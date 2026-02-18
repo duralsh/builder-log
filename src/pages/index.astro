@@ -1,5 +1,28 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { STOIC_QUOTES } from "../lib/stoicQuotes";
+
+const now = new Date();
+const startOfYear = new Date(now.getFullYear(), 0, 0);
+const msPerDay = 1000 * 60 * 60 * 24;
+const dayOfYear = Math.floor((now.getTime() - startOfYear.getTime()) / msPerDay);
+
+const seededRandom = (seed: number) => {
+  let value = seed % 2147483647;
+  if (value <= 0) value += 2147483646;
+  return () => {
+    value = (value * 16807) % 2147483647;
+    return (value - 1) / 2147483646;
+  };
+};
+
+const shuffledByDay = [...STOIC_QUOTES];
+const random = seededRandom(dayOfYear);
+for (let i = shuffledByDay.length - 1; i > 0; i--) {
+  const j = Math.floor(random() * (i + 1));
+  [shuffledByDay[i], shuffledByDay[j]] = [shuffledByDay[j], shuffledByDay[i]];
+}
+const quoteOfDay = shuffledByDay[0];
 ---
 
 <BaseLayout title="Dogus Ural" description="Product leader building at the intersection of social and finance.">
@@ -9,12 +32,21 @@ import BaseLayout from "../layouts/BaseLayout.astro";
       <div class="hero-copy">
         <h1>Dogus Ural</h1>
         <p>
-          I build consumer products at the intersection of social and finance. Most recently at
+          I build consumer products at the intersection of AI and finance. Most recently at
           <a href="https://arena.social/home" target="_blank" rel="noreferrer">Arena</a>, where I led a team shipping
-          embedded wallets, perpetual trading, and social features to 16,000 daily users. Before that, embedded
-          software at Snap. Based in Vienna. Deep in Roman history, ancient coins, and things that grow on their own.
+          embedded wallets, perpetual trading, and social features to 16,000 daily users. Before that, I built
+          embedded software at Snap. Based in Vienna. I am constantly building and learning, especially around AI,
+          finance, and where they overlap. Deep in Roman history, ancient coins, and things that grow on their own.
         </p>
       </div>
+    </div>
+  </section>
+
+  <section class="section quote-section">
+    <div class="container quote-of-day">
+      <h2>🏛️ Stoic Quote of the Day</h2>
+      <blockquote>"{quoteOfDay.quote}"</blockquote>
+      <p class="muted">- {quoteOfDay.author}</p>
     </div>
   </section>
 
@@ -47,6 +79,34 @@ import BaseLayout from "../layouts/BaseLayout.astro";
     max-width: 62ch;
     font-size: clamp(1rem, 1.3vw, 1.08rem);
     line-height: 1.75;
+  }
+
+  .quote-section {
+    padding-top: 0.9rem;
+  }
+
+  .quote-of-day {
+    margin-top: 1.6rem;
+    border-left: 2px solid color-mix(in srgb, var(--accent) 72%, var(--border));
+    padding: 0.95rem 1.1rem;
+    background: color-mix(in srgb, var(--bg-elevated) 30%, transparent);
+  }
+
+  .quote-of-day h2 {
+    margin-bottom: 0.5rem;
+  }
+
+  .quote-of-day blockquote {
+    margin: 0;
+    max-width: 70ch;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    font-style: italic;
+  }
+
+  .quote-of-day .muted {
+    margin-top: 0.35rem;
+    letter-spacing: 0.02em;
   }
 
   @media (max-width: 860px) {

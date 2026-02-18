@@ -16,16 +16,19 @@ const projectEmoji: Record<string, string> = {
 <BaseLayout title="Projects | Dogus Ural">
   <section class="section">
     <div class="container">
-      <h1>Things I Build</h1>
+      <h1>🛠️ Things I Build</h1>
       <ul class="project-bullets">
         {
           projects.map((project) => (
             <li>
-              <span class="emoji">{projectEmoji[project.slug] ?? "🛠️"}</span>
-              <a href={project.data.github} target="_blank" rel="noreferrer">
-                {project.data.title}
-              </a>
-              <span class="muted"> — {project.data.excerpt} ({formatDate(project.data.date)})</span>
+              <div class="project-line">
+                <span class="emoji">{projectEmoji[project.slug] ?? "🛠️"}</span>
+                <a href={project.data.github} target="_blank" rel="noreferrer">
+                  {project.data.title}
+                </a>
+                <span class="pill">{formatDate(project.data.date)}</span>
+              </div>
+              <p class="muted">{project.data.excerpt}</p>
             </li>
           ))
         }
@@ -39,10 +42,26 @@ const projectEmoji: Record<string, string> = {
     margin-top: 1.2rem;
     padding-left: 1.2rem;
     font-family: "JetBrains Mono", "SFMono-Regular", "Menlo", monospace;
-    line-height: 1.9;
+    line-height: 1.65;
+  }
+
+  .project-bullets li {
+    margin-bottom: 0.85rem;
+  }
+
+  .project-line {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    flex-wrap: wrap;
   }
 
   .emoji {
     margin-right: 0.35rem;
+  }
+
+  .project-bullets p {
+    margin: 0.25rem 0 0;
+    max-width: 70ch;
   }
 </style>

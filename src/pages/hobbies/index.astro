@@ -12,15 +12,15 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
 <BaseLayout title="Hobbies | Dogus Ural">
   <section class="section">
     <div class="container">
-      <h1>Hobbies</h1>
-      <p class="muted">Training logs and ancient coin notes.</p>
+      <h1>🧩 Hobbies</h1>
+      <p class="muted">Training logs and numismatics notes.</p>
     </div>
   </section>
 
   <section class="section">
     <div class="container hobby-grid">
       <article class="card hobby-block">
-        <h2><a href="/hobbies/lifting">Lifting</a></h2>
+        <h2><a href="/hobbies/lifting">🏋️ Lifting</a></h2>
         <p>
           Strength work is a long game. I track consistency, progressive overload, and the small habits that compound
           over months.
@@ -35,10 +35,10 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
       </article>
 
       <article class="card hobby-block">
-        <h2><a href="/hobbies/coins">Ancient Coins</a></h2>
+        <h2><a href="/hobbies/coins">🪙 Numismatics</a></h2>
+        <p>I mostly collect Classical Greek tetradrachms and Roman Republic silver denarii.</p>
         <p>
-          Notes on Roman and Greek coin acquisitions: context, minting details, provenance, and what each piece says
-          about history.
+          <a href="/hobbies/coins/collection">Collection list →</a>
         </p>
         <ul>
           {coins.slice(0, 3).map((post) => (

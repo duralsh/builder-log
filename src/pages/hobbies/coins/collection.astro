@@ -1,0 +1,562 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const coins = [
+  {
+    title: "MACEDON under Roman Protectorate, First Meris",
+    type: "Tetradrachm",
+    date: "Circa 167-148 BC",
+    mint: "Amphipolis",
+    obv: "Diademed and draped bust of Artemis right, with bow and quiver over shoulder; all in centre of Macedonian shield.",
+    rev: "MAKEΔONΩN / ΠPΩTHΣ. Club; AP monogram above; all within oak wreath; thunderbolt to left.",
+    refs: "SNG Copenhagen 1310-1; HGC 3.1, 1103.",
+    condition: "Very fine",
+    weight: "16.91 g",
+    diameter: "30 mm",
+    axis: "",
+    image: "/coins/macedon-first-meris-tetradrachm.png",
+  },
+  {
+    title: "ATTICA, Athens",
+    type: "Tetradrachm",
+    date: "Circa 454-404 BC",
+    mint: "Athens",
+    obv: "Head of Athena to right, wearing crested Attic helmet ornamented with three olive leaves above visor and spiral palmette on bowl, round earring with central boss, and pearl necklace.",
+    rev: "Owl standing to right with head facing, olive sprig and crescent behind, AΘE before; all within incuse square.",
+    refs: "Kroll 8; Dewing 1591-8; SNG Copenhagen 31; HGC 4, 1597.",
+    condition: "Very fine, few scratches on obv",
+    weight: "17.15 g",
+    diameter: "23 mm",
+    axis: "",
+    image: "/coins/athens-tetradrachm-classical.png",
+  },
+  {
+    title: "KINGS OF THRACE, Kalchedon, in the name of Lysimachos (305-281 BC)",
+    type: "Tetradrachm AR",
+    date: "305-281 BC",
+    mint: "Kalchedon",
+    obv: "Head of the deified Alexander right, wearing horn of Ammon.",
+    rev: "BAΣIΛEΩΣ ΛYΣIMAXOY, Athena seated left, holding Nike and spear over shoulder, resting elbow on shield. Controls: grain ear and monogram.",
+    refs: "cf. Muller 251; HGC 7, 526.",
+    notes: "Ex Savoca Herakles 3, Lot 17.",
+    condition: "Extremely fine",
+    weight: "17.03 g",
+    diameter: "30 mm",
+    axis: "",
+    image: "/coins/lysimachos-kalchedon-tetradrachm.png",
+  },
+  {
+    title: "KINGS OF PERGAMON, Eumenes I (in the name of Philetairos)",
+    type: "AR Tetradrachm",
+    date: "263-241 BC",
+    mint: "Pergamon",
+    obv: "Laureate head of Philetairos right.",
+    rev: "ΦIΛETAIPOY. Athena seated left, elbow resting on shield to right, holding spear and crowning dynastic name with wreath. Ivy leaf to outer left, A to inner left, bow to right.",
+    refs: "SNG BN 1610-2.",
+    notes: "Rare obverse variety with slight drapery.",
+    condition: "Very fine",
+    weight: "17.00 g",
+    diameter: "30.45 mm",
+    axis: "",
+    image: "/coins/eumenes-i-philetairos-tetradrachm.png",
+  },
+  {
+    title: "KINGDOM OF MACEDON, Alexander III 'the Great' (336-323 BC)",
+    type: "AR Drachm",
+    date: "Circa 324-323 BC (lifetime issue)",
+    mint: "Sardes",
+    obv: "Head of Herakles right, wearing lion skin.",
+    rev: "Zeus Aetophoros seated left; club upward to outer right.",
+    refs: "Price 2561; Muller 137.",
+    notes: "Lifetime issue. Ex Hirsch sale 272 (2011), lot 210.",
+    condition: "About extremely fine, nicely toned",
+    weight: "4.28 g",
+    diameter: "17 mm",
+    axis: "",
+    image: "/coins/alexander-iii-drachm-lifetime-sardes.png",
+  },
+  {
+    title: "IONIA, Miletos",
+    type: "Obol or Hemihekte",
+    date: "Late 6th-early 5th centuries BC",
+    mint: "Miletos",
+    obv: "Forepart of lion right, head left.",
+    rev: "Stellate pattern within incuse square.",
+    refs: "SNG Kayhan I 476-82.",
+    condition: "Good very fine",
+    weight: "1.09 g",
+    diameter: "8.89 mm",
+    axis: "",
+    image: "/coins/miletos-obol-hemihekte.png",
+  },
+  {
+    title: "MYSIA, Kyzikos",
+    type: "Obol",
+    date: "Circa 525-475 BC",
+    mint: "Kyzikos",
+    obv: "Forepart of boar left; tunny to right.",
+    rev: "Head of roaring lion left.",
+    refs: "SNG France 369-372.",
+    condition: "Good very fine",
+    weight: "1.19 g",
+    diameter: "8.65 mm",
+    axis: "",
+    image: "/coins/kyzikos-obol.png",
+  },
+  {
+    title: "HADRIAN (117-138)",
+    type: "Denarius",
+    date: "Travel Series issue",
+    mint: "Rome",
+    obv: "HADRIANVS AVG COS III P P. Laureate bust right, with drapery on far shoulder.",
+    rev: "AFRICA. Africa, wearing elephant skin headdress and holding scorpion and cornucopia, reclining left on rock; basket of grain ears to left.",
+    refs: "RIC II 1494.",
+    condition: "Good very fine",
+    weight: "3.23 g",
+    diameter: "16.71 mm",
+    axis: "",
+    image: "/coins/hadrian-africa-denarius.png",
+  },
+  {
+    title: "MAXIMINUS I THRAX (AD 235-238)",
+    type: "AR Denarius",
+    date: "AD 235-238",
+    mint: "Rome",
+    obv: "Not specified.",
+    rev: "Not specified.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "2.80 g",
+    diameter: "20.06 mm",
+    axis: "",
+    image: "/coins/maximinus-i-thrax-denarius.png",
+  },
+  {
+    title: "ISLANDS off KARIA, Rhodos",
+    type: "AR Obol",
+    date: "250 BC",
+    mint: "Rhodos",
+    obv: "Not specified.",
+    rev: "Not specified.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "0.76 g",
+    diameter: "10.32 mm",
+    axis: "",
+    image: "/coins/rhodos-diobol-250bc.png",
+  },
+  {
+    title: "THRACE, Chersonesos",
+    type: "AR Diobol",
+    date: "Circa 500 BC",
+    mint: "Chersonesos",
+    obv: "Not specified.",
+    rev: "Not specified.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "2.32 g",
+    diameter: "12.51 mm",
+    axis: "",
+    image: "/coins/chersonesos-hemiobol-500bc.png",
+  },
+  {
+    title: "PISIDIA, Selge",
+    type: "AR Obol",
+    date: "Circa 350-300 BC",
+    mint: "Selge",
+    obv: "Not specified.",
+    rev: "Not specified.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "0.81 g",
+    diameter: "9.77 mm",
+    axis: "",
+    image: "/coins/selge-obol-350-300bc.png",
+  },
+  {
+    title: "DYNASTS of LYCIA, uncertain",
+    type: "AR Obol",
+    date: "Circa 6th-5th century BC",
+    mint: "Lycia",
+    obv: "Not specified.",
+    rev: "Not specified.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "0.83 g",
+    diameter: "9.36 mm",
+    axis: "",
+    image: "/coins/lycia-dynasts-obol-6th-5thbc.png",
+  },
+  {
+    title: "PISIDIA, Selge",
+    type: "AR Obol",
+    date: "Ca. 4th century BC",
+    mint: "Selge",
+    obv: "Not specified.",
+    rev: "Not specified.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "0.92 g",
+    diameter: "10.00 mm",
+    axis: "",
+    image: "/coins/selge-obol-4thbc-a.png",
+  },
+  {
+    title: "PISIDIA, Selge",
+    type: "AR Obol",
+    date: "Ca. 4th century BC",
+    mint: "Selge",
+    obv: "Not specified.",
+    rev: "Not specified.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "1.03 g",
+    diameter: "10.31 mm",
+    axis: "",
+    image: "/coins/selge-obol-4thbc-b.png",
+  },
+  {
+    title: "CARIA, Rhodes",
+    type: "AR Hemidrahm or Diobol",
+    date: "Circa 205-188 BC",
+    mint: "Rhodes",
+    obv: "Not specified.",
+    rev: "Not specified.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "1.12 g",
+    diameter: "11.20 mm",
+    axis: "",
+    image: "/coins/rhodes-hemidrahm-diobol-205-188bc-a.png",
+  },
+  {
+    title: "CARIA, Rhodes",
+    type: "AR Hemidrahm or Diobol",
+    date: "Circa 205-188 BC",
+    mint: "Rhodes",
+    obv: "Not specified.",
+    rev: "Not specified.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "1.24 g",
+    diameter: "13.36 mm",
+    axis: "",
+    image: "/coins/rhodes-hemidrahm-diobol-205-188bc-b.png",
+  },
+  {
+    title: "IONIA, Phokaia",
+    type: "AR Diobol",
+    date: "Circa 521-478 BC",
+    mint: "Phokaia",
+    obv: "Not specified.",
+    rev: "Not specified.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "1.25 g",
+    diameter: "11.22 mm",
+    axis: "",
+    image: "/coins/phokaia-diobol-521-478bc.png",
+  },
+  {
+    title: "ANTONINUS PIUS",
+    type: "Denarius",
+    date: "AD 157-158",
+    mint: "Rome",
+    obv: "ANTONINVS AVG PIVS P P, laureate head right.",
+    rev: "VOTA SVSCEPTA DEC III, Antoninus standing left, sacrificing out of patera over tripod altar; COS IIII in exergue.",
+    refs: "RIC 283; BMC 585.",
+    condition: "Extremely fine",
+    weight: "3.47 g",
+    diameter: "19 mm",
+    axis: "12 h",
+    image: "/coins/antoninus-pius-denarius-157-158.png",
+  },
+  {
+    title: "MARCUS AURELIUS",
+    type: "AR Denarius",
+    date: "AD 162",
+    mint: "Rome",
+    obv: "Bare head right, slight drapery.",
+    rev: "Providentia standing left, holding globe and cornucopia.",
+    refs: "RIC 48 var. (slight drapery); RSC 517.",
+    notes: "Purchased from Savoca Numismatik, Munchen.",
+    condition: "About extremely fine, nice patina",
+    weight: "3.49 g",
+    diameter: "19 mm",
+    axis: "",
+    image: "/coins/marcus-aurelius-denarius-ad-162-providentia.png",
+  },
+  {
+    title: "MARCUS AURELIUS",
+    type: "AR Denarius",
+    date: "AD 175-176",
+    mint: "Rome",
+    obv: "Laureate head right.",
+    rev: "Aequitas standing left, holding scales and cornucopia.",
+    refs: "RIC 359 var. (reverse legend); RSC 929c.",
+    notes: "Purchased from Savoca Numismatik, Munchen.",
+    condition: "Extremely fine, nice patina",
+    weight: "3.44 g",
+    diameter: "19 mm",
+    axis: "",
+    image: "/coins/marcus-aurelius-denarius-ad-175-176-aequitas.png",
+  },
+  {
+    title: "GORDIAN III (238-244)",
+    type: "Antoninianus",
+    date: "AD 241-243",
+    mint: "Rome",
+    obv: "IMP GORDIANVS PIVS FEL AVG, radiate, draped and cuirassed bust of Gordian III to right, seen from behind.",
+    rev: "VIRTVTI AVGVSTI, Hercules, laureate, standing right, holding his right hand behind his back and leaning left on club set on rock; lion's skin draped over club.",
+    refs: "RIC 95; Cohen 404; Michaux 385.",
+    condition: "About extremely fine",
+    weight: "4.05 g",
+    diameter: "22 mm",
+    axis: "2 h",
+    image: "/coins/gordian-iii-antoninianus.png",
+  },
+  {
+    title: "VALERIAN I",
+    type: "BI Antoninianus",
+    date: "AD 253-260",
+    mint: "Antioch",
+    obv: "IMP C P LIC VALERIANVS AVG, radiate, draped and cuirassed bust right.",
+    rev: "VIRTVS AVGG, Valerian and Gallienus facing each other, each holding spear, one holding Victory and the other a globe.",
+    refs: "RIC 292c; Cohen 277.",
+    condition: "Near extremely fine",
+    weight: "3.96 g",
+    diameter: "22 mm",
+    axis: "",
+    image: "/coins/valerian-i-bi-antoninianus.png",
+  },
+  {
+    title: "CONSTANTINE I 'the Great' (307-337)",
+    type: "Follis (Bronze)",
+    date: "AD 315-316",
+    mint: "Lugdunum (Lyons)",
+    obv: "IMP CONSTANTINVS AVG, laureate, draped and cuirassed bust right, seen from behind.",
+    rev: "SOLI INVICTO COMITI, Sol, radiate, standing left, holding globe and raising right hand; TF - star across fields. Mintmark PLG.",
+    refs: "RIC VII Lyons 32.",
+    condition: "Extremely fine",
+    weight: "4.11 g",
+    diameter: "20 mm",
+    axis: "6 h",
+    image: "/coins/constantine-i-follis-lyons.png",
+  },
+  {
+    title: "CONSTANTINE I 'the Great' (306-337)",
+    type: "Follis",
+    date: "Roman Imperial period",
+    mint: "Not specified",
+    obv: "Laureate head of Constantine right.",
+    rev: "PROVIDENTIA AVGG, camp gate.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "3.62 g",
+    diameter: "19 mm",
+    axis: "",
+    image: "/coins/constantine-i-follis-camp-gate.png",
+  },
+  {
+    title: "CONSTANTINUS I (306-337)",
+    type: "Follis",
+    date: "Roman Imperial period",
+    mint: "Not specified",
+    obv: "VRBS ROMA, helmeted bust left.",
+    rev: "She-wolf with Romulus and Remus.",
+    refs: "Reference not specified.",
+    condition: "Not specified",
+    weight: "2.66 g",
+    diameter: "16 mm",
+    axis: "",
+    image: "/coins/constantinus-i-follis-urbs-roma.png",
+  },
+  {
+    title: "CONSTANTINE I 'the Great' (307-337)",
+    type: "Follis (Bronze)",
+    date: "AD 318",
+    mint: "Siscia, 4th officina",
+    obv: "IMP CONSTANTINVS PF AVG, helmeted, laureate, cuirassed bust right.",
+    rev: "VICTORIAE LAETAE PRINC PERP, two Victories facing and inscribing VOT PR on shield placed on altar. Mintmark ΔSIS star.",
+    refs: "RIC VII Siscia 47.",
+    condition: "Very fine / choice very fine",
+    weight: "3.78 g",
+    diameter: "19 mm",
+    axis: "1 h",
+    image: "/coins/constantine-i-follis-siscia.png",
+  },
+  {
+    title: "NERVA (96-98)",
+    type: "Denarius",
+    date: "AD 96-98",
+    mint: "Rome",
+    obv: "IMP NERVA CAES AVG P M TR P COS III P P. Laureate head right.",
+    rev: "CONCORDIA EXERCITVVM. Clasped hands.",
+    refs: "RIC 14.",
+    condition: "Very fine",
+    weight: "3.75 g",
+    diameter: "18 mm",
+    axis: "",
+    image: "/coins/nerva-denarius-concordia-exercitvvm.png",
+  },
+  {
+    title: "TRAJAN (AD 98-117)",
+    type: "AR Denarius",
+    date: "AD 98-117",
+    mint: "Rome",
+    obv: "IMP CAES NER TRAIAN OPTIM AVG GER DAC PARTHICO. Laureate bust of Trajan right, with slight drapery.",
+    rev: "P M TR P COS VI P P S P Q R, PROVID. Providentia standing left, leaning upon column to right, holding sceptre and pointing toward globus to left.",
+    refs: "RIC 364; Woytek 562d.",
+    notes: "Rare.",
+    condition: "Very fine",
+    weight: "3.29 g",
+    diameter: "17.86 mm",
+    axis: "",
+    image: "/coins/trajan-providentia-denarius.png",
+  },
+  {
+    title: "CORINTHIA, Corinth",
+    type: "Stater",
+    date: "Circa 400-375 BC",
+    mint: "Corinth",
+    obv: "Pegasos flying right, koppa below.",
+    rev: "Head of Athena right, wearing laureate Corinthian helmet; coiled serpent to left.",
+    refs: "Pegasi 222 var. (no laurel-wreath); BCD Corinth 63 var. (same); HGC 4, 1834.",
+    condition: "Very fine",
+    weight: "8.54 g",
+    diameter: "22 mm",
+    axis: "",
+    image: "/coins/corinth-stater-pegasos-athena.png",
+  },
+  {
+    title: "ARMENIA, Levon I (1198-1219)",
+    type: "Tram",
+    date: "1198-1219",
+    mint: "Armenia",
+    obv: "Crowned figure of Levon seated on throne ornamented with lions, holding cross and fleur-de-lis, feet on footstool.",
+    rev: "Two lions rampant, back to back; long cross between.",
+    refs: "Cf. AC 282-3 (for type).",
+    condition: "Good very fine",
+    weight: "2.87 g",
+    diameter: "24 mm",
+    axis: "",
+    image: "/coins/armenia-levon-i-tram.png",
+  },
+];
+
+const parseStartYear = (date: string) => {
+  const matches = [...date.matchAll(/\d{2,4}/g)].map((m) => Number(m[0]));
+  if (matches.length === 0) return 0;
+  const first = matches[0];
+  return /BC/i.test(date) ? -first : first;
+};
+
+const categoryFor = (coin: (typeof coins)[number]) => {
+  if (/ARMENIA|Levon/i.test(coin.title)) return "Medieval";
+  const year = parseStartYear(coin.date);
+  if (year >= 1) return "Roman Imperial";
+  if (year <= -500) return "Archaic Greek";
+  if (year < 0) return "Classical & Hellenistic Greek";
+  return "Other";
+};
+
+const categories = [
+  "Archaic Greek",
+  "Classical & Hellenistic Greek",
+  "Roman Imperial",
+  "Medieval",
+] as const;
+
+const groupedCoins = categories
+  .map((category) => ({
+    category,
+    items: coins
+      .filter((coin) => categoryFor(coin) === category)
+      .sort((a, b) => parseStartYear(a.date) - parseStartYear(b.date)),
+  }))
+  .filter((group) => group.items.length > 0);
+---
+
+<BaseLayout title="Numismatics Collection | Dogus Ural">
+  <section class="section">
+    <div class="container">
+      <h1>🧿 Numismatics Collection</h1>
+      <p class="muted">A growing catalog focused on Classical Greek tetradrachms and Roman Republic silver denarii.</p>
+
+      {groupedCoins.map((group) => (
+        <section class="coin-category">
+          <h2>{group.category}</h2>
+          <ol class="coin-list">
+            {group.items.map((coin) => (
+              <li class="coin-item">
+                <h3>
+                  {coin.title} - {coin.type}
+                </h3>
+                <p class="muted">
+                  {coin.date} · {coin.mint}
+                </p>
+                <img src={coin.image} alt={`${coin.title} ${coin.type}`} class="coin-image" />
+                <p>
+                  <strong>Obv:</strong> {coin.obv}
+                </p>
+                <p>
+                  <strong>Rev:</strong> {coin.rev}
+                </p>
+                <p>
+                  <strong>References:</strong> {coin.refs}
+                </p>
+                {coin.notes ? (
+                  <p>
+                    <strong>Notes:</strong> {coin.notes}
+                  </p>
+                ) : null}
+                <p>
+                  <strong>Condition:</strong> {coin.condition}
+                </p>
+                <p>
+                  <strong>Weight:</strong> {coin.weight} · <strong>Diameter:</strong> {coin.diameter}
+                  {coin.axis ? (
+                    <>
+                      {" "}
+                      · <strong>Axis:</strong> {coin.axis}
+                    </>
+                  ) : null}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .coin-category {
+    margin-top: 1.3rem;
+  }
+
+  .coin-category h2 {
+    margin-bottom: 0.55rem;
+  }
+
+  .coin-list {
+    margin: 0;
+    padding-left: 1.25rem;
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .coin-item {
+    border-bottom: 1px dashed var(--border);
+    padding-bottom: 1.2rem;
+  }
+
+  .coin-image {
+    width: min(760px, 100%);
+    display: block;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    margin: 0.5rem 0 0.8rem;
+  }
+</style>

@@ -66,9 +66,9 @@ const pathname = Astro.url.pathname;
     text-decoration: none;
   }
 
-  nav a::before {
-    content: "/";
-    margin-right: 0.15rem;
+  nav a + a::before {
+    content: "·";
+    margin-right: 0.55rem;
     color: var(--text-muted);
   }
 

@@ -1,22 +1,22 @@
 :root {
-  --bg: #050805;
-  --bg-elevated: #091009;
-  --text: #d6f5d6;
-  --text-muted: #87a687;
-  --border: #214021;
-  --accent: #5cff8a;
-  --accent-strong: #8fffaf;
+  --bg: #060a07;
+  --bg-elevated: #0c140d;
+  --text: #d8e6d8;
+  --text-muted: #8fa08f;
+  --border: #2a3b2a;
+  --accent: #74ff9a;
+  --accent-strong: #9dffb9;
   --shadow: none;
 }
 
 :root[data-theme="light"] {
-  --bg: #f3f8f3;
+  --bg: #f5f9f5;
   --bg-elevated: #ffffff;
-  --text: #122012;
-  --text-muted: #4e6c4e;
-  --border: #b7d1b7;
-  --accent: #1c8f3b;
-  --accent-strong: #14682a;
+  --text: #132113;
+  --text-muted: #587058;
+  --border: #bfd3bf;
+  --accent: #1f9440;
+  --accent-strong: #157131;
   --shadow: none;
 }
 
@@ -38,8 +38,8 @@ body {
   flex-direction: column;
   background: var(--bg);
   color: var(--text);
-  font-family: "JetBrains Mono", "SFMono-Regular", "Menlo", "Consolas", monospace;
-  line-height: 1.72;
+  font-family: "Inter", "Avenir Next", "Segoe UI", sans-serif;
+  line-height: 1.68;
   transition: background-color 0.25s ease, color 0.25s ease;
 }
 
@@ -82,19 +82,19 @@ a:hover {
 }
 
 .container {
-  width: min(1080px, 92vw);
+  width: min(1020px, 92vw);
   margin: 0 auto;
 }
 
 .card {
-  background: transparent;
+  background: color-mix(in srgb, var(--bg-elevated) 38%, transparent);
   border: 0;
-  border-radius: 0;
+  border-radius: 6px;
   box-shadow: none;
 }
 
 .section {
-  padding: 2.8rem 0;
+  padding: 3.1rem 0;
 }
 
 .muted {
@@ -107,7 +107,7 @@ a:hover {
   border: 1px dashed var(--border);
   border-radius: 4px;
   padding: 0.1rem 0.4rem;
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--text-muted);
   background: transparent;
 }
@@ -119,7 +119,7 @@ a:hover {
 }
 
 .post-card {
-  padding: 0.9rem 0;
+  padding: 1rem 0.15rem;
   border-bottom: 1px dashed var(--border);
   transition: border-color 0.2s ease;
 }
@@ -143,7 +143,7 @@ a:hover {
   border-radius: 6px;
   border: 1px dashed var(--border);
   margin-bottom: 0.9rem;
-  background: linear-gradient(130deg, #0d1a0d, #050b05);
+  background: linear-gradient(130deg, #142417, #08110a);
 }
 
 @media (max-width: 720px) {

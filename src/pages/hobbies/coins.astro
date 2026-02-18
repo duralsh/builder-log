@@ -6,13 +6,15 @@ import { formatDate, sortByDateDesc } from "../../lib/posts";
 const posts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("coins")));
 ---
 
-<BaseLayout title="Ancient Coins | Dogus Ural">
+<BaseLayout title="Numismatics | Dogus Ural">
   <section class="section">
     <div class="container">
-      <h1>Ancient Coins</h1>
+      <h1>🪙 Numismatics</h1>
       <p class="muted">
-        Posts tagged <code>coins</code>: acquisitions, provenance, and historical notes with links to external
-        numismatic references.
+        I mostly collect Classical Greek tetradrachms and Roman Republic silver denarii.
+      </p>
+      <p>
+        <a href="/hobbies/coins/collection">View collection list →</a>
       </p>
       <div class="post-grid">
         {

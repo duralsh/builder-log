@@ -33,9 +33,9 @@ const pathname = Astro.url.pathname;
     position: sticky;
     top: 0;
     z-index: 30;
-    border-bottom: 1px solid var(--border);
-    background: color-mix(in srgb, var(--bg) 90%, transparent);
-    backdrop-filter: blur(8px);
+    border-bottom: 1px dashed var(--border);
+    background: color-mix(in srgb, var(--bg) 94%, transparent);
+    backdrop-filter: blur(4px);
   }
 
   .nav-shell {
@@ -47,9 +47,9 @@ const pathname = Astro.url.pathname;
   }
 
   .brand {
-    font-family: "Fraunces", "Georgia", serif;
+    font-family: "JetBrains Mono", "SFMono-Regular", "Menlo", monospace;
     color: var(--text);
-    font-size: 1.15rem;
+    font-size: 1rem;
     text-decoration: none;
   }
 
@@ -62,8 +62,14 @@ const pathname = Astro.url.pathname;
 
   nav a {
     color: var(--text-muted);
-    padding: 0.2rem 0;
+    padding: 0.2rem 0.15rem;
     text-decoration: none;
+  }
+
+  nav a::before {
+    content: "/";
+    margin-right: 0.15rem;
+    color: var(--text-muted);
   }
 
   nav a.active,

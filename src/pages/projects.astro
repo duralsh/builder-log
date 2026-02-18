@@ -1,0 +1,48 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { formatDate, sortByDateDesc } from "../lib/posts";
+
+const projects = sortByDateDesc(
+  await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("project")),
+);
+
+const projectEmoji: Record<string, string> = {
+  "german-vocab-cli": "🧠",
+  "git-commit-ai": "🤖",
+};
+---
+
+<BaseLayout title="Projects | Dogus Ural">
+  <section class="section">
+    <div class="container">
+      <h1>Things I Build</h1>
+      <ul class="project-bullets">
+        {
+          projects.map((project) => (
+            <li>
+              <span class="emoji">{projectEmoji[project.slug] ?? "🛠️"}</span>
+              <a href={project.data.github} target="_blank" rel="noreferrer">
+                {project.data.title}
+              </a>
+              <span class="muted"> — {project.data.excerpt} ({formatDate(project.data.date)})</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .project-bullets {
+    margin-top: 1.2rem;
+    padding-left: 1.2rem;
+    font-family: "JetBrains Mono", "SFMono-Regular", "Menlo", monospace;
+    line-height: 1.9;
+  }
+
+  .emoji {
+    margin-right: 0.35rem;
+  }
+</style>

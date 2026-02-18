@@ -1,0 +1,96 @@
+---
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import type { GetStaticPaths } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatDate, sortByDateDesc } from "../../lib/posts";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+export const getStaticPaths = (async () => {
+  const posts = await getCollection("posts", ({ data }) => !data.draft);
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}) satisfies GetStaticPaths;
+
+const { post } = Astro.props as Props;
+const { Content } = await render(post);
+const allPosts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft));
+const index = allPosts.findIndex((entry) => entry.slug === post.slug);
+const nextPost = index > 0 ? allPosts[index - 1] : null;
+const prevPost = index < allPosts.length - 1 ? allPosts[index + 1] : null;
+---
+
+<BaseLayout title={`${post.data.title} | Dogus Ural`} description={post.data.excerpt}>
+  <section class="section">
+    <article class="container post">
+      {post.data.cover && <img src={post.data.cover} alt={post.data.title} class="cover-img" />}
+      <h1>{post.data.title}</h1>
+      <div class="post-meta">
+        <span class="pill">{formatDate(post.data.date)}</span>
+        {post.data.tags.map((tag) => (
+          <span class="pill">#{tag}</span>
+        ))}
+      </div>
+
+      <div class="card post-body">
+        <Content />
+      </div>
+
+      {post.data.links && post.data.links.length > 0 && (
+        <section class="card linkouts">
+          <h2>Links</h2>
+          <ul>
+            {post.data.links.map((link) => (
+              <li>
+                <a href={link.url} target="_blank" rel="noreferrer">
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
+
+      <nav class="post-nav card">
+        {prevPost ? <a href={`/posts/${prevPost.slug}`}>← {prevPost.data.title}</a> : <span class="muted">Start</span>}
+        {nextPost ? <a href={`/posts/${nextPost.slug}`}>{nextPost.data.title} →</a> : <span class="muted">Latest</span>}
+      </nav>
+    </article>
+  </section>
+</BaseLayout>
+
+<style>
+  .post {
+    max-width: 860px;
+  }
+
+  .post-body {
+    padding: 1.3rem;
+  }
+
+  .post-body :global(img),
+  .post-body :global(iframe),
+  .post-body :global(video) {
+    max-width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  .linkouts,
+  .post-nav {
+    margin-top: 1rem;
+    padding: 1rem 1.2rem;
+  }
+
+  .post-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+</style>

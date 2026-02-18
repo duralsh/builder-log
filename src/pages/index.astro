@@ -1,0 +1,62 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="Dogus Ural" description="Product leader building at the intersection of social and finance.">
+  <section class="section">
+    <div class="container hero">
+      <img class="hero-img card" src="/dogus-hero.png" alt="Dogus Ural portrait" />
+      <div class="hero-copy">
+        <h1>Dogus Ural</h1>
+        <p>
+          I build consumer products at the intersection of social and finance. Most recently at
+          <a href="https://arena.social/home" target="_blank" rel="noreferrer">Arena</a>, where I led a team shipping
+          embedded wallets, perpetual trading, and social features to 16,000 daily users. Before that, embedded
+          software at Snap. Based in Vienna. Deep in Roman history, ancient coins, and things that grow on their own.
+        </p>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>
+
+<style>
+  .hero {
+    display: grid;
+    gap: clamp(1rem, 2.2vw, 2.2rem);
+    align-items: center;
+    grid-template-columns: minmax(240px, 330px) 1fr;
+    padding: 1.2rem 0 0.6rem;
+  }
+
+  .hero-img {
+    width: 100%;
+    border-radius: 22px;
+    object-fit: cover;
+    aspect-ratio: 5 / 6;
+    background: linear-gradient(130deg, #5b4f43, #2b241f);
+  }
+
+  .hero-copy h1 {
+    font-size: clamp(2rem, 4.4vw, 2.9rem);
+    margin-bottom: 0.55rem;
+  }
+
+  .hero-copy p {
+    max-width: 62ch;
+    font-size: clamp(1rem, 1.3vw, 1.08rem);
+    line-height: 1.75;
+  }
+
+  @media (max-width: 860px) {
+    .hero {
+      grid-template-columns: 1fr;
+      padding-top: 0.4rem;
+    }
+
+    .hero-img {
+      max-width: 420px;
+      justify-self: center;
+    }
+  }
+</style>

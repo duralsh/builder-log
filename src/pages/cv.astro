@@ -1,0 +1,236 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { sortByDateDesc } from "../lib/posts";
+
+const allPosts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("work")));
+
+const roles = [
+  {
+    title: "Director of Product",
+    company: "Arena Inc.",
+    location: "Vienna / New York",
+    start: new Date("2024-02-01"),
+    end: null,
+    dates: "Feb 2024 – Present",
+    description:
+      "Arena is a SocialFi platform combining embedded wallets, perpetual trading, token launches, and social features.",
+    links: [
+      { label: "arena.social", url: "https://arena.social/home" },
+      { label: "arenatrade.ai", url: "https://arenatrade.ai" },
+    ],
+    bullets: [
+      "Led a team of 12 engineers and 3 designers",
+      "Integrated perpetuals trading via Hyperliquid; $100M volume in first month",
+      "DEX reached $500M cumulative volume since May 2025",
+      "Scaled platform from ~2k to ~16k DAU",
+      "Shipped embedded wallets (EVM + Solana), account abstraction, cross-chain protocols",
+      "Social login to wallet provisioning (Twitter, Apple, Google, Facebook, TikTok)",
+      "Launched platform token with staking and revenue sharing; ~$200M FDV peak",
+    ],
+  },
+  {
+    title: "Product & Engineering Lead",
+    company: "Ural e.U.",
+    location: "Vienna",
+    start: new Date("2022-05-01"),
+    end: new Date("2024-02-01"),
+    dates: "May 2022 – Feb 2024",
+    description:
+      "Consumer NFT and gaming launches on Avalanche and Starknet. Managed 3 engineers, 2 designers, 4 artists. Products: OOPA, FlipBlob, Platypus. Concept to launch across UX, smart-contract integration, and release operations.",
+    links: [],
+    bullets: [],
+  },
+  {
+    title: "Software Engineer (AR / Embedded)",
+    company: "Snap Inc.",
+    location: "Vienna",
+    start: new Date("2021-03-01"),
+    end: new Date("2022-05-01"),
+    dates: "Mar 2021 – May 2022",
+    description:
+      "Embedded software for Snap smart glasses. Built userspace libraries interfacing with Android and custom Linux sensor drivers. Collaborated across hardware, firmware, and product design.",
+    links: [{ label: "spectacles.com", url: "https://www.spectacles.com/" }],
+    bullets: [],
+  },
+  {
+    title: "Embedded Software Team Lead",
+    company: "Riddle&Code",
+    location: "Vienna",
+    start: new Date("2019-01-01"),
+    end: new Date("2021-01-01"),
+    dates: "Jan 2019 – Jan 2021",
+    description:
+      "Led embedded and security projects across automotive, logistics, energy, and fintech. Owned delivery planning, customer communication, and task breakdowns.",
+    links: [],
+    bullets: [],
+  },
+  {
+    title: "Software Engineer",
+    company: "Airties",
+    location: "Istanbul",
+    start: new Date("2018-08-01"),
+    end: new Date("2019-01-01"),
+    dates: "Aug 2018 – Jan 2019",
+    description: "Core software for telecom customers. Triaged and fixed production issues.",
+    links: [],
+    bullets: [],
+  },
+  {
+    title: "Embedded Software Engineer",
+    company: "Accenture",
+    location: "Istanbul",
+    start: new Date("2017-07-01"),
+    end: new Date("2018-08-01"),
+    dates: "Jul 2017 – Aug 2018",
+    description: "Embedded components across multiple client projects. Istanbul.",
+    links: [],
+    bullets: [],
+  },
+  {
+    title: "Embedded Software Engineer",
+    company: "Volrad",
+    location: "Ankara",
+    start: new Date("2016-11-01"),
+    end: new Date("2017-06-30"),
+    dates: "Nov 2016 – Jun 2017",
+    description: "Firmware and peripheral drivers on bare-metal PIC microcontrollers. Ankara.",
+    links: [],
+    bullets: [],
+  },
+];
+
+const rolePosts = (start: Date, end: Date | null) =>
+  allPosts.filter((post) => post.data.date >= start && (end ? post.data.date < end : true));
+---
+
+<BaseLayout title="CV | Dogus Ural">
+  <section class="cv-heading">
+    <div class="container">
+      <h1>CV</h1>
+    </div>
+  </section>
+
+  <section class="cv-work">
+    <div class="container cv-list">
+      {
+        roles.map((role) => (
+          <article class="card role">
+            <h2>
+              {role.title} — {role.company}
+            </h2>
+            <h3 class="role-location muted">{role.location}</h3>
+            <p class="muted">{role.dates}</p>
+            {role.links.length > 0 && (
+              <div class="role-links muted">
+                <span>Links:</span>
+                {role.links.map((link) => (
+                  <a href={link.url} target="_blank" rel="noreferrer">
+                    {link.label}
+                  </a>
+                ))}
+              </div>
+            )}
+            <p>{role.description}</p>
+
+            {role.bullets.length > 0 && (
+              <ul>
+                {role.bullets.map((item) => (
+                  <li>{item}</li>
+                ))}
+              </ul>
+            )}
+
+            {rolePosts(role.start, role.end).length > 0 && (
+              <div class="related-posts">
+                <h3>Related posts</h3>
+                <ul>
+                  {rolePosts(role.start, role.end).map((post) => (
+                    <li>
+                      <a href={`/posts/${post.slug}`}>{post.data.title}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </article>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="cv-meta-section">
+    <div class="container card meta">
+      <h2>Education</h2>
+      <ul>
+        <li>M.S. Computer Science — METU, Ankara · 2016–2017</li>
+        <li>B.S. Electronics Engineering — Ankara University · 2008–2015</li>
+      </ul>
+      <h2>Skills</h2>
+      <p>
+        <strong>Product:</strong> strategy, roadmaps, discovery, execution, growth loops, stakeholder management, user
+        research, launch planning, competitive analysis
+      </p>
+      <p>
+        <strong>Crypto / Fintech:</strong> non-custodial wallets (EOA, MPC, AA), cross-chain protocols, DeFi
+        integrations, DEX/swaps, Layer 2, on/off-ramps, token design, social trading
+      </p>
+      <p>
+        <strong>Technical:</strong> Solidity, Rust, Python, C/C++, Cairo, smart-contract integration, API design,
+        embedded systems
+      </p>
+      <p><strong>Blockchain:</strong> EVM chains, Solana, Avalanche, Starknet, Base, Arbitrum, BNB</p>
+      <p><strong>Languages:</strong> Turkish (native), English (fluent), German (B2)</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .cv-heading {
+    padding: 2.2rem 0 0.7rem;
+  }
+
+  .cv-heading h1 {
+    margin-bottom: 0;
+  }
+
+  .cv-work {
+    padding: 0 0 1rem;
+  }
+
+  .cv-meta-section {
+    padding: 0 0 2rem;
+  }
+
+  .cv-list {
+    display: grid;
+    gap: 1.2rem;
+  }
+
+  .role {
+    padding: 1.2rem;
+  }
+
+  .role-location {
+    font-size: 1rem;
+    margin: -0.3rem 0 0.3rem;
+  }
+
+  .role-links {
+    display: flex;
+    gap: 0.85rem;
+    flex-wrap: wrap;
+    align-items: center;
+    font-size: 0.95rem;
+    margin: 0.1rem 0 0.5rem;
+  }
+
+  .related-posts h3 {
+    margin-top: 1rem;
+    margin-bottom: 0.3rem;
+  }
+
+  .meta {
+    padding: 1.2rem;
+  }
+</style>

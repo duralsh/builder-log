@@ -1,0 +1,37 @@
+<button id="theme-toggle" type="button" aria-label="Toggle dark and light mode">
+  Toggle theme
+</button>
+
+<style>
+  #theme-toggle {
+    border: 1px solid var(--border);
+    background: var(--bg-elevated);
+    color: var(--text);
+    border-radius: 999px;
+    padding: 0.4rem 0.8rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+
+  #theme-toggle:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+</style>
+
+<script>
+  const key = "site-theme";
+  const root = document.documentElement;
+  const button = document.querySelector("#theme-toggle");
+
+  const current = root.dataset.theme || "dark";
+  if (button) {
+    button.textContent = current === "dark" ? "Light mode" : "Dark mode";
+    button.addEventListener("click", () => {
+      const next = root.dataset.theme === "dark" ? "light" : "dark";
+      root.dataset.theme = next;
+      localStorage.setItem(key, next);
+      button.textContent = next === "dark" ? "Light mode" : "Dark mode";
+    });
+  }
+</script>

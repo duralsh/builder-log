@@ -1,0 +1,35 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatDate, sortByDateDesc } from "../../lib/posts";
+
+const posts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft));
+---
+
+<BaseLayout title="Posts | Dogus Ural">
+  <section class="section">
+    <div class="container">
+      <h1>All Posts</h1>
+      <p class="muted">Chronological feed across work, projects, lifting, and coins.</p>
+
+      <div class="post-grid">
+        {
+          posts.map((post) => (
+            <article class="card post-card">
+              {post.data.cover && <img src={post.data.cover} alt={post.data.title} class="cover-img" />}
+              <div class="post-meta">
+                <span class="pill">{formatDate(post.data.date)}</span>
+                {post.data.tags.map((tag) => (
+                  <span class="pill">#{tag}</span>
+                ))}
+              </div>
+              <h2>{post.data.title}</h2>
+              <p class="muted">{post.data.excerpt}</p>
+              <a href={`/posts/${post.slug}`}>Read post</a>
+            </article>
+          ))
+        }
+      </div>
+    </div>
+  </section>
+</BaseLayout>

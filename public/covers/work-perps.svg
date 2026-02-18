@@ -1,0 +1,8 @@
+<svg width="1200" height="675" viewBox="0 0 1200 675" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1200" height="675" fill="#131312"/>
+  <path d="M120 510L280 430L430 450L620 280L770 330L950 180L1080 220" stroke="#C8A97D" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="280" cy="430" r="12" fill="#F2D2A8"/>
+  <circle cx="620" cy="280" r="12" fill="#F2D2A8"/>
+  <circle cx="950" cy="180" r="12" fill="#F2D2A8"/>
+  <text x="120" y="610" fill="#E8D7BF" font-family="sans-serif" font-size="44">Perpetuals Launch</text>
+</svg>

@@ -1,0 +1,65 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatDate, sortByDateDesc } from "../../lib/posts";
+
+const lifting = sortByDateDesc(
+  await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("lifting")),
+);
+const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("coins")));
+---
+
+<BaseLayout title="Hobbies | Dogus Ural">
+  <section class="section">
+    <div class="container">
+      <h1>Hobbies</h1>
+      <p class="muted">Training logs and ancient coin notes.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container hobby-grid">
+      <article class="card hobby-block">
+        <h2><a href="/hobbies/lifting">Lifting</a></h2>
+        <p>
+          Strength work is a long game. I track consistency, progressive overload, and the small habits that compound
+          over months.
+        </p>
+        <ul>
+          {lifting.slice(0, 3).map((post) => (
+            <li>
+              <a href={`/posts/${post.slug}`}>{post.data.title}</a> <span class="muted">· {formatDate(post.data.date)}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
+
+      <article class="card hobby-block">
+        <h2><a href="/hobbies/coins">Ancient Coins</a></h2>
+        <p>
+          Notes on Roman and Greek coin acquisitions: context, minting details, provenance, and what each piece says
+          about history.
+        </p>
+        <ul>
+          {coins.slice(0, 3).map((post) => (
+            <li>
+              <a href={`/posts/${post.slug}`}>{post.data.title}</a> <span class="muted">· {formatDate(post.data.date)}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hobby-grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+  }
+
+  .hobby-block {
+    padding: 1.2rem;
+  }
+</style>

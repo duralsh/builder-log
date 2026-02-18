@@ -1,15 +1,15 @@
 ---
-title: "My Collection"
+title: "Cabinet Highlights"
 date: 2026-02-18
 tags: ["coins"]
-excerpt: "A quick look at pieces from my ancient coin collection."
+excerpt: "A quick look at selected pieces from my numismatic cabinet."
 cover: "/coins/my-collection-cover.png"
 draft: false
 ---
 
-A snapshot of coins from my collection, including some tetradrachms and staters.
+A snapshot of selected coins from my cabinet, including some tetradrachms and staters.
 
-### Collection video
+### Cabinet reel
 
 <video controls playsinline preload="metadata" style="max-width:100%; border:1px dashed var(--border); border-radius:6px;">
   <source src="/coins/IMG_8004.mp4" type="video/mp4" />

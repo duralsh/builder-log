@@ -119,8 +119,9 @@ a:hover {
 }
 
 .post-card {
-  padding: 1rem 0.15rem;
+  padding: 1rem 0.15rem 1.35rem;
   border-bottom: 1px dashed var(--border);
+  margin-bottom: 0.4rem;
   transition: border-color 0.2s ease;
 }
 

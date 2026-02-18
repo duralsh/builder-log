@@ -451,6 +451,20 @@ const parseStartYear = (date: string) => {
   return /BC/i.test(date) ? -first : first;
 };
 
+const toToken = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
+const anchorCounts = new Map<string, number>();
+const buildAnchor = (value: string) => {
+  const base = toToken(value) || "item";
+  const next = (anchorCounts.get(base) ?? 0) + 1;
+  anchorCounts.set(base, next);
+  return next === 1 ? base : `${base}-${next}`;
+};
+
 const categoryFor = (coin: (typeof coins)[number]) => {
   if (/ARMENIA|Levon/i.test(coin.title)) return "Medieval";
   const year = parseStartYear(coin.date);
@@ -475,20 +489,49 @@ const groupedCoins = categories
       .sort((a, b) => parseStartYear(a.date) - parseStartYear(b.date)),
   }))
   .filter((group) => group.items.length > 0);
+
+const groupedCoinsWithAnchors = groupedCoins.map((group) => ({
+  ...group,
+  anchor: buildAnchor(group.category),
+  items: group.items.map((coin) => ({
+    ...coin,
+    anchor: buildAnchor(`${coin.title}-${coin.type}`),
+  })),
+}));
+
+const outlineTokens = groupedCoinsWithAnchors.flatMap((group) =>
+  group.items.map((coin) => ({
+    anchor: coin.anchor,
+    label: coin.title,
+  })),
+);
 ---
 
-<BaseLayout title="Numismatics Collection | Dogus Ural">
+<BaseLayout title="Numismatic Cabinet | Dogus Ural">
   <section class="section">
     <div class="container">
-      <h1>🧿 Numismatics Collection</h1>
-      <p class="muted">A growing catalog focused on Classical Greek tetradrachms and Roman Republic silver denarii.</p>
+      <h1>🏛️ Numismatic Cabinet</h1>
+      <p class="muted">A curated cabinet focused on Classical Greek tetradrachms and Roman Republic silver denarii.</p>
 
-      {groupedCoins.map((group) => (
-        <section class="coin-category">
+      <nav class="cabinet-outline" aria-label="Cabinet index">
+        <h2>Gallery Index</h2>
+        <ul class="token-list">
+          {outlineTokens.map((token) => (
+            <li class="token-row">
+              <a href={`#${token.anchor}`} class="token">
+                {token.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      {groupedCoinsWithAnchors.map((group) => (
+        <section class="coin-category" id={group.anchor}>
           <h2>{group.category}</h2>
           <ol class="coin-list">
             {group.items.map((coin) => (
-              <li class="coin-item">
+              <li class="coin-item" id={coin.anchor}>
                 <h3>
                   {coin.title} - {coin.type}
                 </h3>
@@ -532,8 +575,47 @@ const groupedCoins = categories
 </BaseLayout>
 
 <style>
+  .cabinet-outline {
+    border: 1px dashed color-mix(in srgb, var(--accent) 42%, var(--border));
+    border-radius: 6px;
+    padding: 0.9rem 0.9rem 1rem;
+    background: color-mix(in srgb, var(--bg-elevated) 22%, transparent);
+    margin: 1rem 0 1.25rem;
+  }
+
+  .cabinet-outline h2 {
+    font-size: 1rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .token-list {
+    margin: 0;
+    padding-left: 1.2rem;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .token-row {
+    list-style: square;
+    color: var(--text-muted);
+  }
+
+  .token {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 2px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    transition: color 0.2s ease;
+  }
+
+  .token:hover {
+    color: var(--accent);
+  }
+
   .coin-category {
     margin-top: 1.3rem;
+    scroll-margin-top: 6.5rem;
   }
 
   .coin-category h2 {
@@ -549,7 +631,13 @@ const groupedCoins = categories
 
   .coin-item {
     border-bottom: 1px dashed var(--border);
-    padding-bottom: 1.2rem;
+    padding-bottom: 1.45rem;
+    margin-bottom: 0.35rem;
+    scroll-margin-top: 6.5rem;
+  }
+
+  .coin-item p:last-child {
+    margin-bottom: 0.15rem;
   }
 
   .coin-image {
@@ -558,5 +646,11 @@ const groupedCoins = categories
     border: 1px dashed var(--border);
     border-radius: 6px;
     margin: 0.5rem 0 0.8rem;
+  }
+
+  @media (max-width: 720px) {
+    .cabinet-outline {
+      padding: 0.9rem;
+    }
   }
 </style>

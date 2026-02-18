@@ -21,10 +21,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
     <div class="container hobby-grid">
       <article class="card hobby-block">
         <h2><a href="/hobbies/lifting">🏋️ Lifting</a></h2>
-        <p>
-          Strength work is a long game. I track consistency, progressive overload, and the small habits that compound
-          over months.
-        </p>
+        <p>I am a big fan of kettlebells, boxing, cycling and home workouts.</p>
         <ul>
           {lifting.slice(0, 3).map((post) => (
             <li>
@@ -38,7 +35,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
         <h2><a href="/hobbies/coins">🪙 Numismatics</a></h2>
         <p>I mostly collect Classical Greek tetradrachms and Roman Republic silver denarii.</p>
         <p>
-          <a href="/hobbies/coins/collection">Collection list →</a>
+          <a href="/hobbies/coins/collection">Numismatic cabinet →</a>
         </p>
         <ul>
           {coins.slice(0, 3).map((post) => (

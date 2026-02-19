@@ -3,14 +3,16 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { formatDate, sortByDateDesc } from "../../lib/posts";
 
-const posts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft));
+const posts = sortByDateDesc(
+  await getCollection("posts", ({ data }) => !data.draft && !data.tags.includes("project")),
+);
 ---
 
 <BaseLayout title="Posts | Dogus Ural">
   <section class="section">
     <div class="container">
       <h1>🗂️ All Posts</h1>
-      <p class="muted">Chronological feed across work, projects, lifting, and coins.</p>
+      <p class="muted">Chronological feed across work, lifting, and coins.</p>
 
       <div class="post-grid">
         {

@@ -1,0 +1,155 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const shippedItems = [
+  {
+    title: "Arena Staking + Arena Champions",
+    summary:
+      "Built staking for Arena's native token and launched Arena Champions, where the top 500 stakers participate in company revenue share.",
+    metric: "Top 500 + rev-share",
+    visual: "/arena/arena-champions-leaderboard.png",
+    icon: "⚔️",
+  },
+  {
+    title: "Activity Feed for Live In-App Events",
+    summary:
+      "Designed a dedicated in-app feed that surfaces key actions in real time: token trades, perpetual position opens, new joins, and Arena staking events.",
+    metric: "Live feed",
+    visual: "/covers/work-wallets.svg",
+    video: "/arena/activity-feed.mp4",
+    icon: "📡",
+  },
+  {
+    title: "Livestreaming + Voice Calls with Tipping",
+    summary:
+      "Shipped livestreaming and voice-call rooms similar to Twitter Spaces, where users can tip the host and speakers directly inside the live chat.",
+    metric: "Live + tipping",
+    visual: "/arena/livestream-voice-tipping.png",
+    icon: "🎙️",
+  },
+  {
+    title: "Perpetual DEX + HIP-3 Market Expansion",
+    summary:
+      "Integrated Hyperliquid to support perpetual DEX trading across 200+ crypto markets, and added HIP-3 for commodity and stock exposure, all seamlessly inside Arena.",
+    metric: "200+ markets",
+    visual: "/covers/work-perps.svg",
+    video: "/arena/perps-hip3.mp4",
+    icon: "📊",
+  },
+  {
+    title: "Multichain Wallet + Native Swaps + Social Layer",
+    summary:
+      "Shipped a multichain wallet with native swaps and integrated social features, bringing asset actions and social engagement into one seamless flow.",
+    metric: "Wallet + swaps",
+    visual: "/covers/work-wallets.svg",
+    video: "/arena/arena-champions-trimmed.mp4",
+    icon: "🌐",
+  },
+];
+---
+
+<BaseLayout title="Arena | Projects | Dogus Ural">
+  <section class="section">
+    <div class="container">
+      <h1>⚔️ Arena</h1>
+      <p class="muted">Selected product launches and platform capabilities.</p>
+
+      <ol class="ship-list">
+        {shippedItems.map((item, index) => (
+          <li class="ship-row">
+            <div class="ship-meta muted">
+              <span class="ship-index">#{index + 1}</span>
+              <span class="pill">{item.metric}</span>
+            </div>
+            <div class="ship-main">
+              <h2>
+                <span>{item.icon}</span> {item.title}
+              </h2>
+              <p>{item.summary}</p>
+              {item.video ? (
+                <video class="ship-visual" controls playsinline preload="metadata">
+                  <source src={item.video} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <img src={item.visual} alt={item.title} class="ship-visual ship-image" />
+              )}
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .ship-list {
+    list-style: none;
+    margin: 1rem 0 0;
+    padding: 0;
+    border-top: 1px dashed var(--border);
+  }
+
+  .ship-row {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 0.8rem 1rem;
+    padding: 0.95rem 0.1rem 1.15rem;
+    border-bottom: 1px dashed var(--border);
+    transition: background-color 0.2s ease;
+  }
+
+  .ship-row:hover {
+    background: color-mix(in srgb, var(--bg-elevated) 18%, transparent);
+  }
+
+  .ship-meta {
+    display: grid;
+    align-content: start;
+    gap: 0.3rem;
+    font-size: 0.84rem;
+  }
+
+  .ship-index {
+    color: var(--text);
+    font-family: "JetBrains Mono", "SFMono-Regular", "Menlo", monospace;
+  }
+
+  .ship-main h2 {
+    margin: 0;
+    font-size: 1.02rem;
+    line-height: 1.3;
+  }
+
+  .ship-main p {
+    margin: 0.4rem 0 0;
+    max-width: 74ch;
+  }
+
+  .ship-visual {
+    width: 100%;
+    max-width: 620px;
+    margin-top: 0.65rem;
+    height: auto;
+    object-fit: contain;
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    background: color-mix(in srgb, var(--bg) 80%, black);
+  }
+
+  .ship-image {
+    object-position: top center;
+  }
+
+  @media (max-width: 760px) {
+    .ship-row {
+      grid-template-columns: 1fr;
+      gap: 0.55rem;
+    }
+
+    .ship-meta {
+      grid-template-columns: auto auto;
+      align-items: center;
+    }
+  }
+</style>

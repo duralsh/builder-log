@@ -10,6 +10,11 @@ const projects = sortByDateDesc(
 const projectEmoji: Record<string, string> = {
   "german-vocab-cli": "🧠",
   "git-commit-ai": "🤖",
+  arena: "⚔️",
+};
+
+const internalProjectRoutes: Record<string, string> = {
+  arena: "/projects/arena",
 };
 ---
 
@@ -23,7 +28,11 @@ const projectEmoji: Record<string, string> = {
             <li>
               <div class="project-line">
                 <span class="emoji">{projectEmoji[project.slug] ?? "🛠️"}</span>
-                <a href={project.data.github} target="_blank" rel="noreferrer">
+                <a
+                  href={internalProjectRoutes[project.slug] ?? project.data.github ?? `/posts/${project.slug}`}
+                  target={internalProjectRoutes[project.slug] ? undefined : "_blank"}
+                  rel={internalProjectRoutes[project.slug] ? undefined : "noreferrer"}
+                >
                   {project.data.title}
                 </a>
                 <span class="pill">{formatDate(project.data.date)}</span>

@@ -4,7 +4,7 @@ date: 2024-12-09
 tags: ["lifting"]
 excerpt: "Conditioning protocols that support both ring work and general strength training."
 cover: "/covers/lifting-boxing.svg"
-draft: false
+draft: true
 ---
 
 Boxing sharpened my relationship with effort pacing.

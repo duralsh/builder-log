@@ -4,7 +4,7 @@ date: 2025-09-02
 tags: ["lifting"]
 excerpt: "A training block focused on consistency, recovery discipline, and measurable progression."
 cover: "/covers/lifting-cycle.svg"
-draft: false
+draft: true
 ---
 
 The most important variable in my lifting progress is not program complexity, it is consistency.

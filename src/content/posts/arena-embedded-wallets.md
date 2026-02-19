@@ -7,7 +7,7 @@ cover: "/covers/work-wallets.svg"
 links:
   - label: "Arena"
     url: "https://arena.social"
-draft: false
+draft: true
 ---
 
 The best wallet onboarding flow is the one users barely notice.

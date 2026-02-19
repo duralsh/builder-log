@@ -3,7 +3,7 @@ import { getCollection, render } from "astro:content";
 import type { CollectionEntry } from "astro:content";
 import type { GetStaticPaths } from "astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
-import { formatDate, sortByDateDesc } from "../../lib/posts";
+import { formatDate } from "../../lib/posts";
 
 interface Props {
   post: CollectionEntry<"posts">;
@@ -19,10 +19,6 @@ export const getStaticPaths = (async () => {
 
 const { post } = Astro.props as Props;
 const { Content } = await render(post);
-const allPosts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft));
-const index = allPosts.findIndex((entry) => entry.slug === post.slug);
-const nextPost = index > 0 ? allPosts[index - 1] : null;
-const prevPost = index < allPosts.length - 1 ? allPosts[index + 1] : null;
 ---
 
 <BaseLayout title={`${post.data.title} | Dogus Ural`} description={post.data.excerpt}>
@@ -56,10 +52,6 @@ const prevPost = index < allPosts.length - 1 ? allPosts[index + 1] : null;
         </section>
       )}
 
-      <nav class="post-nav card">
-        {prevPost ? <a href={`/posts/${prevPost.slug}`}>← {prevPost.data.title}</a> : <span class="muted">Start</span>}
-        {nextPost ? <a href={`/posts/${nextPost.slug}`}>{nextPost.data.title} →</a> : <span class="muted">Latest</span>}
-      </nav>
     </article>
   </section>
 </BaseLayout>
@@ -81,16 +73,8 @@ const prevPost = index < allPosts.length - 1 ? allPosts[index + 1] : null;
     border: 1px solid var(--border);
   }
 
-  .linkouts,
-  .post-nav {
+  .linkouts {
     margin-top: 1rem;
     padding: 1rem 1.2rem;
-  }
-
-  .post-nav {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.7rem;
-    flex-wrap: wrap;
   }
 </style>

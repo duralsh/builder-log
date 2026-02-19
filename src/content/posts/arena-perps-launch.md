@@ -5,8 +5,8 @@ tags: ["work"]
 excerpt: "Execution notes from taking perpetual trading live and reaching $100M in month one."
 cover: "/covers/hyperliquid-perps-banner.png"
 links:
-  - label: "Arena Trade"
-    url: "https://arenatrade.ai"
+  - label: "Arena"
+    url: "https://arena.social/home"
   - label: "Hyperliquid"
     url: "https://hyperfoundation.org"
 draft: false

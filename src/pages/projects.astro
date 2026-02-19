@@ -25,22 +25,26 @@ const internalProjectRoutes: Record<string, string> = {
       <h1>🛠️ Things I Build</h1>
       <ul class="project-bullets">
         {
-          projects.map((project) => (
-            <li>
-              <div class="project-line">
-                <span class="emoji">{projectEmoji[project.slug] ?? "🛠️"}</span>
-                <a
-                  href={internalProjectRoutes[project.slug] ?? project.data.github ?? `/posts/${project.slug}`}
-                  target={internalProjectRoutes[project.slug] ? undefined : "_blank"}
-                  rel={internalProjectRoutes[project.slug] ? undefined : "noreferrer"}
-                >
-                  {project.data.title}
-                </a>
-                <span class="pill">{formatDate(project.data.date)}</span>
-              </div>
-              <p class="muted">{project.data.excerpt}</p>
-            </li>
-          ))
+          projects.map((project) => {
+            const href = internalProjectRoutes[project.slug] ?? project.data.github;
+            const isInternal = Boolean(internalProjectRoutes[project.slug]);
+            return (
+              <li>
+                <div class="project-line">
+                  <span class="emoji">{projectEmoji[project.slug] ?? "🛠️"}</span>
+                  {href ? (
+                    <a href={href} target={isInternal ? undefined : "_blank"} rel={isInternal ? undefined : "noreferrer"}>
+                      {project.data.title}
+                    </a>
+                  ) : (
+                    <span>{project.data.title}</span>
+                  )}
+                  <span class="pill">{formatDate(project.data.date)}</span>
+                </div>
+                <p class="muted">{project.data.excerpt}</p>
+              </li>
+            );
+          })
         }
       </ul>
     </div>

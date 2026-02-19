@@ -16,7 +16,7 @@ const shippedItems = [
       "Designed a dedicated in-app feed that surfaces key actions in real time: token trades, perpetual position opens, new joins, and Arena staking events.",
     metric: "Live feed",
     visual: "/covers/work-wallets.svg",
-    video: "/arena/activity-feed.mp4",
+    gif: "/arena/activity-feed.gif",
     icon: "📡",
   },
   {
@@ -33,7 +33,7 @@ const shippedItems = [
       "Integrated Hyperliquid to support perpetual DEX trading across 200+ crypto markets, and added HIP-3 for commodity and stock exposure, all seamlessly inside Arena.",
     metric: "200+ markets",
     visual: "/covers/work-perps.svg",
-    video: "/arena/perps-hip3.mp4",
+    gif: "/arena/perps-hip3.gif",
     icon: "📊",
   },
   {
@@ -42,7 +42,7 @@ const shippedItems = [
       "Shipped a multichain wallet with native swaps and integrated social features, bringing asset actions and social engagement into one seamless flow.",
     metric: "Wallet + swaps",
     visual: "/covers/work-wallets.svg",
-    video: "/arena/arena-champions-trimmed.mp4",
+    gif: "/arena/arena-champions-trimmed.gif",
     icon: "🌐",
   },
 ];
@@ -66,11 +66,13 @@ const shippedItems = [
                 <span>{item.icon}</span> {item.title}
               </h2>
               <p>{item.summary}</p>
-              {item.video ? (
-                <video class="ship-visual" controls playsinline preload="metadata">
-                  <source src={item.video} type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
+              {item.gif ? (
+                <img
+                  src={item.gif}
+                  alt={`${item.title} animated preview`}
+                  class="ship-visual ship-image"
+                  loading="lazy"
+                />
               ) : (
                 <img src={item.visual} alt={item.title} class="ship-visual ship-image" />
               )}

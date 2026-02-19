@@ -77,21 +77,19 @@ const books = [
       <h1>📚 Reading Shelf</h1>
       <p class="muted">Icon view of books I keep returning to.</p>
 
-      <ul class="book-grid">
-        {books.map((book) => (
-          <li class="book-item">
-            <img src={book.cover} alt={`Cover of ${book.title}`} class="book-cover" loading="lazy" />
-            <h2>{book.title}</h2>
-            <p class="muted">{book.author}</p>
-          </li>
-        ))}
-      </ul>
-
-      <section class="pdf-section">
-        <h2>🗂️ Downloadable PDFs</h2>
-        <p class="muted">Cheat sheets and quick references have moved to a dedicated page.</p>
-        <p><a href="/hobbies/reading/downloads">Open PDF library →</a></p>
+      <section class="books-section">
+        <h2>📖 Books</h2>
+        <ul class="book-grid">
+          {books.map((book) => (
+            <li class="book-item">
+              <img src={book.cover} alt={`Cover of ${book.title}`} class="book-cover" loading="lazy" />
+              <h3>{book.title}</h3>
+              <p class="muted">{book.author}</p>
+            </li>
+          ))}
+        </ul>
       </section>
+
     </div>
   </section>
 </BaseLayout>
@@ -122,7 +120,7 @@ const books = [
     background: color-mix(in srgb, var(--bg) 82%, black);
   }
 
-  .book-item h2 {
+  .book-item h3 {
     font-size: 0.9rem;
     margin: 0.55rem 0 0.25rem;
     line-height: 1.3;
@@ -133,14 +131,8 @@ const books = [
     font-size: 0.82rem;
   }
 
-  .pdf-section {
-    margin-top: 2rem;
-    border-top: 1px dashed var(--border);
-    padding-top: 1rem;
-  }
-
-  .pdf-section h2 {
+  .books-section h2 {
     font-size: 1.05rem;
-    margin-bottom: 0.4rem;
+    margin: 1rem 0 0.35rem;
   }
 </style>

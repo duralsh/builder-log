@@ -20,7 +20,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
   <section class="section">
     <div class="container hobby-grid">
       <article class="card hobby-block">
-        <h2><a href="/hobbies/lifting">🏋️ Lifting</a></h2>
+        <h2>🏋️ Lifting</h2>
         <p>I am a big fan of kettlebells, boxing, cycling and home workouts.</p>
         <ul>
           {lifting.slice(0, 3).map((post) => (
@@ -32,7 +32,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
       </article>
 
       <article class="card hobby-block">
-        <h2><a href="/hobbies/coins">🪙 Numismatics</a></h2>
+        <h2>🪙 Numismatics</h2>
         <p>I mostly collect Classical Greek tetradrachms and Roman Republic silver denarii.</p>
         <p>
           <a href="/hobbies/coins/collection">Numismatic cabinet →</a>
@@ -47,7 +47,8 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
       </article>
 
       <article class="card hobby-block">
-        <h2><a href="/hobbies/reading">📚 Reading</a></h2>
+        <h2>📚 Reading</h2>
+        <p><a href="/hobbies/reading">Reading Shelf</a></p>
         <p><a href="/hobbies/reading/downloads">Downloadable PDFs</a></p>
       </article>
     </div>

@@ -1,0 +1,106 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+
+const downloadColumns = [
+  {
+    section: "German",
+    files: [
+      {
+        title: "Adjective Declension CheatSheet + Quiz",
+        href: "/downloads/german/adjective-declension-cheatsheet-quiz-v2.pdf",
+      },
+      {
+        title: "German Connectors and Nebensaetze",
+        href: "/downloads/german/german-connectors-nebensaetze.pdf",
+      },
+      {
+        title: "German Nebensatz + Adverb CheatSheet",
+        href: "/downloads/german/german-nebensatz-adverb-cheatsheet.pdf",
+      },
+      {
+        title: "Modal Verbs Complete Guide",
+        href: "/downloads/german/modal-verbs-complete-guide.pdf",
+      },
+    ],
+  },
+  {
+    section: "Stoic Quotes",
+    files: [
+      {
+        title: "A Stoic a Day",
+        href: "/downloads/stoic/a-stoic-a-day.pdf",
+      },
+    ],
+  },
+  {
+    section: "Terminal Shortcuts",
+    files: [
+      {
+        title: "Keyboard Shortcuts",
+        href: "/downloads/terminal/keyboard-shortcuts.pdf",
+      },
+    ],
+  },
+];
+---
+
+<BaseLayout title="Reading Downloads | Dogus Ural">
+  <section class="section">
+    <div class="container">
+      <h1>🗂️ PDF Library</h1>
+      <p class="muted">Cheat sheets and references. All links open in a new tab.</p>
+      <p><a href="/hobbies/reading">← Back to reading shelf</a></p>
+
+      <div class="pdf-columns">
+        {downloadColumns.map((column) => (
+          <section class="pdf-col">
+            <h2>{column.section}</h2>
+            <ul class="pdf-list">
+              {column.files.map((file) => (
+                <li>
+                  <a href={file.href} target="_blank" rel="noreferrer">
+                    {file.title}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .pdf-columns {
+    margin-top: 1rem;
+    display: grid;
+    gap: 0.85rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pdf-col {
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 0.8rem;
+    background: color-mix(in srgb, var(--bg-elevated) 20%, transparent);
+  }
+
+  .pdf-col h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+  }
+
+  .pdf-list {
+    margin: 0;
+    padding-left: 1.15rem;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  @media (max-width: 760px) {
+    .pdf-columns {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

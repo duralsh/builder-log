@@ -13,7 +13,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
   <section class="section">
     <div class="container">
       <h1>🧩 Hobbies</h1>
-      <p class="muted">Training logs and numismatics notes.</p>
+      <p class="muted">Training logs, numismatics notes, and a reading shelf.</p>
     </div>
   </section>
 
@@ -45,6 +45,11 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
           ))}
         </ul>
       </article>
+
+      <article class="card hobby-block">
+        <h2><a href="/hobbies/reading">📚 Reading</a></h2>
+        <p><a href="/hobbies/reading/downloads">Downloadable PDFs</a></p>
+      </article>
     </div>
   </section>
 </BaseLayout>
@@ -59,4 +64,5 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
   .hobby-block {
     padding: 1.2rem;
   }
+
 </style>

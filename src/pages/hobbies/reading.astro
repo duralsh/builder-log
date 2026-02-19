@@ -1,0 +1,146 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+
+const books = [
+  {
+    title: "A History of Ancient Rome in Twelve Coins",
+    author: "Gareth Harney",
+    cover: "/books/ancient-rome-twelve-coins.png",
+  },
+  {
+    title: "Baudolino",
+    author: "Umberto Eco",
+    cover: "/books/baudolino.png",
+  },
+  {
+    title: "Bunu Herkes Bilir",
+    author: "Emrah Safa Gurkan",
+    cover: "/books/bunu-herkes-bilir.png",
+  },
+  {
+    title: "Meditations",
+    author: "Marcus Aurelius",
+    cover: "/books/meditations.png",
+  },
+  {
+    title: "Product Management in Practice",
+    author: "Matt LeMay",
+    cover: "/books/product-management-in-practice.png",
+  },
+  {
+    title: "Talking to My Daughter About the Economy",
+    author: "Yanis Varoufakis",
+    cover: "/books/talking-to-my-daughter-about-the-economy.png",
+  },
+  {
+    title: "Extreme Ownership",
+    author: "Jocko Willink",
+    cover: "/books/extreme-ownership.png",
+  },
+  {
+    title: "The Daily Stoic: 366 Meditations on Wisdom, Perseverance, and the Art of Living",
+    author: "Ryan Holiday",
+    cover: "/books/daily-stoic-366.png",
+  },
+  {
+    title: "The First 90 Days (Updated and Expanded)",
+    author: "Michael D. Watkins",
+    cover: "/books/first-90-days.png",
+  },
+  {
+    title: "The Name of the Rose",
+    author: "Umberto Eco",
+    cover: "/books/name-of-the-rose.png",
+  },
+  {
+    title: "The Roman Empire: A Very Short Introduction",
+    author: "Christopher Kelly",
+    cover: "/books/roman-empire-vsi.png",
+  },
+  {
+    title: "The Oxford Handbook of Greek and Roman Coinage",
+    author: "William E. Metcalf (ed.)",
+    cover: "/books/oxford-handbook-greek-roman-coinage.png",
+  },
+  {
+    title: "100 Greatest Ancient Coins",
+    author: "Harlan J. Berk",
+    cover: "/books/100-greatest-ancient-coins.png",
+  },
+];
+
+---
+
+<BaseLayout title="Reading | Dogus Ural">
+  <section class="section">
+    <div class="container">
+      <h1>📚 Reading Shelf</h1>
+      <p class="muted">Icon view of books I keep returning to.</p>
+
+      <ul class="book-grid">
+        {books.map((book) => (
+          <li class="book-item">
+            <img src={book.cover} alt={`Cover of ${book.title}`} class="book-cover" loading="lazy" />
+            <h2>{book.title}</h2>
+            <p class="muted">{book.author}</p>
+          </li>
+        ))}
+      </ul>
+
+      <section class="pdf-section">
+        <h2>🗂️ Downloadable PDFs</h2>
+        <p class="muted">Cheat sheets and quick references have moved to a dedicated page.</p>
+        <p><a href="/hobbies/reading/downloads">Open PDF library →</a></p>
+      </section>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .book-grid {
+    list-style: none;
+    margin: 1.1rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  }
+
+  .book-item {
+    border: 1px dashed var(--border);
+    border-radius: 6px;
+    padding: 0.6rem;
+    background: color-mix(in srgb, var(--bg-elevated) 24%, transparent);
+  }
+
+  .book-cover {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    background: color-mix(in srgb, var(--bg) 82%, black);
+  }
+
+  .book-item h2 {
+    font-size: 0.9rem;
+    margin: 0.55rem 0 0.25rem;
+    line-height: 1.3;
+  }
+
+  .book-item p {
+    margin: 0;
+    font-size: 0.82rem;
+  }
+
+  .pdf-section {
+    margin-top: 2rem;
+    border-top: 1px dashed var(--border);
+    padding-top: 1rem;
+  }
+
+  .pdf-section h2 {
+    font-size: 1.05rem;
+    margin-bottom: 0.4rem;
+  }
+</style>

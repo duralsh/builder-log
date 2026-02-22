@@ -29,10 +29,7 @@ import { STOIC_QUOTES } from "../lib/stoicQuotes";
     </div>
   </section>
 
-  <script id="stoic-quotes-data" type="application/json" is:inline>
-    {JSON.stringify(STOIC_QUOTES)}
-  </script>
-  <script is:inline>
+  <script is:inline define:vars={{ stoicQuotes: STOIC_QUOTES }}>
     const hashString = (value) => {
       let hash = 0;
       for (let i = 0; i < value.length; i++) {
@@ -46,7 +43,7 @@ import { STOIC_QUOTES } from "../lib/stoicQuotes";
       const day = String(date.getDate()).padStart(2, "0");
       return `${year}-${month}-${day}`;
     };
-    const quotes = JSON.parse(document.getElementById("stoic-quotes-data")?.textContent || "[]");
+    const quotes = Array.isArray(stoicQuotes) ? stoicQuotes : [];
     if (quotes.length > 0) {
       const today = new Date();
       const yesterday = new Date(today);

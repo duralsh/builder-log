@@ -27,7 +27,8 @@ const internalProjectRoutes: Record<string, string> = {
       <ul class="project-bullets">
         {
           projects.map((project) => {
-            const href = internalProjectRoutes[project.slug] ?? project.data.github;
+            const liveLink = project.data.links?.find((l) => l.label === "Live");
+            const href = internalProjectRoutes[project.slug] ?? liveLink?.url ?? project.data.github;
             const isInternal = Boolean(internalProjectRoutes[project.slug]);
             return (
               <li>
@@ -39,6 +40,9 @@ const internalProjectRoutes: Record<string, string> = {
                     </a>
                   ) : (
                     <span>{project.data.title}</span>
+                  )}
+                  {liveLink && project.data.github && (
+                    <a class="gh-link" href={project.data.github} target="_blank" rel="noreferrer">github</a>
                   )}
                   <span class="pill">{formatDate(project.data.date)}</span>
                 </div>
@@ -73,6 +77,15 @@ const internalProjectRoutes: Record<string, string> = {
 
   .emoji {
     margin-right: 0.35rem;
+  }
+
+  .gh-link {
+    font-size: 0.8em;
+    opacity: 0.5;
+  }
+
+  .gh-link:hover {
+    opacity: 0.8;
   }
 
   .project-bullets p {

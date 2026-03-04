@@ -4,7 +4,7 @@ date: 2026-01-11
 tags: ["project"]
 excerpt: "A self-hosted workflow for lookup, spaced review, and AI-generated quiz batches."
 cover: "/covers/project-vocab.svg"
-github: "https://github.com/duralsh/wortify"
+github: "https://github.com/duralsh/praegen"
 draft: false
 ---
 

@@ -2,7 +2,7 @@
 title: "Arena"
 date: 2026-02-18
 tags: ["project"]
-excerpt: "A focused build log for recent social and trading product shipping at Arena."
+excerpt: "Social media platform with embedded wallets, perpetual trading, and community features."
 cover: "/covers/work-perps.svg"
 links:
   - label: "Live"
@@ -10,6 +10,4 @@ links:
 draft: false
 ---
 
-Arena is currently represented as a dedicated internal project page instead of an external repo link.
-
-See: `/projects/arena`
+Arena is a social media platform combining crypto-native features with community engagement. I led the team shipping embedded wallets, perpetual trading, and social features to 16,000 daily users.

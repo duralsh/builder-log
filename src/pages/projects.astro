@@ -28,21 +28,25 @@ const internalProjectRoutes: Record<string, string> = {
         {
           projects.map((project) => {
             const liveLink = project.data.links?.find((l) => l.label === "Live");
-            const href = internalProjectRoutes[project.slug] ?? liveLink?.url ?? project.data.github;
-            const isInternal = Boolean(internalProjectRoutes[project.slug]);
+            const internalRoute = internalProjectRoutes[project.slug];
+            const href = liveLink?.url ?? internalRoute ?? project.data.github;
+            const isExternal = !internalRoute || liveLink;
             return (
               <li>
                 <div class="project-line">
                   <span class="emoji">{projectEmoji[project.slug] ?? "🛠️"}</span>
                   {href ? (
-                    <a href={href} target={isInternal ? undefined : "_blank"} rel={isInternal ? undefined : "noreferrer"}>
+                    <a href={href} target={isExternal ? "_blank" : undefined} rel={isExternal ? "noreferrer" : undefined}>
                       {project.data.title}
                     </a>
                   ) : (
                     <span>{project.data.title}</span>
                   )}
                   {liveLink && project.data.github && (
-                    <a class="gh-link" href={project.data.github} target="_blank" rel="noreferrer">github</a>
+                    <a class="secondary-link" href={project.data.github} target="_blank" rel="noreferrer">github</a>
+                  )}
+                  {liveLink && internalRoute && (
+                    <a class="secondary-link" href={internalRoute}>log</a>
                   )}
                   <span class="pill">{formatDate(project.data.date)}</span>
                 </div>
@@ -79,12 +83,12 @@ const internalProjectRoutes: Record<string, string> = {
     margin-right: 0.35rem;
   }
 
-  .gh-link {
+  .secondary-link {
     font-size: 0.8em;
     opacity: 0.5;
   }
 
-  .gh-link:hover {
+  .secondary-link:hover {
     opacity: 0.8;
   }
 

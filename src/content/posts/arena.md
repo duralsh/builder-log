@@ -4,6 +4,9 @@ date: 2026-02-18
 tags: ["project"]
 excerpt: "A focused build log for recent social and trading product shipping at Arena."
 cover: "/covers/work-perps.svg"
+links:
+  - label: "Live"
+    url: "https://arena.social"
 draft: false
 ---
 

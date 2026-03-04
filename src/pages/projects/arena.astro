@@ -72,9 +72,10 @@ const shippedItems = [
                   alt={`${item.title} animated preview`}
                   class="ship-visual ship-image"
                   loading="lazy"
+                  decoding="async"
                 />
               ) : (
-                <img src={item.visual} alt={item.title} class="ship-visual ship-image" />
+                <img src={item.visual} alt={item.title} class="ship-visual ship-image" loading="lazy" decoding="async" />
               )}
             </div>
           </li>

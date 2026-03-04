@@ -1,5 +1,5 @@
 ---
-title: "builder-log"
+title: "Builder Log"
 date: 2026-02-19
 tags: ["project"]
 excerpt: "Personal site built with Astro: product log, CV, numismatics cabinet, and reading shelf."

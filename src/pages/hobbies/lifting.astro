@@ -19,7 +19,7 @@ const posts = sortByDateDesc(
         {
           posts.map((post) => (
             <article class="card post-card">
-              {post.data.cover && <img src={post.data.cover} alt={post.data.title} class="cover-img" />}
+              {post.data.cover && <img src={post.data.cover} alt={post.data.title} class="cover-img" loading="lazy" decoding="async" />}
               <div class="post-meta">
                 <span class="pill">{formatDate(post.data.date)}</span>
               </div>

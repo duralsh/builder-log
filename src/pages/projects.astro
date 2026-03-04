@@ -42,7 +42,7 @@ const internalProjectRoutes: Record<string, string> = {
                   ) : (
                     <span>{project.data.title}</span>
                   )}
-                  {project.data.github && (
+                  {project.data.github && (liveLink || internalRoute) && (
                     <a class="secondary-link" href={project.data.github} target="_blank" rel="noreferrer">github</a>
                   )}
                   {liveLink && internalRoute && (

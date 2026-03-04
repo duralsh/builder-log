@@ -538,7 +538,7 @@ const outlineTokens = groupedCoinsWithAnchors.flatMap((group) =>
                 <p class="muted">
                   {coin.date} · {coin.mint}
                 </p>
-                <img src={coin.image} alt={`${coin.title} ${coin.type}`} class="coin-image" />
+                <img src={coin.image} alt={`${coin.title} ${coin.type}`} class="coin-image" loading="lazy" decoding="async" />
                 <p>
                   <strong>Obv:</strong> {coin.obv}
                 </p>

@@ -1,0 +1,30 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="404 | Dogus Ural" description="Page not found.">
+  <section class="section">
+    <div class="container not-found">
+      <h1>404</h1>
+      <p>Page not found.</p>
+      <a href="/">Go home</a>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .not-found {
+    text-align: center;
+    padding: 4rem 0;
+  }
+
+  .not-found h1 {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .not-found p {
+    margin-bottom: 1rem;
+    color: var(--text-muted);
+  }
+</style>

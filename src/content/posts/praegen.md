@@ -7,7 +7,7 @@ cover: "/covers/project-vocab.svg"
 github: "https://github.com/duralsh/praegen"
 links:
   - label: "Live"
-    url: "https://praegen.app/lookup"
+    url: "https://praegen.app/"
 draft: false
 ---
 

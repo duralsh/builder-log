@@ -14,12 +14,12 @@ const pathname = Astro.url.pathname;
 
 <header>
   <div class="container nav-shell">
-    <a class="brand" href="/">Dogus Ural</a>
+    <a class="brand" href="/">~/dogus-ural</a>
     <nav aria-label="Primary">
       {
         links.map((link) => (
           <a href={link.href} class={pathname === link.href ? "active" : undefined}>
-            {link.label}
+            {pathname === link.href ? `* ${link.label}` : link.label}
           </a>
         ))
       }

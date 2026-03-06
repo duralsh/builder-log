@@ -9,7 +9,7 @@ const links = [
   { href: "/posts", label: "All Posts" },
 ];
 
-const pathname = Astro.url.pathname;
+const pathname = Astro.url.pathname.replace(/\/+$/, "") || "/";
 ---
 
 <header>

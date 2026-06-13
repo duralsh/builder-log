@@ -63,7 +63,7 @@ export const BOOKS: Book[] = [
   {
     title: "Rubicon: The Last Years of the Roman Republic",
     author: "Tom Holland",
-    cover: "/books/rubicon.svg",
+    cover: "/books/rubicon.png",
   },
   {
     title: "The Oxford Handbook of Greek and Roman Coinage",

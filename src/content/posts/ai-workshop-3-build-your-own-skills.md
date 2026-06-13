@@ -1,5 +1,5 @@
 ---
-title: "Build Your Own Skills for Claude — AI Workshop #3"
+title: "Build Your Own Skills for Claude"
 date: 2026-05-26
 tags: ["workshop"]
 excerpt: "Claude skills, end to end: what they are, what's inside a real SKILL.md, and the workflow to build, test, review, and ship one of your own — no coding required."

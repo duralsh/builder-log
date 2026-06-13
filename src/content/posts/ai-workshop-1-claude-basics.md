@@ -1,5 +1,5 @@
 ---
-title: "Claude Basics — AI Workshop #1"
+title: "Claude Basics"
 date: 2026-05-08
 tags: ["workshop"]
 excerpt: "The kickoff of an internal AI workshop series I run: a 30-minute crash course on what Claude is, where to use it, and what the buzzwords actually mean — no jargon hangover."

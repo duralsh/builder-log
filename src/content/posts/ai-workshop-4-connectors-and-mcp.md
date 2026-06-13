@@ -1,5 +1,5 @@
 ---
-title: "Giving Claude Hands — Connectors & MCP — AI Workshop #4"
+title: "Giving Claude Hands — Connectors & MCP"
 date: 2026-06-08
 tags: ["workshop"]
 excerpt: "How Claude reaches your real tools — Notion, Microsoft 365, Slack — chained into real workflows. The guiding rule: read freely, act on purpose."

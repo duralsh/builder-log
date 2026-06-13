@@ -38,7 +38,7 @@ const icons: Record<string, string> = {
             <div class="ship-main">
               <h2>
                 <span>{icons[post.slug] ?? "🤖"}</span>{" "}
-                <a href={`/posts/${post.slug}`}>{post.data.title.replace(/ — AI Workshop #\d+$/, "")}</a>
+                <a href={`/posts/${post.slug}`}>{post.data.title}</a>
               </h2>
               <p>{post.data.excerpt}</p>
               <a class="read-link" href={`/posts/${post.slug}`}>Read the recap →</a>

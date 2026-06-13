@@ -1,5 +1,5 @@
 ---
-title: "Why Your Prompts Suck and How to Fix Them — AI Workshop #2"
+title: "Why Your Prompts Suck (and How to Fix Them)"
 date: 2026-05-15
 tags: ["workshop"]
 excerpt: "A hands-on hour on why most prompts get weak results — the six ways prompts fail, a copy-paste prompt skeleton, and a real before/after fix on a live document."

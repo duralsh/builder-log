@@ -12,6 +12,7 @@
 
   /* Brand & accent */
   --primary: #0a0a0a;
+  --primary-hover: #222222;
   --brand-pink: #ff4d8b;
   --brand-teal: #1a3a3a;
   --brand-lavender: #b8a4ed;
@@ -64,6 +65,31 @@
 
   --font-display: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* === Warm dark theme === */
+:root[data-theme="dark"] {
+  /* Surface */
+  --canvas: #15120d;
+  --surface-soft: #1c1812;
+  --surface-card: #211c15;
+  --surface-strong: #2a241b;
+  --hairline: #393124;
+
+  /* Text */
+  --ink: #f4eee1;
+  --body-strong: #e8e1d2;
+  --body: #cdc5b5;
+  --muted: #9b9384;
+  --muted-soft: #6e6759;
+
+  /* Primary button flips to light-on-dark */
+  --primary: #f2ece0;
+  --primary-hover: #e3dccb;
+  --on-primary: #15120d;
+
+  /* Slightly brighter pink for links on dark */
+  --accent-strong: #ff6fa3;
 }
 
 *,
@@ -225,7 +251,7 @@ code {
 }
 
 .btn-primary:hover {
-  background: #222;
+  background: var(--primary-hover);
   color: var(--on-primary);
 }
 
@@ -252,7 +278,7 @@ code {
   border-radius: var(--rounded-xl);
   padding: var(--space-xl);
   text-decoration: none;
-  color: var(--ink);
+  color: #1a1a1a; /* fixed: feature-card fills stay light in both themes */
   border: 1px solid transparent;
   min-height: 220px;
   transition: transform 0.15s ease;
@@ -260,7 +286,7 @@ code {
 
 .feature-card:hover {
   transform: translateY(-3px);
-  color: var(--ink);
+  color: #1a1a1a;
 }
 
 .feature-card .feature-emoji {
@@ -321,8 +347,8 @@ code {
   background: #e3cb86; /* muted sand */
 }
 .feature-card--cream {
-  background: var(--surface-card);
-  border-color: var(--hairline);
+  background: #f5f0e0;
+  border-color: #e7e0cf;
 }
 
 /* === Post grid / cards === */

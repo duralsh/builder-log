@@ -45,6 +45,16 @@ const ogImage = new URL(image, Astro.site);
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={ogImage.href} />
+
+    <script is:inline>
+      const stored = localStorage.getItem("site-theme");
+      const theme = stored
+        ? stored
+        : window.matchMedia("(prefers-color-scheme: dark)").matches
+          ? "dark"
+          : "light";
+      document.documentElement.dataset.theme = theme;
+    </script>
   </head>
   <body>
     <Header />

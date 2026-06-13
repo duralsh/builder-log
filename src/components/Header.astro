@@ -1,4 +1,6 @@
 ---
+import ThemeToggle from "./ThemeToggle.astro";
+
 const links = [
   { href: "/", label: "Home" },
   { href: "/cv", label: "CV" },
@@ -25,7 +27,10 @@ const pathname = Astro.url.pathname.replace(/\/+$/, "") || "/";
         ))
       }
     </nav>
-    <a class="btn btn-primary nav-cta" href="mailto:dogusural@gmail.com">Get in touch</a>
+    <div class="nav-right">
+      <ThemeToggle />
+      <a class="btn btn-primary nav-cta" href="mailto:dogusural@gmail.com">Get in touch</a>
+    </div>
   </div>
 </header>
 
@@ -93,7 +98,10 @@ const pathname = Astro.url.pathname.replace(/\/+$/, "") || "/";
     color: var(--ink);
   }
 
-  .nav-cta {
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
     justify-self: end;
   }
 
@@ -101,7 +109,7 @@ const pathname = Astro.url.pathname.replace(/\/+$/, "") || "/";
     .nav-shell {
       grid-template-columns: 1fr auto;
       grid-template-areas:
-        "brand cta"
+        "brand right"
         "nav nav";
     }
 
@@ -109,8 +117,8 @@ const pathname = Astro.url.pathname.replace(/\/+$/, "") || "/";
       grid-area: brand;
     }
 
-    .nav-cta {
-      grid-area: cta;
+    .nav-right {
+      grid-area: right;
     }
 
     nav {

@@ -263,13 +263,23 @@ code {
   color: var(--ink);
 }
 
+.feature-card .feature-emoji {
+  font-size: 1.9rem;
+  line-height: 1;
+  margin-bottom: auto;
+}
+
 .feature-card .feature-eyebrow {
   font-size: 12px;
   font-weight: 600;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   opacity: 0.7;
-  margin-bottom: auto;
+  margin-bottom: 0.4rem;
+}
+
+.feature-card h3 {
+  margin-top: 0;
 }
 
 .feature-card h3 {

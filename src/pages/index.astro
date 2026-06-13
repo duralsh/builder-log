@@ -4,6 +4,7 @@ import { STOIC_QUOTES } from "../lib/stoicQuotes";
 
 const features = [
   {
+    emoji: "💼",
     eyebrow: "Work",
     title: "CV & experience",
     body: "From bare-metal firmware to leading product at a SocialFi platform serving 16k daily users.",
@@ -11,6 +12,7 @@ const features = [
     variant: "teal",
   },
   {
+    emoji: "🛠️",
     eyebrow: "Building",
     title: "Things I build",
     body: "Consumer products at the intersection of AI and finance — wallets, perps, agents, and side projects.",
@@ -18,6 +20,7 @@ const features = [
     variant: "pink",
   },
   {
+    emoji: "🪙",
     eyebrow: "Numismatics",
     title: "Ancient coins",
     body: "A cabinet of Classical Greek tetradrachms and Roman silver denarii, catalogued by era.",
@@ -25,6 +28,7 @@ const features = [
     variant: "ochre",
   },
   {
+    emoji: "🏋️",
     eyebrow: "Training",
     title: "Lifting log",
     body: "Kettlebells, boxing, cycling, and home workouts — milestones and training notes.",
@@ -32,6 +36,7 @@ const features = [
     variant: "lavender",
   },
   {
+    emoji: "📚",
     eyebrow: "Reading",
     title: "Reading shelf",
     body: "Books I keep returning to, plus a small library of downloadable cheat sheets.",
@@ -39,6 +44,7 @@ const features = [
     variant: "peach",
   },
   {
+    emoji: "✍️",
     eyebrow: "Writing",
     title: "All posts",
     body: "A chronological feed across work, lifting, and coins. Long-form notes and builder logs.",
@@ -79,6 +85,7 @@ const features = [
         {
           features.map((feature) => (
             <a class={`feature-card feature-card--${feature.variant}`} href={feature.href}>
+              <span class="feature-emoji">{feature.emoji}</span>
               <span class="feature-eyebrow">{feature.eyebrow}</span>
               <h3>{feature.title}</h3>
               <p>{feature.body}</p>

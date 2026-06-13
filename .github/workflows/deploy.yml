@@ -29,8 +29,10 @@ jobs:
           printf '%s\n' "$KNOWN_HOSTS" > ~/.ssh/known_hosts
           chmod 644 ~/.ssh/known_hosts
 
+          # The VPS locks this key to a forced command (~/deploy-builder-log.sh:
+          # git pull + npm ci + npm run build). Any command sent here is ignored,
+          # so a leaked key can only trigger a deploy — never an arbitrary shell.
           ssh -i ~/.ssh/deploy_key \
             -o IdentitiesOnly=yes \
             -o StrictHostKeyChecking=yes \
-            "$SSH_USER@$SSH_HOST" \
-            "set -euo pipefail; cd '$SSH_PATH' && git pull --ff-only origin main && npm ci --no-audit --no-fund && npm run build"
+            "$SSH_USER@$SSH_HOST" deploy

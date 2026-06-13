@@ -61,6 +61,11 @@ export const BOOKS: Book[] = [
     cover: "/books/roman-empire-vsi.png",
   },
   {
+    title: "Rubicon: The Last Years of the Roman Republic",
+    author: "Tom Holland",
+    cover: "/books/rubicon.svg",
+  },
+  {
     title: "The Oxford Handbook of Greek and Roman Coinage",
     author: "William E. Metcalf (ed.)",
     cover: "/books/oxford-handbook-greek-roman-coinage.png",

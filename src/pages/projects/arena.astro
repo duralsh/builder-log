@@ -88,34 +88,36 @@ const shippedItems = [
 <style>
   .ship-list {
     list-style: none;
-    margin: 1rem 0 0;
+    margin: 1.6rem 0 0;
     padding: 0;
-    border-top: 1px dashed var(--border);
+    display: grid;
+    gap: 1.25rem;
   }
 
   .ship-row {
     display: grid;
     grid-template-columns: 150px minmax(0, 1fr);
-    gap: 0.8rem 1rem;
-    padding: 0.95rem 0.1rem 1.15rem;
-    border-bottom: 1px dashed var(--border);
-    transition: background-color 0.2s ease;
+    gap: 0.8rem 1.4rem;
+    padding: 1.6rem 1.8rem;
+    background: var(--surface-card);
+    border-radius: var(--rounded-lg);
+    transition: transform 0.15s ease;
   }
 
   .ship-row:hover {
-    background: color-mix(in srgb, var(--bg-elevated) 18%, transparent);
+    transform: translateY(-3px);
   }
 
   .ship-meta {
     display: grid;
     align-content: start;
-    gap: 0.3rem;
+    gap: 0.4rem;
     font-size: 0.84rem;
   }
 
   .ship-index {
-    color: var(--text);
-    font-family: "JetBrains Mono", "SFMono-Regular", "Menlo", monospace;
+    color: var(--ink);
+    font-weight: 600;
   }
 
   .ship-main h2 {
@@ -132,12 +134,12 @@ const shippedItems = [
   .ship-visual {
     width: 100%;
     max-width: 620px;
-    margin-top: 0.65rem;
+    margin-top: 0.85rem;
     height: auto;
     object-fit: contain;
-    border: 1px dashed var(--border);
-    border-radius: 0;
-    background: color-mix(in srgb, var(--bg) 80%, black);
+    border: 1px solid var(--hairline);
+    border-radius: var(--rounded-md);
+    background: var(--surface-soft);
   }
 
   .ship-image {

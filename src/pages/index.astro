@@ -1,29 +1,114 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { STOIC_QUOTES } from "../lib/stoicQuotes";
+
+const features = [
+  {
+    eyebrow: "Work",
+    title: "CV & experience",
+    body: "From bare-metal firmware to leading product at a SocialFi platform serving 16k daily users.",
+    href: "/cv",
+    variant: "teal",
+  },
+  {
+    eyebrow: "Building",
+    title: "Things I build",
+    body: "Consumer products at the intersection of AI and finance — wallets, perps, agents, and side projects.",
+    href: "/projects",
+    variant: "pink",
+  },
+  {
+    eyebrow: "Numismatics",
+    title: "Ancient coins",
+    body: "A cabinet of Classical Greek tetradrachms and Roman silver denarii, catalogued by era.",
+    href: "/hobbies/coins/collection",
+    variant: "ochre",
+  },
+  {
+    eyebrow: "Training",
+    title: "Lifting log",
+    body: "Kettlebells, boxing, cycling, and home workouts — milestones and training notes.",
+    href: "/hobbies/lifting",
+    variant: "lavender",
+  },
+  {
+    eyebrow: "Reading",
+    title: "Reading shelf",
+    body: "Books I keep returning to, plus a small library of downloadable cheat sheets.",
+    href: "/hobbies/reading",
+    variant: "peach",
+  },
+  {
+    eyebrow: "Writing",
+    title: "All posts",
+    body: "A chronological feed across work, lifting, and coins. Long-form notes and builder logs.",
+    href: "/posts",
+    variant: "cream",
+  },
+];
 ---
 
 <BaseLayout title="Dogus Ural" description="Product leader building at the intersection of AI and finance.">
-  <section class="section">
+  <section class="section hero-section">
     <div class="container hero">
-      <img class="hero-img card" src="/dogus-hero.png" alt="Dogus Ural portrait" decoding="async" />
       <div class="hero-copy">
-        <h1>Dogus Ural</h1>
+        <span class="pill hero-pill">📍 Dogus Ural · Vienna, Austria</span>
+        <h1>Building at the edge of AI &amp; finance.</h1>
         <p>
           I build consumer products at the intersection of AI and finance. Currently at
-          <a href="https://arena.social/home" target="_blank" rel="noreferrer">Arena</a>, where I lead a team shipping
+          <a href="https://arena.social/home" target="_blank" rel="noreferrer">Arena</a>, leading a team shipping
           embedded wallets, perpetual trading, and social features to 16,000 daily users. Previously at Snap, building
-          embedded software. Based in Vienna. Deep in Roman history, ancient coins, and things that grow on their own.
+          embedded software. Deep in Roman history, ancient coins, and things that grow on their own.
         </p>
+        <div class="hero-buttons">
+          <a class="btn btn-primary" href="/cv">View CV</a>
+          <a class="btn btn-secondary" href="/projects">See what I build</a>
+        </div>
+      </div>
+      <div class="hero-illustration">
+        <img src="/dogus-hero.png" alt="Dogus Ural portrait" decoding="async" />
+      </div>
+    </div>
+  </section>
+
+  <section class="section explore-section">
+    <div class="container">
+      <span class="section-eyebrow">Explore</span>
+      <h2>A bit of everything I care about.</h2>
+      <div class="feature-grid">
+        {
+          features.map((feature) => (
+            <a class={`feature-card feature-card--${feature.variant}`} href={feature.href}>
+              <span class="feature-eyebrow">{feature.eyebrow}</span>
+              <h3>{feature.title}</h3>
+              <p>{feature.body}</p>
+              <span class="feature-arrow">Open →</span>
+            </a>
+          ))
+        }
       </div>
     </div>
   </section>
 
   <section class="section quote-section">
-    <div class="container quote-of-day">
-      <h2>🏛️ Stoic Quote of the Day</h2>
-      <blockquote id="stoic-quote">"{STOIC_QUOTES[0].quote}"</blockquote>
-      <p id="stoic-author" class="muted">- {STOIC_QUOTES[0].author}</p>
+    <div class="container">
+      <div class="quote-card">
+        <span class="section-eyebrow">🏛️ Stoic quote of the day</span>
+        <blockquote id="stoic-quote">"{STOIC_QUOTES[0].quote}"</blockquote>
+        <p id="stoic-author" class="quote-author">— {STOIC_QUOTES[0].author}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section cta-section">
+    <div class="container">
+      <div class="cta-band">
+        <div class="cta-copy">
+          <h2>Want to build something together?</h2>
+          <p>I'm always happy to talk product, crypto, ancient coins, or kettlebells.</p>
+        </div>
+        <a class="btn btn-primary cta-btn" href="mailto:dogusural@gmail.com">Get in touch</a>
+      </div>
     </div>
   </section>
 
@@ -59,78 +144,148 @@ import { STOIC_QUOTES } from "../lib/stoicQuotes";
       const quoteNode = document.getElementById("stoic-quote");
       const authorNode = document.getElementById("stoic-author");
       if (quoteNode) quoteNode.textContent = `"${selected.quote}"`;
-      if (authorNode) authorNode.textContent = `- ${selected.author}`;
+      if (authorNode) authorNode.textContent = `— ${selected.author}`;
     }
   </script>
-
 </BaseLayout>
 
 <style>
-  .hero {
-    display: grid;
-    gap: clamp(1rem, 2.2vw, 2.2rem);
-    align-items: center;
-    grid-template-columns: minmax(240px, 330px) 1fr;
-    padding: 1.2rem 0 0.6rem;
+  .hero-section {
+    padding-top: clamp(2.5rem, 5vw, 4.5rem);
+    padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
   }
 
-  .hero-img {
-    width: 100%;
-    border-radius: 0;
-    border: 1px dashed var(--border);
-    object-fit: cover;
-    aspect-ratio: 5 / 6;
-    background: linear-gradient(130deg, #5b4f43, #2b241f);
+  .hero {
+    display: grid;
+    gap: clamp(2rem, 4vw, 4rem);
+    align-items: center;
+    grid-template-columns: 7fr 5fr;
+  }
+
+  .hero-pill {
+    margin-bottom: 1.4rem;
   }
 
   .hero-copy h1 {
-    font-size: clamp(2rem, 4.4vw, 2.9rem);
-    margin-bottom: 0.55rem;
+    margin-bottom: 1.4rem;
   }
 
   .hero-copy p {
-    max-width: 62ch;
-    font-size: clamp(1rem, 1.3vw, 1.08rem);
-    line-height: 1.75;
+    max-width: 54ch;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: var(--body);
   }
 
-  .quote-section {
-    padding-top: 0.9rem;
+  .hero-buttons {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 1.8rem;
   }
 
-  .quote-of-day {
-    margin-top: 1.6rem;
-    border-left: 2px solid color-mix(in srgb, var(--accent) 72%, var(--border));
-    padding: 0.95rem 1.1rem;
-    background: color-mix(in srgb, var(--bg-elevated) 30%, transparent);
+  .hero-illustration {
+    background: var(--surface-soft);
+    border-radius: var(--rounded-xl);
+    padding: 1.4rem;
+    overflow: hidden;
   }
 
-  .quote-of-day h2 {
+  .hero-illustration img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 5 / 6;
+    object-fit: cover;
+    border-radius: var(--rounded-lg);
+  }
+
+  .section-eyebrow {
+    display: inline-block;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.9rem;
+  }
+
+  .explore-section h2 {
+    margin-bottom: 2.2rem;
+  }
+
+  .feature-grid {
+    display: grid;
+    gap: 1.25rem;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .quote-card {
+    background: var(--surface-strong);
+    border-radius: var(--rounded-xl);
+    padding: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .quote-card blockquote {
+    margin: 0;
+    max-width: 60ch;
+    font-family: var(--font-display);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    font-size: clamp(1.4rem, 3vw, 2rem);
+    line-height: 1.25;
+    color: var(--ink);
+  }
+
+  .quote-author {
+    margin: 1.2rem 0 0;
+    color: var(--muted);
+    font-weight: 500;
+  }
+
+  .cta-band {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+    background: var(--surface-soft);
+    border-radius: var(--rounded-xl);
+    padding: clamp(2.5rem, 5vw, 4.5rem);
+  }
+
+  .cta-copy h2 {
     margin-bottom: 0.5rem;
   }
 
-  .quote-of-day blockquote {
+  .cta-copy p {
     margin: 0;
-    max-width: 70ch;
+    color: var(--body);
     font-size: 1.05rem;
-    line-height: 1.75;
-    font-style: italic;
   }
 
-  .quote-of-day .muted {
-    margin-top: 0.35rem;
-    letter-spacing: 0.02em;
+  .cta-btn {
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 900px) {
+    .feature-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
   }
 
   @media (max-width: 860px) {
     .hero {
       grid-template-columns: 1fr;
-      padding-top: 0.4rem;
     }
 
-    .hero-img {
+    .hero-illustration {
       max-width: 420px;
-      justify-self: center;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .feature-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>

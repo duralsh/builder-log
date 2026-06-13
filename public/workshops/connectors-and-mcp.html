@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Giving Claude Hands — Connectors &amp; MCP — Workshop</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500;1,8..60,600;1,8..60,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --terracotta: #c96442;
+      --terracotta-deep: #a8502f;
+      --coral: #d97757;
+      --olive: #869959;
+      --magenta: #C75B7E;
+      --lavender: #9D86C4;
+      --sky: #7BA0CC;
+      --sky-deep: #4f73a0;
+      --sage: #A8C0A9;
+      --beige: #E8DFC8;
+      --cream: #f5f4ed;
+      --paper: #faf9f5;
+      --ink: #141413;
+      --ink-soft: #4d4c48;
+      --muted: #87867f;
+    }
+
+    /* Reveal overrides */
+    .reveal {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 26px;
+      color: var(--ink);
+      font-weight: 400;
+      letter-spacing: -0.005em;
+    }
+
+    .reveal .slides { text-align: left; }
+
+    .reveal .slides > section,
+    .reveal .slides > section > section {
+      padding: 56px 88px 110px 88px;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: 'Source Serif 4', 'Tiempos', Georgia, serif;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      text-transform: none;
+      color: var(--ink);
+      margin: 0 0 0.35em 0;
+    }
+
+    .reveal h1 { font-size: 4em; }
+    .reveal h2 { font-size: 2.2em; }
+    .reveal h3 { font-size: 1.5em; }
+
+    .reveal p, .reveal li { line-height: 1.5; color: var(--ink-soft); }
+
+    .reveal ul { list-style: none; margin-left: 0; padding-left: 0; }
+
+    .reveal ul li {
+      margin: 0.45em 0;
+      padding-left: 1.4em;
+      position: relative;
+      font-size: 0.95em;
+    }
+
+    .reveal ul li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--terracotta);
+      font-weight: 500;
+    }
+
+    .reveal code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: rgba(217, 118, 79, 0.1);
+      color: var(--terracotta-deep);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .reveal pre {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 22px 26px;
+      border-radius: 6px;
+      font-size: 0.62em;
+      line-height: 1.55;
+      box-shadow: none;
+      margin: 0.7em 0;
+      width: auto;
+    }
+
+    .reveal pre code {
+      background: transparent;
+      color: var(--paper);
+      padding: 0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .reveal a {
+      color: var(--terracotta-deep);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(217, 118, 79, 0.3);
+    }
+
+    /* Slide types */
+    .slide-cream { background: var(--cream); }
+    .slide-paper { background: var(--paper); }
+
+    /* Layout helpers */
+    .slide-content {
+      max-width: 1140px;
+      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    .slide-content.center { justify-content: center; }
+
+    .chip {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55em;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      padding: 6px 14px;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+    .chip-light { border-color: rgba(26, 24, 20, 0.4); color: rgba(26, 24, 20, 0.7); }
+    .chip-terracotta { background: var(--terracotta); border-color: var(--terracotta); color: var(--ink); }
+
+    .lede {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.35em;
+      line-height: 1.35;
+      color: var(--ink);
+      max-width: 900px;
+      font-weight: 300;
+      margin: 0 0 16px 0;
+    }
+
+    .sub {
+      font-size: 0.92em;
+      color: var(--muted);
+      max-width: 880px;
+      line-height: 1.5;
+      margin: 0 0 24px 0;
+    }
+
+    .footer-mark {
+      position: absolute;
+      bottom: 38px; left: 88px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 500;
+      color: var(--ink); opacity: 0.45;
+      display: flex; align-items: center; gap: 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .page-num {
+      position: absolute;
+      bottom: 38px; right: 88px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; color: var(--ink); opacity: 0.4;
+      letter-spacing: 0.04em;
+    }
+
+    /* Two-column layouts */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+
+    .col-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55em; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted); margin-bottom: 12px;
+    }
+
+    .col-card {
+      background: var(--paper);
+      border: 1px solid rgba(26, 24, 20, 0.08);
+      border-radius: 10px;
+      padding: 22px 26px;
+      font-size: 0.9em;
+    }
+    .col-card.bad { border-left: 4px solid #B85450; }
+    .col-card.good { border-left: 4px solid var(--olive); }
+
+    /* Cover slide */
+    .cover-top { position: absolute; top: 60px; left: 88px; display: flex; align-items: center; gap: 18px; }
+    .cover-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600;
+      letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--ink); opacity: 0.85;
+    }
+    .cover-title { font-size: 4.2em; font-weight: 500; line-height: 1; max-width: 16ch; letter-spacing: -0.01em; margin: 0; }
+    .reveal .cover-subtitle {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.45em; font-weight: 600; font-style: italic;
+      color: var(--ink); margin: 22px 0 0 0; max-width: 30ch; line-height: 1.35;
+    }
+    .cover-meta {
+      position: absolute; bottom: 62px; left: 88px; right: 88px;
+      font-family: 'Inter', sans-serif; font-size: 14px;
+      color: var(--ink); opacity: 0.85; line-height: 1.85;
+      border-top: 1px solid rgba(26, 24, 20, 0.25); padding-top: 22px;
+    }
+    .cover-meta strong { font-weight: 600; opacity: 1; }
+    .cover-link { color: var(--ink); border-bottom: 1px solid rgba(26, 24, 20, 0.4); font-weight: 500; }
+    .cover-link:hover { border-bottom-color: var(--ink); opacity: 1; }
+
+    /* Chapter divider slides */
+    .chapter-divider { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 20px; }
+    .title-emoji { font-size: 0.55em; display: inline-block; margin-left: 0.25em; vertical-align: 0.15em; line-height: 1; }
+    .chapter-num {
+      font-family: 'Inter', sans-serif; font-size: 0.55em; font-weight: 500;
+      letter-spacing: 0.05em; color: var(--ink);
+      border: 1px solid var(--ink); border-radius: 999px;
+      padding: 6px 18px; display: inline-block; width: fit-content; margin-bottom: 28px;
+    }
+    .chapter-title { font-family: 'Source Serif 4', serif; font-size: 4em; line-height: 1; font-weight: 400; color: var(--ink); }
+    .reveal .chapter-blurb {
+      font-family: 'Source Serif 4', serif; font-size: 1.15em; line-height: 1.4;
+      max-width: 24ch; margin-top: 22px; color: var(--ink); font-weight: 500;
+    }
+
+    /* Hero text */
+    .hero-quote { font-family: 'Source Serif 4', serif; font-size: 3em; line-height: 1.1; font-weight: 300; max-width: 18ch; color: var(--ink); margin: 0; }
+    .hero-quote em { font-style: italic; color: var(--terracotta-deep); }
+
+    /* Trio cards */
+    .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+    .trio-card { background: var(--paper); border-radius: 10px; padding: 22px 24px; border: 1px solid rgba(26, 24, 20, 0.08); }
+    .trio-card h4 { font-family: 'Source Serif 4', serif; font-size: 1.2em; font-weight: 500; margin: 0 0 10px 0; color: var(--ink); }
+    .trio-card p { font-size: 0.72em; line-height: 1.5; color: var(--ink-soft); margin: 0 0 10px 0; }
+    .trio-card .tag { font-size: 0.5em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 10px; display: block; }
+    .trio-card .examples { font-size: 0.65em; color: var(--muted); font-style: italic; margin: 6px 0 0 0; line-height: 1.45; padding-top: 10px; border-top: 1px solid rgba(26, 24, 20, 0.08); }
+
+    /* Step list */
+    .step-list { display: grid; grid-template-columns: auto 1fr; gap: 16px 24px; margin-top: 20px; }
+    .step-num { font-family: 'Source Serif 4', serif; font-size: 1.6em; color: var(--terracotta); line-height: 1; font-weight: 500; }
+    .step-body { padding-top: 6px; }
+    .step-body h4 { font-family: 'Source Serif 4', serif; font-size: 1.05em; margin: 0 0 4px 0; color: var(--ink); font-weight: 500; }
+    .step-body p { font-size: 0.78em; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+
+    /* Logo */
+    .claude-logo { display: inline-flex; align-items: center; gap: 10px; font-family: 'Source Serif 4', serif; font-size: 1.05em; font-weight: 400; color: var(--ink); }
+    .claude-logo svg { width: 22px; height: 22px; }
+
+    /* Callout */
+    .callout { background: rgba(217, 118, 79, 0.08); border-left: 3px solid var(--terracotta); padding: 18px 24px; margin: 18px 0; border-radius: 0 6px 6px 0; font-size: 0.82em; color: var(--ink); line-height: 1.55; }
+    .callout strong { color: var(--terracotta-deep); }
+    .callout p { margin: 4px 0; color: var(--ink); }
+
+    /* Properties grid */
+    .props { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+    .prop { background: var(--paper); border-radius: 10px; padding: 22px 24px; border-top: 3px solid var(--terracotta); }
+    .prop h4 { font-family: 'Source Serif 4', serif; font-size: 1.15em; font-weight: 500; margin: 0 0 8px 0; color: var(--ink); }
+    .prop p { font-size: 0.72em; line-height: 1.5; color: var(--ink-soft); margin: 0; }
+
+    /* TOC list (contents slide) */
+    .toc-list { list-style: none; counter-reset: toc-counter; margin: 14px 0 0 0; padding: 0; max-width: 1000px; }
+    .toc-list li { counter-increment: toc-counter; padding: 14px 0 14px 56px; border-bottom: 1px solid rgba(26, 24, 20, 0.08); position: relative; }
+    .toc-list li:last-child { border-bottom: none; }
+    .toc-list li::before { content: counter(toc-counter, decimal-leading-zero); position: absolute; left: 0; top: 16px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: var(--terracotta); letter-spacing: 0.08em; }
+    .toc-list a { font-family: 'Source Serif 4', serif; font-size: 1.2em; font-weight: 500; color: var(--ink); text-decoration: none; border-bottom: none; transition: color 0.15s ease; display: inline-block; }
+    .toc-list a:hover { color: var(--terracotta); border-bottom: none; }
+    .toc-list .desc { font-size: 0.78em; color: var(--ink-soft); margin: 4px 0 0 0; line-height: 1.45; }
+
+    /* Take-home */
+    .remember-list { display: grid; gap: 13px; margin-top: 6px; max-width: 920px; }
+    .remember-item { display: grid; grid-template-columns: 48px 1fr; gap: 22px; align-items: start; background: var(--paper); border-radius: 10px; padding: 16px 24px; border-left: 4px solid var(--terracotta); }
+    .remember-num { font-family: 'Source Serif 4', serif; font-size: 1.9em; color: var(--terracotta); font-weight: 500; line-height: 1; }
+    .remember-item p { font-size: 0.86em; color: var(--ink-soft); line-height: 1.5; margin: 4px 0 0 0; }
+    .remember-item p strong { color: var(--ink); }
+
+    /* Thanks footer */
+    .thanks-footer { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink); opacity: 0.6; line-height: 1.7; letter-spacing: 0.02em; border-top: 1px solid rgba(26, 24, 20, 0.2); padding-top: 14px; }
+
+    /* Status badges */
+    .status-available { font-family: 'Inter', sans-serif; font-size: 0.5em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--olive); margin-left: 8px; vertical-align: 2px; background: rgba(134, 153, 89, 0.12); padding: 2px 8px; border-radius: 999px; }
+    .status-soon { font-family: 'Inter', sans-serif; font-size: 0.5em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--terracotta-deep); margin-left: 8px; vertical-align: 2px; background: rgba(168, 80, 47, 0.1); padding: 2px 8px; border-radius: 999px; }
+
+    /* ============================================= */
+    /* FLOW CHART — workflow diagrams (MCP → skill → Claude → MCP) */
+    /* ============================================= */
+    .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin: 16px 0 12px 0; }
+    .flow-node {
+      background: var(--paper);
+      border: 1px solid rgba(26, 24, 20, 0.08);
+      border-top: 3px solid var(--muted);
+      border-radius: 10px;
+      padding: 10px 13px;
+      min-width: 100px;
+      max-width: 150px;
+      flex: 0 1 auto;
+    }
+    .flow-node .kicker { font-family: 'Inter', sans-serif; font-size: 0.5em; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; display: block; margin-bottom: 5px; color: var(--muted); }
+    .flow-node .name { display: block; font-family: 'Source Serif 4', serif; font-size: 0.88em; color: var(--ink); font-weight: 500; line-height: 1.15; }
+    .flow-node .det { display: block; font-size: 0.58em; color: var(--ink-soft); margin-top: 6px; line-height: 1.4; }
+    .flow-node.you   { border-top-color: var(--ink); }
+    .flow-node.you   .kicker { color: var(--ink-soft); }
+    .flow-node.skill { border-top-color: var(--terracotta); }
+    .flow-node.skill .kicker { color: var(--terracotta-deep); }
+    .flow-node.read  { border-top-color: var(--sky); }
+    .flow-node.read  .kicker { color: var(--sky-deep); }
+    .flow-node.brain { border-top-color: var(--lavender); }
+    .flow-node.brain .kicker { color: #6b5797; }
+    .flow-node.act   { border-top-color: var(--magenta); }
+    .flow-node.act   .kicker { color: #a23d61; }
+    .flow-node.out   { border-top-color: var(--olive); }
+    .flow-node.out   .kicker { color: #5f6e3e; }
+    .flow-arrow { color: var(--terracotta); font-size: 1.05em; font-weight: 600; flex: 0 0 auto; padding: 0 1px; }
+    .flow-branch { display: flex; flex-direction: column; gap: 8px; }
+
+    .flow-legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 28px; margin-top: 22px; max-width: 1040px; }
+    .legend-item { display: flex; align-items: flex-start; gap: 12px; }
+    .legend-swatch { width: 14px; height: 14px; border-radius: 4px; flex: 0 0 auto; margin-top: 4px; }
+    .legend-item h4 { font-family: 'Source Serif 4', serif; font-size: 0.95em; font-weight: 500; margin: 0 0 2px 0; color: var(--ink); }
+    .legend-item p { font-size: 0.66em; color: var(--ink-soft); margin: 0; line-height: 1.4; }
+
+    @media print {
+      .reveal .controls, .reveal .progress { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="reveal">
+  <div class="slides">
+
+    <!-- =========================================== -->
+    <!-- 01 — COVER -->
+    <!-- =========================================== -->
+    <section data-background-color="#c96442">
+      <div class="cover-top">
+        <div class="claude-logo">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L13.5 9 L21 10.5 L13.5 13.5 L12 22 L10.5 13.5 L3 12 L10.5 9 Z"/></svg>
+        </div>
+        <div class="cover-eyebrow">AI Workshop · #4</div>
+      </div>
+      <div class="slide-content" style="justify-content: center;">
+        <h1 class="cover-title">Giving Claude Hands<span class="title-emoji">🖐️</span></h1>
+        <p class="cover-subtitle">Connectors &amp; MCP — how Claude reaches your real tools. For everyone on Claude.ai or Cowork.</p>
+      </div>
+      <div class="cover-meta">
+        <strong>Monday · Online</strong><br>
+        Hosted by Dogus Ural<br>
+        Previously: <a href="#" class="cover-link">an internal AI hub · Workshops #1–#3 →</a>
+      </div>
+      <aside class="notes">
+        Welcome to AI Workshop #4. Workshop #3 ended on a promise: skills can chain "any connector your team has." Today we pay that off. By the end you'll know what a connector (MCP) actually is, what your three live ones hold, and you'll have watched three real workflows go from a single tool to chaining several together. No coding. If you're on Claude.ai or Cowork, everything here is for you.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 02 — CONTENTS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Contents</div>
+        <h2>What we'll cover.</h2>
+        <p class="sub">60 minutes, 3 parts. Click any line to jump to that section.</p>
+        <ol class="toc-list">
+          <li>
+            <a href="#/part-1">What's a connector?</a>
+            <p class="desc">MCP in plain terms — the kitchen Claude cooks in. Read vs. act. Your three connectors.</p>
+          </li>
+          <li>
+            <a href="#/part-2">Three workflows.</a>
+            <p class="desc">Answer Finder, Meeting Prep, and a Salesforce churn alert — each with a flow chart.</p>
+          </li>
+          <li>
+            <a href="#/part-3">The discipline behind it.</a>
+            <p class="desc">Why everything lives in Notion, the flywheel that makes the tools smarter — and what to do this week.</p>
+          </li>
+        </ol>
+      </div>
+      <div class="page-num">02</div>
+      <aside class="notes">
+        The roadmap. Part 1 is the concept — kept short and jargon-free. Part 2 is the heart of the session: three real workflows, each with a flow chart showing how the pieces connect. Part 3 is the one habit that makes all of this work. Part 4 is what to do this week. Each line is clickable if you want to jump around in Q&A.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 03 — PART 1 DIVIDER -->
+    <!-- =========================================== -->
+    <section data-background-color="#869959" id="part-1">
+      <div class="chapter-divider">
+        <span class="chapter-num">Part 1</span>
+        <h2 class="chapter-title">What's a<br/>connector?<span class="title-emoji">🔌</span></h2>
+        <p class="chapter-blurb">It stocks the kitchen Claude cooks in.</p>
+      </div>
+      <aside class="notes">
+        Transition: "Skills taught Claude how you work. Connectors give Claude a kitchen to work in — your actual data and tools." Keep this part light; the payoff is Part 2.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 04 — DEFINITION -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Definition</div>
+        <h2>A connector stocks Claude's kitchen.</h2>
+        <p class="sub">Picture an outside system — Notion, your email and calendar, Slack — as a kitchen full of ingredients and equipment. A connector hands Claude the keys: it can walk in, see what's there, and cook with it. The open standard behind it is called <strong>MCP</strong> (Model Context Protocol).</p>
+        <div class="callout">
+          <p><strong>The kitchen analogy</strong> (from Anthropic's skills guide): "MCP is the professional kitchen — the tools, ingredients and equipment." It's everything Claude can work with. <strong>MCP is what Claude can <em>do</em>.</strong></p>
+        </div>
+        <p class="sub" style="margin-top: 14px;">You don't install anything. You just turn a connector <em>on</em> — and the kitchen is stocked. (The recipe — the skill — joins in a moment.)</p>
+      </div>
+      <div class="page-num">04</div>
+      <aside class="notes">
+        Stick with one analogy the whole way through: the kitchen. A connector hands Claude the keys to a kitchen — the tools and ingredients of an outside system. This is the same picture from Workshop #3 (MCP = kitchen, skill = recipe), so it's a callback, not a new idea. Don't dwell on the acronym — "MCP" is just the name of the standard. The payoff they care about: flip a connector on, and the kitchen is stocked. Tee up slide 8, where the recipe joins the kitchen.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 05 — WHY IT MATTERS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Why it matters</div>
+        <h2>Web search reads the internet. Connectors reach <em>your</em> tools.</h2>
+        <p class="sub">"Can't Claude just Google it?" — only for things that live on the public web. Your real work sits behind your login, in your own tools. That's the gap connectors close.</p>
+        <div class="two-col" style="margin-top: 8px;">
+          <div>
+            <div class="col-label">Web search</div>
+            <div class="col-card bad">
+              <ul style="margin: 0; padding-left: 18px; font-size: 0.78em; line-height: 1.6;">
+                <li>Reaches the <strong>public internet</strong> — news, articles, general knowledge.</li>
+                <li>Can't see anything private — not your Notion, inbox, Slack, or Salesforce.</li>
+                <li>Only reads public pages — it can't <em>do</em> anything in your tools.</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">Connectors</div>
+            <div class="col-card good">
+              <ul style="margin: 0; padding-left: 18px; font-size: 0.78em; line-height: 1.6;">
+                <li>Reach <strong>your</strong> tools and live data — Notion, Microsoft 365, Slack, Salesforce.</li>
+                <li>See what's behind your login — private, internal, current.</li>
+                <li>Can <strong>act</strong> — draft, write, send, update — not just look.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Why connectors are needed:</strong> your actual work doesn't live on the public web — it's in your tools, behind your login. Web search can't reach it, and can't change anything. Connectors are how Claude works with <em>your</em> real stuff.
+        </div>
+      </div>
+      <div class="page-num">05</div>
+      <aside class="notes">
+        Reframed around the question everyone has: "Claude already searches the web — why do I need connectors?" Answer: web search only sees the public internet; your work is private, behind your login, in your tools — and real work means acting in those tools, not just reading public pages. Left column = what web search can't do; right column = what connectors add (private data + the ability to act). Land the callout: connectors are how Claude touches YOUR stuff. Sharper "why it matters" than the abstract standards point.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 06 — READ VS ACT -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">The one distinction that matters</div>
+        <h2>Two things a connector can do: read, and act.</h2>
+        <p class="sub">Under the hood a connector hands Claude a set of <em>tools</em> — things it can do in that kitchen. They split into two kinds, and the difference is everything when you decide how much to trust it: reading is checking the pantry; acting is cooking and serving.</p>
+        <div class="two-col" style="margin-top: 8px;">
+          <div>
+            <div class="col-label">Read — safe, reversible</div>
+            <div class="col-card good">
+              <p style="margin: 0 0 8px 0; font-size: 0.85em;"><strong>Claude looks, nothing changes.</strong></p>
+              <ul style="margin: 0; padding-left: 18px; font-size: 0.76em; line-height: 1.6;">
+                <li>Search Notion, read a page</li>
+                <li>Summarise a Slack thread</li>
+                <li>Check tomorrow's calendar</li>
+              </ul>
+              <p style="margin: 10px 0 0 0; font-size: 0.68em; color: var(--muted); font-style: italic;">Worst case: a wrong answer. Easy to demo, hard to break.</p>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">Act — powerful, needs a check</div>
+            <div class="col-card bad">
+              <p style="margin: 0 0 8px 0; font-size: 0.85em;"><strong>Claude changes something in the real world.</strong></p>
+              <ul style="margin: 0; padding-left: 18px; font-size: 0.76em; line-height: 1.6;">
+                <li>Send a Slack message or email</li>
+                <li>Create or edit a Notion page</li>
+                <li>Add a calendar invite</li>
+              </ul>
+              <p style="margin: 10px 0 0 0; font-size: 0.68em; color: var(--muted); font-style: italic;">Worst case: a real message goes out. Default to <em>draft</em>, confirm before send.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>The rule we build everything around:</strong> read freely; act on purpose. A workflow reads as much as it likes, but <em>drafts</em> anything it would send and asks first — and an act-heavy workflow is best run as a <strong>manual command</strong>, never auto-triggered on a stray phrase.
+        </div>
+      </div>
+      <div class="page-num">06</div>
+      <aside class="notes">
+        This is the safety spine of the whole session. The MCP docs call these "tools" — executable functions. We simplify to read vs. act. Read is safe: the worst outcome is a wrong answer. Act touches the real world: a sent message can't be unsent. Land the rule: read freely, act on purpose, default to draft. You'll see this rule enforced in all three workflows — the first two only read and draft; the third one acts, and asks first. And the third is a manual command, not an auto-firing skill — precisely because it writes, it should only run when a human starts it.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 07 — YOUR THREE CONNECTORS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Your stack today</div>
+        <h2>Three connectors. Know what lives where.</h2>
+        <p class="sub">A connector is only as good as the data behind it. Here's what each of yours actually holds — match the question to the right tool.</p>
+        <div class="trio">
+          <div class="trio-card">
+            <span class="tag">Notion</span>
+            <h4>The record</h4>
+            <p>The knowledge base. Policies, decision logs, meeting notes, docs, specs. The <strong>canonical, official</strong> answer lives here.</p>
+            <p class="examples">"What's our policy on…", "what did we decide…"</p>
+          </div>
+          <div class="trio-card">
+            <span class="tag">Microsoft 365</span>
+            <h4>Your day</h4>
+            <p>Outlook email &amp; calendar, Word/Excel, SharePoint files. External context, commitments, meetings, documents.</p>
+            <p class="examples">"What's on my calendar…", "summarise this thread…"</p>
+          </div>
+          <div class="trio-card">
+            <span class="tag">Slack</span>
+            <h4>The conversation</h4>
+            <p>Channels and threads. The <strong>latest, informal</strong> picture — decisions in passing, questions, who's on what. May be superseded.</p>
+            <p class="examples">"Catch me up on…", "what was decided in…"</p>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Same fact, different tools, different roles.</strong> Notion is the official record; Slack is the live chatter; M365 is your day and your inbox. When two disagree, the newest isn't always the truest — that's why our workflows cite their source.
+        </div>
+      </div>
+      <div class="page-num">07</div>
+      <aside class="notes">
+        Ground the abstraction in their reality. Notion = the record (canonical). M365 = your day (mail, calendar, files). Slack = the conversation (latest, informal, sometimes stale). The punchline: a connector is only as useful as what's actually in the tool — which sets up Part 3 (everything lives in Notion). Note: project status and deadlines live in YouTrack/Salesforce, not these three — so we don't pretend otherwise in the examples.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 08 — SKILL VS MCP + THE CHAIN -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">How it fits with skills</div>
+        <h2>The kitchen, now with a recipe.</h2>
+        <p class="sub">Part 1 stocked the kitchen — the connector. A <strong>skill is the recipe</strong>: the steps that turn those ingredients into a dish, made your way every time. <strong>MCP is what Claude <em>can</em> do; the skill is how it <em>should</em> do it.</strong> Chain them, and a teammate just orders dinner.</p>
+        <p class="sub" style="margin-bottom: 10px;">Every workflow today is the same shape — read it left to right:</p>
+        <div class="flow">
+          <div class="flow-node you"><span class="kicker">You</span><span class="name">Plain-English ask</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node skill"><span class="kicker">Skill</span><span class="name">The recipe</span><span class="det">scopes + orchestrates</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node read"><span class="kicker">MCP · read</span><span class="name">Pull the data</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node brain"><span class="kicker">Claude</span><span class="name">Think &amp; talk</span><span class="det">review · discuss · decide</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node act"><span class="kicker">MCP · act / skill</span><span class="name">Deliver</span><span class="det">draft · write · hand off</span></div>
+        </div>
+        <div class="callout">
+          <strong>The Claude box is a conversation, not a black box.</strong> It's where you question the data, refine it, and decide — <em>before</em> the next step runs. Nothing acts until you're satisfied. And the last arrow is the magic: Claude's output can flow into another MCP or skill — Notion → Slack, or a churn command → a brand skill → email.
+        </div>
+      </div>
+      <div class="page-num">08</div>
+      <aside class="notes">
+        The kitchen (connector) landed on slide 4; here we add the recipe (skill) — same analogy as Workshop #3. Then introduce the universal shape — You → Skill → MCP read → Claude → MCP act / another skill. Tell them: every flow chart in Part 2 is just this line, dressed up. The point of the final arrow is composability: the output is never a dead end, it feeds the next tool. Emphasise the Claude box too: it's not an automatic black box — it's where you actually converse about the data (question it, refine it, decide) before anything acts, which matters most right before an act step. This primes the legend and the three examples.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 09 — PART 2 DIVIDER -->
+    <!-- =========================================== -->
+    <section data-background-color="#C75B7E" id="part-2">
+      <div class="chapter-divider">
+        <span class="chapter-num">Part 2</span>
+        <h2 class="chapter-title">Three<br/>workflows.<span class="title-emoji">⛓️</span></h2>
+        <p class="chapter-blurb">One tool, then two, then three — chained into something you'd actually use.</p>
+      </div>
+      <aside class="notes">
+        The heart of the session. Three workflows, increasing in ambition: Answer Finder (read 3, draft) → Meeting Prep (read 3, draft) → Salesforce churn (read 1, then ACT on 2). The first two are already built as skills you can use; the third is the showcase of where this goes. Each gets a flow chart — read them out loud, node by node.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 10 — HOW TO READ THE FLOWS (LEGEND) -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">How to read the flow charts</div>
+        <h2>Five kinds of box.</h2>
+        <p class="sub">Each workflow is drawn as a chain of boxes, left to right. The colour of the top edge tells you what each box is.</p>
+        <div class="flow-legend">
+          <div class="legend-item">
+            <span class="legend-swatch" style="background: var(--ink);"></span>
+            <div><h4>You</h4><p>The plain-English ask that starts it.</p></div>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch" style="background: var(--terracotta);"></span>
+            <div><h4>Skill</h4><p>The recipe that scopes the task and orchestrates the rest.</p></div>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch" style="background: var(--sky);"></span>
+            <div><h4>MCP · read</h4><p>A connector pulling data. Safe, reversible.</p></div>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch" style="background: var(--lavender);"></span>
+            <div><h4>Claude</h4><p>The thinking step — and your checkpoint: review and talk through the data here before anything acts.</p></div>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch" style="background: var(--magenta);"></span>
+            <div><h4>MCP · act</h4><p>A connector changing the world. Drafts &amp; confirms first.</p></div>
+          </div>
+          <div class="legend-item">
+            <span class="legend-swatch" style="background: var(--olive);"></span>
+            <div><h4>Output</h4><p>What you get back — the answer or artifact.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-num">10</div>
+      <aside class="notes">
+        Spend 30 seconds here so the diagrams land instantly. The only thing they need to track: blue = read (safe), magenta = act (real-world). If they remember that, every flow chart reads itself. Point out now that they should expect zero magenta in the first two examples and magenta in the third — it primes the read-vs-act payoff.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 11 — EXAMPLE 1: ANSWER FINDER -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Workflow 1 · built &amp; live</div>
+        <h2>Answer Finder.</h2>
+        <p class="sub">One question, searched across all three tools at once. It interviews you to pin down the ask, finds the answer with linked sources, and tells you <strong>who to ask</strong> for more.</p>
+        <div class="flow">
+          <div class="flow-node you"><span class="kicker">You ask</span><span class="name">“Where's our refund policy?”</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node skill"><span class="kicker">Skill</span><span class="name">answer-finder</span><span class="det">preflight + MCQ to scope</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node read"><span class="kicker">MCP · read</span><span class="name">Notion · Slack · Outlook</span><span class="det">search all three</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node brain"><span class="kicker">Claude</span><span class="name">Synthesise</span><span class="det">cite sources · 👤 who to ask</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node out"><span class="kicker">Output</span><span class="name">Cited answer</span><span class="det">+ optional draft reply</span></div>
+        </div>
+        <div class="callout">
+          <strong>Read-only — can't fail loudly.</strong> It searches and drafts, never sends. If a connector is off, it says so instead of guessing. And it always ends with the <em>person</em> who owns the answer, pulled from the sources it found.
+        </div>
+      </div>
+      <div class="page-num">11</div>
+      <aside class="notes">
+        Workflow 1, already a working skill. Walk the flow left to right: you ask in plain English → the skill runs a preflight (are the connectors on?) and a quick multiple-choice to scope the question → it searches Notion, Slack and Outlook → Claude synthesises one cited answer and names who to ask → you get the answer, optionally a drafted reply. All blue and green, no magenta — pure read + draft. Two design touches worth calling out: it refuses gracefully if a connector is missing (never fakes an answer), and the "who to ask" pointer turns a dead end into a next step.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 12 — EXAMPLE 2: MEETING PREP -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Workflow 2 · built &amp; live</div>
+        <h2>Meeting Prep Brief.</h2>
+        <p class="sub">Before a meeting, it pulls the event and attendees from your calendar, the background from Notion, and the recent chatter from Slack — and hands back a one-page brief.</p>
+        <div class="flow">
+          <div class="flow-node you"><span class="kicker">You ask</span><span class="name">“Prep me for the Acme call.”</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node skill"><span class="kicker">Skill</span><span class="name">meeting-prep</span><span class="det">preflight + pick meeting</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node read"><span class="kicker">MCP · read</span><span class="name">M365 Calendar</span><span class="det">event + attendees</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node read"><span class="kicker">MCP · read</span><span class="name">Notion + Slack</span><span class="det">background + latest chatter</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node brain"><span class="kicker">Claude</span><span class="name">One-page brief</span><span class="det">cited · conflicts flagged</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node out"><span class="kicker">Output</span><span class="name">Prep brief</span><span class="det">+ optional save to Notion</span></div>
+        </div>
+        <div class="callout">
+          <strong>Two reads, one synthesis.</strong> Calendar tells it <em>who &amp; when</em>; Notion gives the official background; Slack gives what's actually happening this week. When the Notion doc and the Slack thread disagree, it shows you both — that conflict is usually the most useful line in the brief.
+        </div>
+      </div>
+      <div class="page-num">12</div>
+      <aside class="notes">
+        Workflow 2, also a built skill. Same skeleton as Answer Finder — preflight, scope, read, synthesise — but now the reads are staged: first the calendar (who and when), then Notion + Slack for context. Still no magenta: read-only, with an optional save. The killer feature is conflict-flagging: the Notion spec says one thing, the Tuesday Slack thread says another — surfacing that disagreement is where the prep actually saves the meeting. Note it's a 2-source-plus-calendar chain; chaining doesn't mean "use everything," it means "use what the task needs."
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 13 — EXAMPLE 3: SALESFORCE CHURN → SLACK + NOTION -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Workflow 3 · the showcase</div>
+        <h2>Churn alert: Salesforce → Slack → Notion.</h2>
+        <p class="sub">The full loop: read the churn signals, rank the at-risk accounts, then <strong>act</strong> — DM each owner on Slack and archive a timestamped report to Notion.</p>
+        <div class="flow">
+          <div class="flow-node you"><span class="kicker">You ask</span><span class="name">“Who's gone quiet?”</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node skill"><span class="kicker">Command</span><span class="name">/salesforce-churn-alert</span><span class="det">manual · 9-step flow</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node read"><span class="kicker">MCP · read</span><span class="name">Salesforce</span><span class="det">pull cadence + compute</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-node brain"><span class="kicker">Claude</span><span class="name">Ranked watchlist</span><span class="det">holiday-adjusted, by owner</span></div>
+          <span class="flow-arrow">→</span>
+          <div class="flow-branch">
+            <div class="flow-node act"><span class="kicker">MCP · act</span><span class="name">Slack</span><span class="det">DM each account owner</span></div>
+            <div class="flow-node act"><span class="kicker">MCP · act</span><span class="name">Notion</span><span class="det">write report + run timestamp</span></div>
+          </div>
+        </div>
+        <div class="callout" style="font-size: 0.74em;">
+          <strong>It writes — so it's a manual command, not an auto-firing skill.</strong> Anything that DMs people and writes to Notion should run <em>only when a human starts it</em> — so it's set to manual (<code>disable-model-invocation</code>), drafts everything for you to confirm first, and stamps the report with the <strong>query-execution time</strong> so every run is auditable.
+        </div>
+      </div>
+      <div class="page-num">13</div>
+      <aside class="notes">
+        The showcase — and the one that crosses into "act." Read it slowly: plain ask → the /salesforce-churn-alert command (a manual command built on the churn-check skill from Workshop #3's case study — manual on purpose because it sends and writes) → it reads Salesforce and computes per-account churn → Claude ranks the watchlist, holiday-adjusted, grouped by owner → then it FANS OUT to two act-connectors: Slack DMs to each owner, and a Notion report. The branch is the point — one Claude step, two downstream tools. Hammer the read-vs-act rule: Salesforce read is free; the Slack DMs and Notion write are real, so they're drafted and confirmed before sending. The execution timestamp on the Notion report is the detail the user asked for: it makes the report reproducible and auditable — "these were the quiet accounts as of 08 Jun 10:42." This is where connectors stop being a search box and start being a teammate.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 14 — AUTOMATE THE FLOW -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Automate the flow</div>
+        <h2>Don't want to ask every time? Set it to run.</h2>
+        <p class="sub">Any of these workflows can run on a schedule — the churn alert every Monday at 9am, a digest every Friday. Three ways to automate, from no-setup to full control. Pick by how technical you want to get.</p>
+        <div class="props" style="gap: 16px;">
+          <div class="prop">
+            <h4>Inside Claude <span class="status-available">Easiest · no setup</span></h4>
+            <p>The desktop app's built-in scheduler. Runs on your subscription — connectors already authed, skill already installed, nothing to re-plumb. Recurring (cron), one-time, or ad-hoc manual trigger.</p>
+            <p style="font-size: 0.62em; color: var(--muted); font-style: italic; margin-top: 10px; border-top: 1px solid rgba(26,24,20,0.08); padding-top: 8px;">Caveat: app must be open, runs on your machine, ~few-min dispatch delay.</p>
+          </div>
+          <div class="prop">
+            <h4>Claude Code + cron <span class="status-soon">For devs</span></h4>
+            <p>Headless <code>claude -p</code> fired by your OS scheduler (cron / launchd / Task Scheduler), on your subscription. You re-plumb the MCP servers + skill config inside Claude Code.</p>
+            <p style="font-size: 0.62em; color: var(--muted); font-style: italic; margin-top: 10px; border-top: 1px solid rgba(26,24,20,0.08); padding-top: 8px;">Caveat: still needs your machine on.</p>
+          </div>
+          <div class="prop">
+            <h4>Agent SDK + any scheduler <span class="status-soon">Most setup · server-side</span></h4>
+            <p>Full control, runs server-side without your laptop — cron, GitHub Actions, the cloud. The most plumbing, but truly hands-off once it's live.</p>
+            <p style="font-size: 0.62em; color: var(--muted); font-style: italic; margin-top: 10px; border-top: 1px solid rgba(26,24,20,0.08); padding-top: 8px;">Billing: subscription credit covers it from Jun 15, 2026; before that, API pay-as-you-go.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Most of you want option 1.</strong> If you're not a developer, the in-app scheduler is the only one you need — the churn alert becomes a Monday-morning routine you never trigger by hand.
+        </div>
+      </div>
+      <div class="page-num">14</div>
+      <aside class="notes">
+        The "now make it hands-off" beat. Three escalating options. Option 1 — the desktop app scheduler — is for everyone in this room: no setup, connectors and skill already there, just pick a cadence. The caveats are honest: the app has to be open, it runs on your machine, ~few-minute dispatch delay. Option 2 is for developers comfortable in the terminal — headless claude -p on a cron, but you rebuild the MCP + skill config in Claude Code, and the machine still has to be on. Option 3 is the production route — the Agent SDK running server-side on any scheduler (GitHub Actions, cloud), no laptop needed, most setup. Billing note for option 3: subscription credit covers SDK runs from June 15, 2026; before that it's API pay-as-you-go. Land it: don't over-engineer — option 1 covers 90% of needs.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 15 — PART 3 DIVIDER -->
+    <!-- =========================================== -->
+    <section data-background-color="#A8C0A9" id="part-3">
+      <div class="chapter-divider">
+        <span class="chapter-num">Part 3</span>
+        <h2 class="chapter-title">The discipline<br/>behind it.<span class="title-emoji">🔁</span></h2>
+        <p class="chapter-blurb">A connector is only as smart as what's written down.</p>
+      </div>
+      <aside class="notes">
+        Pivot from "look what it can do" to "here's why it works for us and not by accident." All three workflows lean on Notion and Slack having good content. That's a habit, not a feature.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 15 — EVERYTHING LIVES IN NOTION / FLYWHEEL -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">The flywheel</div>
+        <h2>Everything lives in Notion.</h2>
+        <p class="sub">Answer Finder, Meeting Prep, the churn report — they all <em>read from Notion</em>. The more we capture there, the smarter every one of them gets. That's a flywheel, and it only spins if we feed it.</p>
+        <div class="props" style="grid-template-columns: repeat(2, 1fr); gap: 16px;">
+          <div class="prop">
+            <h4>Write it down</h4>
+            <p>If it isn't written, it didn't happen. Every decision and discussion gets captured — and <strong>recorded &amp; transcribed</strong> via Notion's meeting notes.</p>
+          </div>
+          <div class="prop">
+            <h4>Notion is the global database</h4>
+            <p>One company-wide, queryable source of truth. If you want it findable later, it goes in Notion.</p>
+          </div>
+          <div class="prop">
+            <h4>Slack is for friction, not the record</h4>
+            <p>Quick discussions and unblocking. The moment a thread becomes a decision, promote it into Notion.</p>
+          </div>
+          <div class="prop">
+            <h4>Don't dilute the stack</h4>
+            <p>Every new tool is another place knowledge hides. Fewer sources = more trackable, more searchable, more controllable.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>The loop:</strong> more captured in Notion → better, more precise AI answers → people rely on the tools more → they capture more. <a href="https://www.notion.so/37611196e46d8140ab79ce6da18e7b3a" class="cover-link">Read the full principle on the AI hub →</a>
+        </div>
+      </div>
+      <div class="page-num">16</div>
+      <aside class="notes">
+        This is the strategic heart. The connectors are not magic — they're only as good as what's in the tools. So the single highest-leverage habit is disciplined capture into Notion. Walk the four principles, then land the flywheel: capture compounds. Every decision written down today makes tomorrow's answer faster, for everyone. Link goes to the Knowledge Capture page in the AI hub. Tie it back to the workflows: the churn report writes itself BACK into Notion — the tools both feed on and feed the flywheel.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- TAKE-HOME -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content center">
+        <div class="chip chip-light">The take-home</div>
+        <h2 style="margin-bottom: 14px;">If you remember nothing else.</h2>
+        <div class="remember-list">
+          <div class="remember-item">
+            <span class="remember-num">1</span>
+            <p><strong>A connector gives Claude hands in your real tools.</strong> Turn one on and Claude can read — and act on — Notion, your inbox, Slack. No copy-paste.</p>
+          </div>
+          <div class="remember-item">
+            <span class="remember-num">2</span>
+            <p><strong>Skills are the recipes that make connectors useful — and precise.</strong> MCP is what Claude <em>can</em> do; the skill is how it <em>should</em> — the same precise result, every time.</p>
+          </div>
+          <div class="remember-item">
+            <span class="remember-num">3</span>
+            <p><strong>Read freely; act on purpose.</strong> Reading is safe. Anything that sends or writes should be a draft you confirm. That one rule keeps you out of trouble.</p>
+          </div>
+          <div class="remember-item">
+            <span class="remember-num">4</span>
+            <p><strong>The flywheel runs on Notion.</strong> The tools are only as smart as what's written down. Capture decisions, and every workflow gets better for everyone.</p>
+          </div>
+        </div>
+      </div>
+      <div class="page-num">17</div>
+      <aside class="notes">
+        Four lines, in the house style of Workshops #1–#3. Read them aloud as a recap. #2 is the callback to Workshop #3 — skills are the recipes that make connectors useful and precise (MCP = what Claude can do; the skill = how it should). Land hardest on #3 — read freely, act on purpose — the one that keeps a powerful tool safe. #4 ties the whole series together: skills + prompts + connectors are only as good as the knowledge you feed them.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 18 — THANK YOU -->
+    <!-- =========================================== -->
+    <section data-background-color="#c96442">
+      <div class="slide-content" style="justify-content: space-between;">
+        <div>
+          <div class="claude-logo" style="margin-bottom: 56px;">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L13.5 9 L21 10.5 L13.5 13.5 L12 22 L10.5 13.5 L3 12 L10.5 9 Z"/></svg>
+            Claude
+          </div>
+          <h1 class="cover-title" style="font-size: 3.6em;">Thank you.</h1>
+          <p class="cover-subtitle" style="margin-top: 18px; max-width: 26ch;">Give Claude something to reach for.</p>
+        </div>
+        <div>
+          <div style="display: flex; gap: 40px; font-size: 0.7em; margin-bottom: 36px; flex-wrap: wrap;">
+            <div>
+              <div style="font-weight: 600; margin-bottom: 6px;">an internal AI hub</div>
+              <div style="opacity: 0.85;"><a href="#" style="color: var(--ink); border-bottom: 1px solid rgba(26,24,20,0.3);">the internal hub</a></div>
+            </div>
+            <div>
+              <div style="font-weight: 600; margin-bottom: 6px;">What is MCP</div>
+              <div style="opacity: 0.85;">modelcontextprotocol.io</div>
+            </div>
+            <div>
+              <div style="font-weight: 600; margin-bottom: 6px;">Connectors in Claude</div>
+              <div style="opacity: 0.85;">claude.com/docs/connectors</div>
+            </div>
+            <div>
+              <div style="font-weight: 600; margin-bottom: 6px;">Async questions</div>
+              <div style="opacity: 0.85;"><code style="background: rgba(0,0,0,0.1); color: var(--ink);">#ai-office-hours</code> on Slack</div>
+            </div>
+          </div>
+          <div class="thanks-footer">
+            AI Workshop Series · Workshop #4 · Giving Claude Hands — Connectors &amp; MCP<br>
+            Last updated: June 2026 · Hosted by Dogus Ural
+          </div>
+        </div>
+      </div>
+      <aside class="notes">
+        End on terracotta — bookends with the cover. Leave the resource list up during Q&A. "Give Claude something to reach for" is the take-home: skills taught it how you work; connectors give it something to work with.
+      </aside>
+    </section>
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    controls: true,
+    progress: true,
+    center: false,
+    transition: 'fade',
+    transitionSpeed: 'default',
+    backgroundTransition: 'fade',
+    width: 1440,
+    height: 900,
+    margin: 0,
+    minScale: 0.2,
+    maxScale: 2.0,
+    plugins: [RevealNotes]
+  });
+</script>
+
+</body>
+</html>

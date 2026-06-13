@@ -19,15 +19,14 @@ const posts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
       <div class="post-grid">
         {
           posts.map((post) => (
-            <article class="card post-card">
+            <a class="card post-card" href={`/posts/${post.slug}`}>
               {post.data.cover && <img src={post.data.cover} alt={post.data.title} class="cover-img" loading="lazy" decoding="async" />}
               <div class="post-meta">
                 <span class="pill">{formatDate(post.data.date)}</span>
               </div>
               <h2>{post.data.title}</h2>
               <p class="muted">{post.data.excerpt}</p>
-              <a href={`/posts/${post.slug}`}>Read post</a>
-            </article>
+            </a>
           ))
         }
       </div>

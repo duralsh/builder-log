@@ -214,18 +214,21 @@ const rolePosts = (start: Date, end: Date | null) =>
 
   .cv-list {
     display: grid;
-    gap: 0.3rem;
+    gap: 1rem;
   }
 
   .role {
-    padding: 1rem 0 1.35rem;
-    border-bottom: 1px dashed var(--border);
-    margin-bottom: 0.35rem;
+    padding: 1.6rem 1.8rem 1.8rem;
+  }
+
+  .role h2 {
+    font-size: clamp(1.3rem, 2.2vw, 1.6rem);
   }
 
   .role-location {
     font-size: 1rem;
-    margin: -0.3rem 0 0.3rem;
+    font-weight: 500;
+    margin: -0.2rem 0 0.3rem;
   }
 
   .role-links {
@@ -243,7 +246,6 @@ const rolePosts = (start: Date, end: Date | null) =>
   }
 
   .meta {
-    padding: 1.1rem 0 0.2rem;
-    border-top: 1px dashed var(--border);
+    padding: 1.8rem;
   }
 </style>

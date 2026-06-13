@@ -1,0 +1,1058 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Basics — AI Workshop #1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    /* Surfaces */
+    --parchment: #f5f4ed;
+    --ivory: #faf9f5;
+    --warm-sand: #e8e6dc;
+    --pure-white: #ffffff;
+    --dark-surface: #30302e;
+    --deep-dark: #141413;
+
+    /* Text */
+    --near-black: #141413;
+    --charcoal-warm: #4d4c48;
+    --olive-gray: #5e5d59;
+    --stone-gray: #87867f;
+    --dark-warm: #3d3d3a;
+    --warm-silver: #b0aea5;
+
+    /* Brand */
+    --terracotta: #c96442;
+    --coral: #d97757;
+
+    /* Borders & rings */
+    --border-cream: #f0eee6;
+    --border-warm: #e8e6dc;
+    --ring-warm: #d1cfc5;
+    --ring-deep: #c2c0b6;
+
+    /* Semantic */
+    --error: #b53333;
+    --focus: #3898ec;
+
+    /* Type */
+    --font-serif: 'Source Serif 4', Georgia, 'Iowan Old Style', 'Apple Garamond', serif;
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Monaco, Consolas, monospace;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--parchment);
+    color: var(--near-black);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  .page {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 56px 64px;
+  }
+
+  /* Cover */
+  .cover {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 144px 64px 96px;
+    page-break-after: always;
+  }
+  .cover .eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--terracotta);
+    margin-bottom: 36px;
+    font-weight: 600;
+  }
+  .cover h1 {
+    font-family: var(--font-serif);
+    font-size: 64px;
+    margin: 0 0 18px;
+    font-weight: 500;
+    line-height: 1.10;
+    color: var(--near-black);
+    border: none;
+    padding: 0;
+    letter-spacing: -0.01em;
+  }
+  .cover .subtitle {
+    font-family: var(--font-serif);
+    font-size: 22px;
+    color: var(--olive-gray);
+    margin-bottom: 80px;
+    font-weight: 400;
+    line-height: 1.4;
+    font-style: italic;
+  }
+  .cover .meta {
+    font-family: var(--font-sans);
+    font-size: 14px;
+    color: var(--olive-gray);
+    border-top: 1px solid var(--border-warm);
+    padding-top: 24px;
+    line-height: 1.8;
+  }
+  .cover .meta strong { color: var(--near-black); font-weight: 600; }
+
+  /* Typography */
+  h1 {
+    font-family: var(--font-serif);
+    font-size: 40px;
+    margin: 88px 0 24px;
+    font-weight: 500;
+    line-height: 1.20;
+    color: var(--near-black);
+    border-bottom: 1px solid var(--border-warm);
+    padding-bottom: 18px;
+    letter-spacing: -0.005em;
+  }
+  h1:first-of-type { margin-top: 0; }
+  h2 {
+    font-family: var(--font-serif);
+    font-size: 25px;
+    margin: 44px 0 12px;
+    font-weight: 500;
+    line-height: 1.20;
+    color: var(--near-black);
+  }
+  h3 {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    margin: 28px 0 10px;
+    font-weight: 600;
+    color: var(--stone-gray);
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+  }
+  h4 {
+    font-family: var(--font-serif);
+    font-weight: 500;
+  }
+  p { margin: 0 0 16px; line-height: 1.7; color: var(--charcoal-warm); }
+  ul, ol { margin: 0 0 16px; padding-left: 24px; color: var(--charcoal-warm); }
+  li { margin-bottom: 8px; line-height: 1.7; }
+  strong { color: var(--near-black); font-weight: 600; }
+  em { color: var(--near-black); font-style: italic; }
+  code {
+    background: var(--warm-sand);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-size: 13.5px;
+    color: var(--charcoal-warm);
+    font-family: var(--font-mono);
+  }
+  a {
+    color: var(--near-black);
+    text-decoration: underline;
+    text-decoration-color: var(--ring-warm);
+    text-underline-offset: 3px;
+    transition: text-decoration-color 0.15s ease;
+  }
+  a:hover { text-decoration-color: var(--terracotta); }
+
+  /* Reference example code blocks */
+  .code-block {
+    background: var(--ivory);
+    border: 1px solid var(--border-cream);
+    box-shadow: 0px 0px 0px 1px var(--border-warm);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 20px 0 28px;
+    overflow-x: auto;
+    font-size: 13px;
+    line-height: 1.75;
+    white-space: pre-wrap;
+    font-family: var(--font-mono);
+    color: var(--near-black);
+  }
+  .code-block code {
+    background: none;
+    padding: 0;
+    font-size: 13px;
+    color: var(--near-black);
+  }
+  .ref-link {
+    font-size: 13px;
+    color: var(--olive-gray);
+    font-style: italic;
+    margin-top: 6px;
+  }
+  .ref-link a {
+    text-decoration: underline;
+    text-decoration-color: var(--terracotta);
+    color: var(--terracotta);
+  }
+  .ref-link a:hover { color: var(--coral); text-decoration-color: var(--coral); }
+
+  /* TODO block — internal maintenance notes */
+  .todo-block {
+    border: 1px dashed var(--terracotta);
+    background: rgba(201, 100, 66, 0.05);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin: 48px 0 16px;
+    color: var(--charcoal-warm);
+    font-size: 13.5px;
+  }
+  .todo-block .todo-label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    color: var(--terracotta);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .todo-block ul { margin: 0; padding-left: 20px; }
+  .todo-block li { margin-bottom: 6px; color: var(--charcoal-warm); }
+  @media print { .todo-block { display: none; } }
+
+  /* Callouts */
+  .callout {
+    background: var(--ivory);
+    border: 1px solid var(--border-cream);
+    border-left: 3px solid var(--coral);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    color: var(--olive-gray);
+  }
+  .callout p { margin-bottom: 10px; color: var(--olive-gray); }
+  .callout p:last-child { margin-bottom: 0; }
+  .callout-label {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    color: var(--terracotta);
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+
+  /* Concept blocks */
+  .concept-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    margin: 32px 0 40px;
+  }
+  .concept {
+    background: var(--ivory);
+    border: 1px solid var(--border-cream);
+    box-shadow: 0px 0px 0px 1px var(--border-warm);
+    border-radius: 16px;
+    padding: 26px 28px;
+  }
+  .concept h4 {
+    font-family: var(--font-serif);
+    margin: 0 0 12px;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--near-black);
+    line-height: 1.20;
+  }
+  .concept p {
+    font-size: 14.5px;
+    margin-bottom: 10px;
+    color: var(--olive-gray);
+    line-height: 1.65;
+  }
+  .concept p strong { color: var(--near-black); }
+  .concept ul { padding-left: 20px; }
+  .concept ul li { font-size: 14.5px; color: var(--olive-gray); margin-bottom: 5px; }
+  .concept .tag {
+    display: inline-block;
+    font-size: 11px;
+    color: var(--stone-gray);
+    margin-top: 10px;
+    font-style: italic;
+    letter-spacing: 0.12px;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0 32px;
+    font-size: 14px;
+    background: var(--ivory);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0px 0px 0px 1px var(--border-warm);
+  }
+  th {
+    text-align: left;
+    padding: 14px 16px;
+    font-family: var(--font-sans);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    color: var(--charcoal-warm);
+    border-bottom: 1px solid var(--border-warm);
+    background: var(--warm-sand);
+  }
+  td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border-cream);
+    vertical-align: top;
+    color: var(--charcoal-warm);
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.center { text-align: center; }
+  .check { color: var(--terracotta); font-weight: 600; }
+  .no { color: var(--stone-gray); }
+  .partial { color: var(--coral); font-weight: 500; }
+
+  /* Section dividers */
+  .section-divider {
+    text-align: center;
+    margin: 88px 0 40px;
+    color: var(--terracotta);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 600;
+  }
+  .section-divider::before,
+  .section-divider::after {
+    content: '';
+    display: inline-block;
+    width: 32px;
+    height: 1px;
+    background: var(--ring-warm);
+    vertical-align: middle;
+    margin: 0 16px;
+  }
+
+  /* Footer */
+  .doc-footer {
+    border-top: 1px solid var(--border-warm);
+    padding: 36px 64px;
+    color: var(--stone-gray);
+    font-size: 13px;
+    text-align: center;
+    line-height: 1.8;
+    max-width: 760px;
+    margin: 96px auto 0;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--ivory);
+    border: 1px solid var(--border-cream);
+    box-shadow: 0px 0px 0px 1px var(--border-warm);
+    border-radius: 16px;
+    padding: 32px 36px;
+    margin: 32px 0 40px;
+  }
+  .toc h2 {
+    font-family: var(--font-serif);
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 22px;
+  }
+  .toc ol { padding-left: 24px; margin-bottom: 0; }
+  .toc li {
+    margin-bottom: 10px;
+    font-size: 15px;
+    color: var(--olive-gray);
+    line-height: 1.6;
+  }
+  .toc a {
+    color: var(--near-black);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .toc a:hover {
+    text-decoration: underline;
+    text-decoration-color: var(--terracotta);
+    color: var(--terracotta);
+  }
+
+  /* Context flow chart */
+  .context-flow {
+    margin: 32px 0 40px;
+  }
+  .context-level {
+    background: var(--ivory);
+    border: 1px solid var(--border-cream);
+    box-shadow: 0px 0px 0px 1px var(--border-warm);
+    border-radius: 12px;
+    padding: 18px 22px;
+  }
+  .context-level.current {
+    background: var(--pure-white);
+    border: 1px solid var(--terracotta);
+    box-shadow: 0px 0px 0px 1px var(--terracotta), rgba(201, 100, 66, 0.10) 0px 4px 24px;
+  }
+  .context-level .level-tag {
+    font-family: var(--font-sans);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--terracotta);
+    margin-bottom: 8px;
+    font-weight: 600;
+  }
+  .context-level h4 {
+    font-family: var(--font-serif);
+    margin: 0 0 10px;
+    font-size: 18px;
+    color: var(--near-black);
+    font-weight: 500;
+    line-height: 1.20;
+  }
+  .context-level p, .context-level ul {
+    font-size: 14px;
+    margin: 0;
+    color: var(--olive-gray);
+    line-height: 1.65;
+  }
+  .context-level ul { padding-left: 18px; margin-top: 6px; }
+  .context-level li { margin-bottom: 4px; }
+  .arrow {
+    text-align: center;
+    font-size: 16px;
+    color: var(--ring-warm);
+    margin: 8px 0;
+    line-height: 1;
+  }
+
+  /* Responsive */
+  @media (max-width: 720px) {
+    .page { padding: 40px 24px; }
+    .cover { padding: 96px 24px 64px; }
+    .cover h1 { font-size: 44px; }
+    .cover .subtitle { font-size: 18px; margin-bottom: 56px; }
+    h1 { font-size: 32px; margin-top: 64px; }
+    h2 { font-size: 22px; }
+    .concept-grid { grid-template-columns: 1fr; gap: 16px; }
+    .doc-footer { padding: 28px 24px; }
+  }
+
+  /* Print styles */
+  @media print {
+    html, body { background: white; }
+    body { font-size: 11pt; }
+    .page { padding: 24px 32px; max-width: 100%; }
+    .cover { padding: 64px 32px; min-height: 90vh; max-width: 100%; }
+    .cover h1 { font-size: 36pt; }
+    .cover .subtitle { font-size: 14pt; }
+    h1 { page-break-before: always; font-size: 22pt; border-bottom: 1px solid var(--border-warm); }
+    h1:first-of-type { page-break-before: auto; }
+    h2 { font-size: 14pt; page-break-after: avoid; }
+    h3 { font-size: 9pt; page-break-after: avoid; }
+    .callout, .concept, table, .context-level, .code-block { page-break-inside: avoid; }
+    .doc-footer { padding: 16px 32px; max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<section class="cover">
+  <div class="eyebrow">AI Workshop · #1</div>
+  <h1>Claude Basics</h1>
+  <div class="subtitle">A 30-minute crash course for everyone.</div>
+  <div class="meta">
+    <strong>Friday, May 8, 2026 · Online</strong><br>
+    Hosted by Dogus Ural<br>
+    Use this document as the workshop handout, the source of truth, and the reference you come back to.
+  </div>
+</section>
+
+<div class="page">
+
+<!-- INTRO -->
+<h1 id="intro">What this is</h1>
+<p>This is the kickoff workshop in our AI Fridays series. The goal of these 30 minutes is simple: by the end you should know <strong>what Claude is, where you can use it, and what the buzzwords mean</strong> — without the jargon hangover.</p>
+<p>You don't need to take notes. This document <em>is</em> the notes. Skim during the workshop, read after, and use it as a reference any time someone uses a term you don't recognise.</p>
+
+<div class="callout">
+  <div class="callout-label">How to read this document</div>
+  <p>Each section is short by design. If you're skimming, focus on the bold sentences and the comparison table at the end — that's where the practical decisions live.</p>
+</div>
+
+<!-- TOC -->
+<div class="toc">
+  <h2>What we'll cover</h2>
+  <ol>
+    <li><a href="#part1">LLM fundamentals</a> — what these things actually are</li>
+    <li><a href="#part2">Claude products</a> — chat, Cowork, Code</li>
+    <li><a href="#part3">The vocabulary</a> — skills, MCPs, commands, agents, plugins, projects, hooks</li>
+    <li><a href="#part4">How context actually works</a> — what's loaded at session start, plus tips</li>
+    <li><a href="#part5">Memory across conversations</a> — what persists between chats</li>
+    <li><a href="#part6">Where each thing lives</a> — comparison matrix across the three products</li>
+    <li><a href="#part7">What's next</a> — AI Fridays, the prompt workshop, where to ask questions</li>
+    <li><a href="#appendix">Reference examples</a> — copy-paste-ready Instructions for Claude and a Project instruction</li>
+  </ol>
+</div>
+
+<div class="section-divider">Part 1</div>
+
+<h1 id="part1">LLM fundamentals</h1>
+
+<h2>What is an LLM?</h2>
+<p><strong>LLM stands for Large Language Model.</strong> It's a neural network trained on enormous amounts of text — books, websites, code, conversations. After training, it can generate fluent, useful text by predicting what comes next, one chunk of text at a time.</p>
+<p>That's it. The technology under all the buzz is fundamentally a really good autocomplete that has read the internet.</p>
+
+<div class="callout">
+  <div class="callout-label">Why it feels like more than autocomplete</div>
+  <p>Because at scale, "predict the next chunk of text" turns out to be a remarkably general skill. To predict the next word in a code review, the model has to understand the code. To predict the next sentence in a customer support reply, it has to understand the customer's frustration. So the prediction task forces it to learn structure, reasoning, and tone — not just word frequencies.</p>
+</div>
+
+<h2>Who makes LLMs?</h2>
+<p>The major players as of 2026:</p>
+<ul>
+  <li><strong>Anthropic</strong> — makes Claude. The company we've chosen.</li>
+  <li><strong>OpenAI</strong> — makes ChatGPT and the GPT family of models.</li>
+  <li><strong>Google</strong> — makes Gemini.</li>
+  <li><strong>Meta</strong> — makes Llama (open source — anyone can download and run it).</li>
+  <li><strong>Mistral, DeepSeek</strong> — European and Chinese labs producing competitive open-source models.</li>
+</ul>
+<p>For everyday work, you'll be using Claude. Other tools are out there; we picked Claude because it's currently strongest on careful, structured work — and it has the best toolset for the kind of internal automation we want to build.</p>
+
+<h2>What is a model?</h2>
+<p>Every LLM company offers <strong>multiple models</strong> — different sizes, different speeds, different prices. Bigger models tend to be smarter but slower and more expensive to run.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Claude model</th>
+      <th>What it's for</th>
+      <th>Trade-off</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Haiku</strong></td>
+      <td>Fast, cheap, lightweight tasks (classification, simple drafts)</td>
+      <td>Less depth on complex reasoning</td>
+    </tr>
+    <tr>
+      <td><strong>Sonnet</strong></td>
+      <td>The everyday workhorse — most tasks land here</td>
+      <td>Good balance of speed, cost, depth</td>
+    </tr>
+    <tr>
+      <td><strong>Opus</strong></td>
+      <td>Hardest reasoning, most nuanced writing, longest plans</td>
+      <td>Slower and pricier per call</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>Current generation as of May 2026:</strong> Haiku 4.5, Sonnet 4.6, Opus 4.7.</p>
+
+<p>Most of the time you don't pick the model — the tool does. But if you're using the API or building something custom, you'll choose explicitly.</p>
+
+<h2>Modes — what's "thinking"?</h2>
+<p>Claude (and most modern LLMs) can run in different modes:</p>
+<ul>
+  <li><strong>Standard / chat mode.</strong> You ask, Claude answers. Fast.</li>
+  <li><strong>Thinking mode</strong> (called <em>extended thinking</em> on older models, <em>adaptive thinking</em> on Claude Opus 4.7 and Sonnet 4.6). Claude reasons through the problem before answering. Slower but more accurate on complex tasks like multi-step problems, debugging, careful analysis.</li>
+  <li><strong>Agentic mode.</strong> Claude doesn't just answer — it takes <em>actions</em>. Reads files, runs code, calls APIs, opens tabs. This is what powers Claude Code and Cowork (more on those in a moment).</li>
+</ul>
+<p>You don't have to switch modes manually most of the time. The tool you're using picks the right one for the task.</p>
+
+<h2>Context window</h2>
+<p>The <strong>context window</strong> is how much text Claude can "remember" in a single conversation. It's measured in <em>tokens</em> (more on those next).</p>
+<p>Claude Sonnet 4.6 supports a <strong>1 million-token</strong> context window in beta — roughly 750 pages of text. Claude Opus 4.7 also supports 1 million tokens. Older Claude models, and many third-party tools embedding Claude, still default to 200,000 tokens (~150 pages). When the conversation exceeds the window, the oldest content drops out.</p>
+<div class="callout">
+  <div class="callout-label">Practical tip — keep the context small</div>
+  <p>If a conversation feels like Claude is "forgetting" earlier instructions, slowing down, or getting vague, you've likely overfilled the context window. <strong>Focused context beats more context.</strong> Three ways to manage long sessions:</p>
+  <ul>
+    <li><strong>Start fresh.</strong> Open a new conversation and paste in only the parts that matter. Don't carry the whole history forward by default.</li>
+    <li><strong>Hand over.</strong> Before starting fresh, ask Claude something like <em>"summarise everything important about this conversation so I can continue in a new chat."</em> Paste that summary into the new session as your starting context. Works in any Claude product.</li>
+    <li><strong>Compact (Claude Code).</strong> Type <code>/compact</code> to replace the current conversation with a structured summary. Most startup content (CLAUDE.md, skills, MCP tools) reloads automatically afterwards.</li>
+  </ul>
+</div>
+
+<h2>Tokens</h2>
+<p>A <strong>token</strong> is a chunk of text. Roughly three-quarters of a word for English text on older Claude models. Newer models (Opus 4.7) use a different tokenizer that may produce up to ~35% more tokens for the same text. <code>Hello world</code> is around 2 tokens. A short email is around 200 tokens. The Bible (King James) is about 800,000 tokens on older tokenizers.</p>
+<p>Tokens matter for two reasons:</p>
+<ol>
+  <li><strong>Billing.</strong> When you use the Claude API, you pay per token in and per token out. (You don't see this directly when using claude.ai — it's bundled in the subscription.)</li>
+  <li><strong>Context limits.</strong> The 200K window is in tokens, not words. A long PDF can fill a conversation faster than you think.</li>
+</ol>
+
+<div class="section-divider">Part 2</div>
+
+<h1 id="part2">Claude products</h1>
+<p>Anthropic offers three different ways to talk to Claude. Same underlying model, very different surfaces.</p>
+
+<h2>1. Claude.ai — the chat</h2>
+<p><strong>What it is:</strong> a web app at <code>claude.ai</code>, plus a desktop app you can install on Mac and Windows. The chat interface — like ChatGPT but Claude.</p>
+<p><strong>Who it's for:</strong> everyone. Marketing, sales, ops, customer support, leadership, engineering — anyone who wants to ask Claude a question, draft a message, summarise a doc, brainstorm.</p>
+<p><strong>What you can do:</strong> conversational chat, upload documents, get back text/code/analysis. You can also create <strong>Projects</strong> (more on those in Part 3) — available on all plans, with a Team subscription enabling shared Projects with colleagues.</p>
+<div class="callout">
+  <div class="callout-label">Use it for</div>
+  <p>Drafting an email, rewriting a customer message, summarising a long PDF, getting unstuck on a hard task, brainstorming names for a feature.</p>
+</div>
+
+<h3>Chat-specific features</h3>
+<p>A few features live only in <code>claude.ai</code> chat:</p>
+<ul>
+  <li><strong>Web search.</strong> Claude can search the live web during a conversation — useful for current events, recent news, or anything past its knowledge cutoff (May 2025 for the current generation). You toggle it per chat.</li>
+  <li><strong>Research.</strong> A deeper, multi-step mode where Claude autonomously runs many web searches and reads multiple sources, then returns a structured report with citations. Good for market scans, competitor overviews, prep before a meeting, or "what's the current state of X." Takes minutes rather than seconds.</li>
+</ul>
+
+<h2>2. Cowork — the desktop assistant</h2>
+<p><strong>What it is:</strong> a feature inside the Claude desktop app focused on knowledge work. Imagine Claude Code's superpowers (file access, web access, automation) but designed for non-developers and broader tasks.</p>
+<p><strong>Who it's for:</strong> everyone who isn't a developer but wants Claude to <em>do</em> things, not just talk. Marketing, ops, PMs, customer support, leadership.</p>
+<p><strong>What it can do:</strong> work autonomously on your files, navigate the web, connect to your Notion / OneDrive / Slack via MCPs (Part 3), run multi-step automations, produce documents and reports.</p>
+<p><strong>Scheduled tasks:</strong> Cowork can run a task on a recurring schedule (hourly, daily, weekly, weekdays only) using everything you've connected. Type <code>/schedule</code> inside any task to set one up. Example: <em>"Every Monday at 9am, scan our Notion AI hub for changes since last week and post a summary to <code>#ai-updates</code> on Slack."</em> Caveat: only runs while your computer is awake and Claude Desktop is open — runs are skipped if the machine is asleep, then auto-rerun on wake.</p>
+<div class="callout">
+  <div class="callout-label">Use it for</div>
+  <p>Pulling together a weekly report from Notion + Salesforce, drafting and saving a contract from a template, organising a folder of files, building a dashboard, automating recurring tasks.</p>
+</div>
+
+<h2>3. Claude Code — the developer terminal</h2>
+<p><strong>What it is:</strong> a command-line tool that lives in your terminal. You type <code>claude</code> and you're in a conversation with Claude — but Claude can also read your files, edit code, run tests, and execute shell commands.</p>
+<p><strong>Who it's for:</strong> developers. Specifically, software engineers and anyone comfortable working in a terminal. Not relevant for non-technical roles.</p>
+<p><strong>What it can do:</strong> agentic coding. Give it a task ("fix this bug," "add OAuth to the login flow"), and it'll read the relevant files, plan a change, edit code, run tests, and report back. Iterates autonomously.</p>
+<div class="callout">
+  <div class="callout-label">Use it for</div>
+  <p>Bug fixes, refactors, dependency upgrades, writing tests, scaffolding new features, code reviews. The kind of "this is mostly mechanical but tedious" work.</p>
+</div>
+
+<div class="section-divider">Part 3</div>
+
+<h1 id="part3">The vocabulary</h1>
+<p>These seven terms come up constantly. Here's what each one actually means, ordered roughly from atomic capability to broadest container.</p>
+
+<div class="concept-grid">
+
+  <div class="concept">
+    <h4>Skills</h4>
+    <p>A <strong>skill</strong> is a folder of instructions and examples that Claude auto-loads when relevant. Think of it as a recipe card the model picks up when the situation calls for it.</p>
+    <p>Example: a customer-support skill that auto-fires when you ask Claude to draft a reply, applying your team's tone and SOP without you having to ask each time.</p>
+    <p><strong>Default skills you get out of the box:</strong> every Claude product ships with skills you can use without installing anything. The ones most useful for everyday work in Claude.ai chat and Cowork:</p>
+    <ul>
+      <li><strong>Document creation:</strong> skills for producing Word docs, PowerPoint presentations, Excel spreadsheets, and PDFs directly from a conversation. Just ask Claude to "create a slide deck on X" and the right skill fires.</li>
+      <li><strong>Scheduled tasks:</strong> a skill for setting up recurring tasks (e.g., "every Friday at 9am, summarise this week's customer feedback").</li>
+      <li><strong>PDF handling:</strong> reading, editing, and extracting from PDFs.</li>
+      <li><strong>Cowork setup:</strong> a guided walkthrough skill for getting Cowork configured.</li>
+    </ul>
+    <p>Browse and manage them via <strong>Customize → Skills</strong>. Claude Code also bundles developer-focused skills (<code>/simplify</code>, <code>/debug</code>, etc.) for engineering workflows.</p>
+    <p><strong>Install custom skills:</strong> place a <code>SKILL.md</code> file in <code>~/.claude/skills/&lt;name&gt;/</code> (user-wide), or in <code>.claude/skills/&lt;name&gt;/</code> (project-only), or via a plugin. In Claude.ai chat and Cowork, install via the Skills directory in the UI.</p>
+    <p><strong>Invoke:</strong> Claude auto-loads it when its description matches what you're asking, or you can type <code>/name</code> to invoke it manually.</p>
+    <span class="tag">Used in: Claude.ai chat, Cowork, Claude Code</span>
+  </div>
+
+  <div class="concept">
+    <h4>Commands</h4>
+    <p><strong>Slash commands</strong> are a subset of skills that can <em>only</em> be manually invoked — you type <code>/name</code> to trigger them. Built-in examples: <code>/help</code>, <code>/clear</code>, <code>/memory</code>, <code>/context</code>.</p>
+    <p>Useful for actions with side effects (like <code>/deploy</code>) where you want a human in the loop, not Claude deciding to fire them.</p>
+    <p><strong>Install:</strong> install a skill the normal way (see Skills above) and add <code>disable-model-invocation: true</code> to its frontmatter — that hides it from auto-invocation, leaving manual invocation only.</p>
+    <p><strong>Invoke:</strong> type <code>/name</code> in your conversation. That's the only way.</p>
+    <span class="tag">Used in: Cowork, Claude Code</span>
+  </div>
+
+  <div class="concept">
+    <h4>MCPs / Connectors</h4>
+    <p><strong>MCP</strong> stands for Model Context Protocol — a standard for connecting Claude to other apps and services. A <strong>connector</strong> is an MCP that links Claude to a specific app.</p>
+    <p>Examples: the Notion connector reads and writes your pages. Slack searches and posts messages. A Zendesk or Intercom connector triages support tickets and drafts replies. An SEO connector (Ahrefs, Google Search Console) pulls keyword and ranking data into the chat.</p>
+    <p><strong>Install:</strong> Claude.ai chat and Cowork both use the same Connectors Directory — click to add and authenticate. Claude Code uses <code>claude mcp add &lt;name&gt; …</code> from the terminal.</p>
+    <p><strong>Invoke:</strong> Claude calls the right connector automatically when the task needs it. You don't trigger it directly.</p>
+    <span class="tag">Used in: Cowork, Claude Code, some Claude.ai</span>
+  </div>
+
+  <div class="concept">
+    <h4>Agents</h4>
+    <p><strong>Subagents</strong> are mini-Claudes the main Claude can spawn to handle a chunk of work. Their context is isolated from the main session — they read 50 docs, only the summary comes back.</p>
+    <p>Example: when Claude needs to do a deep research task, it spawns an agent. The main conversation stays clean.</p>
+    <p><strong>Install:</strong> custom subagent definitions go in <code>.claude/agents/&lt;name&gt;.md</code>. Built-in agents (<code>Explore</code>, <code>Plan</code>, <code>general-purpose</code>) are available without setup.</p>
+    <p><strong>Invoke:</strong> Claude does it automatically via the Task tool when delegating work. A skill can also declare <code>context: fork</code> to run inside a subagent.</p>
+    <p><em>Note: Claude Code supports user-defined subagents in <code>.claude/agents/</code>. Cowork uses subagents internally but doesn't expose user-defined ones in public docs.</em></p>
+    <span class="tag">Used in: Cowork (internal), Claude Code (custom + internal)</span>
+  </div>
+
+  <div class="concept">
+    <h4>Hooks</h4>
+    <p><strong>Hooks</strong> are deterministic scripts that fire automatically on lifecycle events — before a tool runs, after a file edit, on session start, when you submit a prompt. They run as plain scripts (no LLM), so behaviour is predictable.</p>
+    <p>Example: run a linter after every edit. Block a commit if the diff contains AWS keys.</p>
+    <p><strong>Install:</strong> write a Python or bash script (e.g. <code>~/.claude/hooks/pre-commit-quality.py</code>), then register it in <code>~/.claude/settings.json</code> under the matching event (<code>PreToolUse</code>, <code>PostToolUse</code>, <code>Stop</code>, etc.).</p>
+    <p><strong>Invoke:</strong> you don't — it fires on the lifecycle event automatically. Set it up once, it runs forever (until you remove it).</p>
+    <span class="tag">Used in: Claude Code</span>
+  </div>
+
+  <div class="concept">
+    <h4>Plugins</h4>
+    <p>A <strong>plugin</strong> is a bundle that contains skills, MCPs, agents, hooks, and/or commands packaged together. Install once, get a whole package.</p>
+    <p>Examples:</p>
+    <ul>
+      <li><strong>Sales toolkit</strong> — a discovery-prep skill, a Salesforce connector, and a <code>/quote</code> command.</li>
+      <li><strong>Brand voice</strong> — your tone-of-voice rules as a skill, plus a <code>/rewrite</code> command.</li>
+      <li><strong>Customer support</strong> — a Zendesk connector plus reply-template skills.</li>
+      <li><strong>SEO</strong> — content-audit skills plus a Google Search Console connector.</li>
+    </ul>
+    <p><strong>Install:</strong> from a plugin marketplace via the marketplace UI (Cowork) or <code>/plugin install &lt;name&gt;@&lt;marketplace&gt;</code> from inside a Claude Code session. Your team can host an internal marketplace for company-specific plugins.</p>
+    <p><strong>Invoke:</strong> nothing extra to do once installed — the contained skills, MCPs, hooks, and agents become available with their own normal invocation methods.</p>
+    <span class="tag">Used in: Cowork, Claude Code</span>
+  </div>
+
+  <div class="concept">
+    <h4>Projects</h4>
+    <p>A <strong>Project</strong> is a scoped conversation space with its own instructions and knowledge files. Every conversation inside the Project uses them; outside the Project, they don't apply.</p>
+    <p>Example: an "Customer Support" Project with our brand voice and Tier 1 SOP — every chat there knows our tone and policies.</p>
+    <p><strong>Why Projects matter:</strong></p>
+    <ul>
+      <li><strong>Clear boundaries with layered rules.</strong> Your global "Instructions for Claude" plus the Project instructions stack — Claude inherits both automatically in every chat, no copy-paste.</li>
+      <li><strong>You can kill a chat and pick up where you left off.</strong> Every chat has a finite context window — long ones slow down or get vague (Part 4). Inside a Project, you can close a bloated chat, start a new one, and continue without rebuilding setup. Project instructions, knowledge files, and Project memory all carry over. The chat's conversation history doesn't, but everything that defines how Claude works in this space does. This is actually the preferred way to manage long-running work.</li>
+    </ul>
+    <p><strong>Install:</strong> create a Project from the Projects UI in Claude.ai or Cowork. Add Project instructions in the settings panel; upload knowledge files into the Project area.</p>
+    <p><strong>Invoke:</strong> start a new conversation inside the Project. Instructions and knowledge are applied automatically.</p>
+    <p class="ref-link">→ <a href="#ref-project">See a sample project instruction</a></p>
+    <span class="tag">Used in: Claude.ai chat, Cowork</span>
+  </div>
+
+</div>
+
+<div class="section-divider">Part 4</div>
+
+<h1 id="part4">How context actually works</h1>
+<p>Now that you know the vocabulary, here's the bigger picture: where does all that context come from when you start a conversation, and how do you keep it from getting bloated?</p>
+
+<h2>What's loaded into the context window at session start</h2>
+<p>Before you even type your first message, Claude already has a lot of context loaded. It flows from the broadest scope (set by Anthropic, applies to every conversation) down to the most specific (your message, right now). Each level layers on top of the one above it.</p>
+
+<div class="context-flow">
+
+  <div class="context-level">
+    <div class="level-tag">Set by Anthropic</div>
+    <h4>Product system prompt</h4>
+    <p>What makes Claude.ai chat feel different from Cowork or Claude Code. You don't see it; you can't change it.</p>
+  </div>
+  <div class="arrow">↓</div>
+
+  <div class="context-level">
+    <div class="level-tag">Per user — applies everywhere</div>
+    <h4>User-level instructions</h4>
+    <ul>
+      <li>Instructions for Claude (Claude.ai chat — Settings → Instructions for Claude)</li>
+      <li>Global instructions (Cowork — Settings → Cowork → Global instructions)</li>
+      <li><code>~/.claude/CLAUDE.md</code> (Claude Code)</li>
+    </ul>
+  </div>
+  <div class="arrow">↓</div>
+
+  <div class="context-level">
+    <div class="level-tag">Per project</div>
+    <h4>Project-level context</h4>
+    <ul>
+      <li>Project instructions + knowledge files (Claude.ai chat, Cowork)</li>
+      <li><code>./CLAUDE.md</code> and <code>./CLAUDE.local.md</code> (Claude Code)</li>
+      <li>Auto memory <code>MEMORY.md</code> — first 200 lines or 25KB (Claude Code)</li>
+    </ul>
+  </div>
+  <div class="arrow">↓</div>
+
+  <div class="context-level">
+    <div class="level-tag">Auto-loaded capabilities</div>
+    <h4>What Claude can use</h4>
+    <ul>
+      <li>Skill names and descriptions (full content loads when invoked)</li>
+      <li>MCP tool names (full schemas load when a tool is called)</li>
+    </ul>
+  </div>
+  <div class="arrow">↓</div>
+
+  <div class="context-level current">
+    <div class="level-tag">Right now</div>
+    <h4>Your message</h4>
+    <p>Whatever you just typed.</p>
+  </div>
+  <div class="arrow">↓</div>
+
+  <div class="context-level">
+    <div class="level-tag">As Claude works</div>
+    <h4>Loaded on demand</h4>
+    <ul>
+      <li>Skill bodies — when a skill is triggered</li>
+      <li>Files Claude reads</li>
+      <li>Path-scoped rules — when files matching the rule's pattern are touched</li>
+      <li>Tool outputs — search results, web fetches, MCP calls</li>
+      <li>Subagent summaries — full details stay in the subagent's own window</li>
+    </ul>
+  </div>
+
+</div>
+
+<h3>Why this matters</h3>
+<ul>
+  <li><strong>Everything in the stack costs tokens.</strong> A 5,000-line <code>CLAUDE.md</code> eats into your 200K window before you've said a word. Keep persistent instructions tight.</li>
+  <li><strong>More specific instructions typically take precedence on conflict.</strong> CLAUDE.md files at different scopes are concatenated additively rather than strict overrides. For skills, subagents, and MCP servers, the more specific definition does override the broader one by name.</li>
+  <li><strong>It helps you debug.</strong> If Claude ignores something you "told it last week," the answer is in what's actually loaded. In Claude Code, run <code>/memory</code> to see every CLAUDE.md and auto-memory file in your session. In Claude.ai, check your Project's instructions and knowledge files.</li>
+</ul>
+
+<div class="callout">
+  <div class="callout-label">Technical note for the curious</div>
+  <p>Only the first level (the product system prompt) is technically a "system prompt" in the API sense. The other levels arrive as user messages or tool outputs. Functionally they behave the same — they shape Claude's behaviour for the whole conversation — but if you ever read about API design, this is why a <code>CLAUDE.md</code> file isn't strictly equivalent to setting a system prompt.</p>
+</div>
+
+<h2>Tips for managing context in practice</h2>
+<p>Habits that pay off the moment your conversation gets non-trivial:</p>
+<ul>
+  <li><strong>Paste only the relevant section, not the whole document.</strong> If you only care about clause 4 of a 60-page contract, paste clause 4. The rest is just noise filling your context window.</li>
+  <li><strong>Prefer URLs over file uploads when the content is publicly fetchable.</strong> Claude can fetch the page only when it needs to, instead of you pre-loading the whole document. Caveat: login-walled or internal pages (Notion, SharePoint, paywalled articles) usually can't be fetched by URL — for those, use a connector or paste the relevant text.</li>
+  <li><strong>Use connectors instead of copy-paste exports.</strong> If the source data lives in Notion, Slack, OneDrive, or similar, a connector lets Claude pull only the specific page or message it needs, on demand. Copy-pasting a 200-row Notion database into chat dumps the whole thing into context whether Claude reads it or not. <em>Available in Cowork, Claude.ai (some), Claude Code.</em></li>
+  <li><strong>Delegate heavy reading to a subagent.</strong> Ask Claude something like <em>"use a subagent to read these 20 files and summarise the parts about authentication"</em> — the subagent reads them in its own isolated window, and only its summary comes back to yours. Your main conversation stays clean and on-topic. <em>Available in Cowork and Claude Code; not in Claude.ai chat.</em></li>
+  <li><strong>Be specific about scope.</strong> "Read <code>src/api/users.ts</code> and explain the auth flow" is much cheaper than "look through the codebase and explain how auth works." Same for the web — give Claude a specific URL or query rather than asking it to "research X."</li>
+</ul>
+
+<div class="section-divider">Part 5</div>
+
+<h1 id="part5">Memory across conversations</h1>
+<p>Within one conversation, the context window does the remembering (Part 1). But what about the next time you talk to Claude? <strong>Different products use different mechanisms</strong> to persist things across conversations. Knowing which is which saves a lot of confusion.</p>
+
+<h2>1. Project instructions and knowledge — Claude.ai chat, Cowork</h2>
+<p>Both Claude.ai chat and Cowork organise work into <strong>Projects</strong>. Each Project has:</p>
+<ul>
+  <li>An <strong>instructions</strong> section where you write rules — how Claude should behave, tone, conventions, what to avoid.</li>
+  <li>A <strong>knowledge files</strong> area where you upload documents that Claude reads in every conversation in that Project.</li>
+</ul>
+<p>Outside the Project, none of this applies. Useful for a focused context that shouldn't bleed into your other work — e.g., an "Customer Support" Project with our SOP and tone of voice, kept separate from general chats.</p>
+<p class="ref-link">→ <a href="#ref-project">Sample project instruction (jump to appendix)</a></p>
+
+<h2>2. Account-wide instructions — Claude.ai chat &amp; Cowork</h2>
+<p>Both Claude.ai chat and Cowork have account-wide instruction fields where rules apply to every conversation, regardless of which Project you're in.</p>
+<ul>
+  <li><strong>Claude.ai chat:</strong> "<strong>Instructions for Claude</strong>" (also called <em>profile instructions</em>). Open by clicking your initials in the lower-left of Claude.ai → Settings → Instructions for Claude.</li>
+  <li><strong>Cowork:</strong> "<strong>Global instructions</strong>" under Settings → Cowork → Global instructions. Same idea — applies to every Cowork task across all your projects.</li>
+</ul>
+<p>Use either for things you'd otherwise retype every conversation: preferred terminology, communication style, role context, "always do X" rules, typical scenarios you encounter.</p>
+<p class="ref-link">→ <a href="#ref-epistemic">Sample global instructions — Epistemic rules (jump to appendix)</a></p>
+<p>Related personalization feature in Claude.ai chat: <strong>Styles</strong> customise <em>how</em> Claude formats responses (tone, structure, length). Styles are about delivery; Instructions are about context. They work independently or together.</p>
+
+<h2>3. CLAUDE.md files — Claude Code</h2>
+<p>Claude Code uses a different mechanism: <code>CLAUDE.md</code> markdown files at multiple scopes that load at the start of every session. More specific scopes win on conflict.</p>
+<ul>
+  <li><strong>Project</strong> (<code>./CLAUDE.md</code>): lives in the project folder, shared with your team via git. <em>"All API handlers live in src/api/handlers/."</em></li>
+  <li><strong>User</strong> (<code>~/.claude/CLAUDE.md</code>): your personal preferences, applied to every project on your machine. <em>"Always use British English."</em></li>
+  <li><strong>Local</strong> (<code>./CLAUDE.local.md</code>): per-project personal preferences, gitignored — just for you on this project.</li>
+</ul>
+<p>This is the canonical way to give Claude Code persistent instructions. Cowork and Claude.ai chat use the Project instructions section instead.</p>
+
+<h2>4. Auto memory — different mechanics per product</h2>
+<p>Claude can take notes about you and your work without you having to repeat yourself. When you correct it (<em>"no, we use pnpm not npm"</em>) or it learns something useful (<em>"the build command is `make ci`"</em>), it can save that for next time. The mechanism and scope differ per product:</p>
+<ul>
+  <li><strong>Claude.ai chat:</strong> account-wide Memory under Settings → Capabilities → "View and edit memory." Auto-summarises your chat history every 24 hours and uses the synthesis as context for new conversations. Each Project also has its own separate memory space. View, edit, pause, or reset from settings.</li>
+  <li><strong>Cowork:</strong> memory is <strong>scoped to projects only</strong>, not account-wide. Each Cowork project has its own memory space; Claude remembers context from tasks within that project and applies it to future tasks in the same project. Memory is not retained across standalone Cowork tasks outside a project.</li>
+  <li><strong>Claude Code:</strong> file-based auto memory at <code>~/.claude/projects/&lt;project&gt;/memory/</code>. Per-project (per git repo), machine-local — doesn't sync across devices or cloud.</li>
+</ul>
+<p><strong>Practical advice:</strong> open the Memory area in whichever Claude product you're using and you'll see exactly what it's remembering. Edit or delete entries you don't want.</p>
+<p><strong>Triggering a memory write yourself (Claude.ai chat &amp; Cowork):</strong> just tell Claude — "remember that we use pnpm not npm" or "save this to memory" — and it'll write the entry. You can also add or edit entries manually in Settings → Capabilities → "View and edit memory."</p>
+<p><strong>Search past chats (Claude.ai chat only):</strong> a separate feature from Memory. When you reference an earlier chat ("what did we decide about X last week?"), Claude searches your chat history directly via RAG and pulls in the relevant excerpts. Toggle under Settings → Capabilities → Preferences → "Search and reference chats." Scope: searches all your non-project chats when you're outside a project, or just the current Project's chats when you're inside one. Doesn't apply to Cowork tasks.</p>
+
+<div class="callout">
+  <div class="callout-label">The mental model</div>
+  <p><strong>Skills, MCPs, agents, commands, hooks</strong> are the <em>parts</em>. <strong>Plugins</strong> bundle them. <strong>Projects</strong> scope a conversation to its own instructions and knowledge (Claude.ai chat, Cowork). <strong>Instructions for Claude</strong> (Claude.ai) and <strong>Global instructions</strong> (Cowork) sit at your account level. <strong>Styles</strong> change how Claude formats responses (Claude.ai). <strong>CLAUDE.md</strong> is your written rules (Claude Code). <strong>Auto memory</strong> is what Claude writes for itself, per project, on your machine.</p>
+</div>
+
+<div class="section-divider">Part 6</div>
+
+<h1 id="part6">Where each thing lives</h1>
+<p>This is the table to bookmark. When someone says "can I use [feature] in [product]?" — this answers it.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Concept</th>
+      <th>Claude.ai (chat)</th>
+      <th>Cowork</th>
+      <th>Claude Code</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Audience</strong></td>
+      <td>Everyone</td>
+      <td>Everyone (knowledge work)</td>
+      <td>Developers</td>
+    </tr>
+    <tr>
+      <td><strong>Interface</strong></td>
+      <td>Web / desktop chat</td>
+      <td>Desktop app</td>
+      <td>Terminal CLI</td>
+    </tr>
+    <tr>
+      <td><strong>Persistent instructions</strong></td>
+      <td class="center check">✓ Instructions for Claude + Project instructions + Styles</td>
+      <td class="center check">✓ Global instructions (Settings → Cowork) + Project instructions</td>
+      <td class="center check">✓ Via <code>CLAUDE.md</code> (project + user + local)</td>
+    </tr>
+    <tr>
+      <td><strong>Skills</strong></td>
+      <td class="center check">✓ Settings → Capabilities → Skills</td>
+      <td class="center check">✓ Customize → Skills (plus more via plugins)</td>
+      <td class="center check">✓ <code>~/.claude/skills/</code></td>
+    </tr>
+    <tr>
+      <td><strong>MCPs / Connectors</strong></td>
+      <td class="center check">✓ Many (Notion, Slack, etc.)</td>
+      <td class="center check">✓ Many (Notion, Slack, etc.)</td>
+      <td class="center check">✓ Configurable</td>
+    </tr>
+    <tr>
+      <td><strong>Slash commands</strong> (manually-invoked skills)</td>
+      <td class="center check">✓ via skills</td>
+      <td class="center check">✓</td>
+      <td class="center check">✓</td>
+    </tr>
+    <tr>
+      <td><strong>Agents (subagents)</strong></td>
+      <td class="center no">✗</td>
+      <td class="center check">✓</td>
+      <td class="center check">✓</td>
+    </tr>
+    <tr>
+      <td><strong>Hooks</strong> (lifecycle scripts)</td>
+      <td class="center no">✗</td>
+      <td class="center no">✗</td>
+      <td class="center check">✓</td>
+    </tr>
+    <tr>
+      <td><strong>Plugins</strong></td>
+      <td class="center no">✗</td>
+      <td class="center check">✓</td>
+      <td class="center check">✓</td>
+    </tr>
+    <tr>
+      <td><strong>Projects</strong></td>
+      <td class="center check">✓</td>
+      <td class="center check">✓</td>
+      <td class="center check">via working directory + <code>CLAUDE.md</code></td>
+    </tr>
+    <tr>
+      <td><strong>File access</strong></td>
+      <td class="center check">Uploads + via connectors (Google Drive, OneDrive, SharePoint)</td>
+      <td class="center check">Selected folders (you grant access)</td>
+      <td class="center check">Working directory + <code>--add-dir</code> (with permission rules)</td>
+    </tr>
+    <tr>
+      <td><strong>Web browsing</strong></td>
+      <td class="center check">Web search + Research</td>
+      <td class="center check">✓</td>
+      <td class="center check">Built-in WebFetch + WebSearch</td>
+    </tr>
+    <tr>
+      <td><strong>Best for</strong></td>
+      <td>Quick questions, drafting, summarising</td>
+      <td>Knowledge work, automation, multi-step tasks</td>
+      <td>Coding, dev workflows</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>The simple rule</h2>
+<ul>
+  <li>Just want to ask Claude something? → <strong>claude.ai chat</strong></li>
+  <li>Want Claude to <em>do</em> work for you across files, apps, the web? → <strong>Cowork</strong></li>
+  <li>Writing or fixing code? → <strong>Claude Code</strong></li>
+</ul>
+<p>You don't have to pick one and stick with it. Most people will use claude.ai daily and reach for Cowork when a task gets bigger.</p>
+
+<div class="section-divider">Part 7</div>
+
+<h1 id="part7">What's next</h1>
+
+<h2>Next workshop: prompts</h2>
+<p>Friday, May 15, 2026 · Online</p>
+<p><strong>"Why your prompts suck and how to fix them."</strong> We'll show what makes a prompt great and the difference it creates. Bring a real bad prompt of yours — sales email, customer message, code review, anything. We'll iterate on real ones live.</p>
+
+<h2>AI Fridays — every Friday</h2>
+<p>Drop-in office hour. Bring anything AI-related you're stuck on — prompts that aren't working, workflows you'd like to automate, weird outputs, "where do I even start" questions. No agenda, no judgment, lurking welcome.</p>
+
+<h2>Async questions during the week</h2>
+<p>DM Dogus, or post in <code>#ai-office-hours</code> on Slack.</p>
+
+<h2>The AI hub</h2>
+<p>Notes, best practices, recaps, the Prompt Standard, the developer Claude Code setup guide — all live in our Notion AI hub: <strong>an internal AI hub</strong>. Find it under <em>the team workspace → the KnowHow space → an internal AI hub</em>.</p>
+
+<div class="callout">
+  <div class="callout-label">If you remember nothing else</div>
+  <p>Three things. <strong>Claude is an LLM.</strong> <strong>You'll mostly use it through claude.ai chat or Cowork.</strong> <strong>If you're stuck, come to AI Fridays.</strong></p>
+</div>
+
+<div class="section-divider">Appendix</div>
+
+<h1 id="appendix">Reference examples</h1>
+<p>Two ready-to-paste examples showing how layered instructions actually work in practice. The global rules cover <em>how Claude should think</em> — flag uncertainty, don't fabricate, ask before assuming. The project rules cover <em>what's true in this domain</em> — terminology, audience, output format. Inside the project, both apply. Outside, only the global rules do.</p>
+
+<h2 id="ref-epistemic">1. Global Instructions for Claude — Epistemic rules</h2>
+<p>These rules apply to every conversation, in every Project, on this account. Paste them into <strong>Claude.ai chat → Settings → Instructions for Claude</strong>, or <strong>Cowork → Settings → Cowork → Global instructions</strong>.</p>
+<pre class="code-block"><code>## Epistemic rules
+- If you are uncertain, say so explicitly. Use phrases like "I'm not sure" or "I'd need to check" rather than guessing.
+- Never fabricate facts, citations, file paths, function names, API endpoints, or data. If you don't know, say you don't know.
+- Distinguish what you know from what you assume. When you assume, label it: "Assuming X, then…"
+- If the request is ambiguous or missing key info, ask one focused clarifying question before doing the work — do not proceed on best-guess assumptions for high-cost actions.
+- For low-cost reversible actions, you may proceed and flag your assumption explicitly.
+- If you make a mistake, acknowledge it directly and correct it. Do not over-apologize or cover.
+- Never claim a task is complete unless you've actually verified the output (ran the code, read the file, checked the result).</code></pre>
+
+<h2 id="ref-project">2. Project-specific instruction — Customer-facing communications</h2>
+<p>Project-level rules layer on top of the global ones. Paste this into a Claude.ai or Cowork Project's instructions field. Note how this file says nothing about epistemic hygiene — that's already handled by the global rules above. This file only adds what's specific to the working context: who the audience is, which language to use, and what's off-limits without sign-off.</p>
+<pre class="code-block"><code># Project purpose
+Anything customer-facing — emails, FAQ updates, support replies, marketing copy. Drafts, edits, reviews, brainstorming.
+
+# Standing rules
+- Audience is mostly fleet operators and dealerships, not battery experts. Default to plain language; only use technical terms if the customer used them first.
+- Tone: factual and helpful. No marketing-hype superlatives ("world-leading," "revolutionary").
+- Anything involving pricing, warranty terms, or delivery dates — flag for me to confirm before producing a final draft.
+- For technical claims about a battery, only use figures I provide. Don't estimate.
+
+# Language selection
+- Match the customer's language. If they wrote in German, respond in German. If in English, respond in English.
+- For internal-only material (notes to me, drafts I'll edit before sending), default to English.
+- If the input is mixed-language or you can't tell which language the customer uses, ask before drafting. Don't default to one or the other.</code></pre>
+
+<div class="callout">
+  <div class="callout-label">Why split them this way</div>
+  <p>Global instructions stay short and universal — they describe <em>how you want Claude to behave at all times</em>. Project instructions stay focused on a single use case — they describe <em>the world this project lives in</em>. Mixing the two leads to bloated, hard-to-maintain instruction files that eat your context window before you've even typed a message.</p>
+</div>
+
+<h2>Further reading — official Claude docs</h2>
+<p>The Anthropic docs used to verify the claims in this workshop. Bookmark anything that looks useful.</p>
+<ul>
+  <li><a href="https://support.claude.com/en/articles/13345190-get-started-with-claude-cowork">Get started with Claude Cowork</a></li>
+  <li><a href="https://support.claude.com/en/articles/14116274-organize-your-tasks-with-projects-in-claude-cowork">Organize your tasks with projects in Cowork</a></li>
+  <li><a href="https://support.claude.com/en/articles/13854387-schedule-recurring-tasks-in-claude-cowork">Schedule recurring tasks in Cowork</a></li>
+  <li><a href="https://support.claude.com/en/articles/13837440-use-plugins-in-cowork">Use plugins in Cowork</a></li>
+  <li><a href="https://support.claude.com/en/articles/11817273-use-claude-s-chat-search-and-memory-to-build-on-previous-context">Use Claude's chat search and memory</a></li>
+  <li><a href="https://claude.com/skills">Skills overview</a></li>
+  <li><a href="https://claude.com/plugins">Plugins directory</a></li>
+</ul>
+
+
+</div>
+
+<!-- FOOTER -->
+<footer class="doc-footer">
+  AI Workshop Series · Workshop #1 · Claude Basics<br>
+  Last updated: May 2026 · Hosted by Dogus Ural<br>
+  Questions? <code>#ai-office-hours</code> on Slack, or come to AI Fridays.
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+---
+import { getCollection } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { formatDate, sortByDateDesc } from "../../lib/posts";
+
+const workshops = sortByDateDesc(
+  await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("workshop")),
+).reverse(); // chronological: #1 first
+
+const icons: Record<string, string> = {
+  "ai-workshop-1-claude-basics": "🤖",
+  "ai-workshop-2-why-your-prompts-suck": "✍️",
+  "ai-workshop-3-build-your-own-skills": "🧩",
+  "ai-workshop-4-connectors-and-mcp": "🖐️",
+};
+---
+
+<BaseLayout
+  title="AI Workshop Series | Projects | Dogus Ural"
+  description="A hands-on internal workshop series I run teaching teams to work with Claude."
+>
+  <section class="section">
+    <div class="container">
+      <h1>🤖 AI Workshop Series</h1>
+      <p class="lead muted">
+        A recurring internal series I run to get a whole company working effectively with AI. Practical,
+        no-jargon sessions that build from fundamentals up to custom skills and connecting Claude to real tools. Each
+        session ships with a self-contained handout and a recording.
+      </p>
+
+      <ol class="ship-list">
+        {workshops.map((post, index) => (
+          <li class="ship-row">
+            <div class="ship-meta muted">
+              <span class="ship-index">#{index + 1}</span>
+              <span class="pill">{formatDate(post.data.date)}</span>
+            </div>
+            <div class="ship-main">
+              <h2>
+                <span>{icons[post.slug] ?? "🤖"}</span>{" "}
+                <a href={`/posts/${post.slug}`}>{post.data.title.replace(/ — AI Workshop #\d+$/, "")}</a>
+              </h2>
+              <p>{post.data.excerpt}</p>
+              <a class="read-link" href={`/posts/${post.slug}`}>Read the recap →</a>
+            </div>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lead {
+    max-width: 70ch;
+    font-size: 1.05rem;
+    margin-top: 0.6rem;
+  }
+
+  .ship-list {
+    list-style: none;
+    margin: 2rem 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  .ship-row {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 0.8rem 1.4rem;
+    padding: 1.6rem 1.8rem;
+    background: var(--surface-card);
+    border-radius: var(--rounded-lg);
+  }
+
+  .ship-meta {
+    display: grid;
+    align-content: start;
+    gap: 0.4rem;
+    font-size: 0.84rem;
+  }
+
+  .ship-index {
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .ship-main h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    line-height: 1.3;
+  }
+
+  .ship-main h2 a {
+    text-decoration: none;
+  }
+
+  .ship-main p {
+    margin: 0.5rem 0 0;
+    max-width: 74ch;
+  }
+
+  .read-link {
+    display: inline-block;
+    margin-top: 0.7rem;
+    font-weight: 500;
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 760px) {
+    .ship-row {
+      grid-template-columns: 1fr;
+      gap: 0.55rem;
+    }
+
+    .ship-meta {
+      grid-template-columns: auto auto;
+      align-items: center;
+    }
+  }
+</style>

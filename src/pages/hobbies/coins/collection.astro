@@ -576,11 +576,10 @@ const outlineTokens = groupedCoinsWithAnchors.flatMap((group) =>
 
 <style>
   .cabinet-outline {
-    border: 1px dashed color-mix(in srgb, var(--accent) 42%, var(--border));
-    border-radius: 0;
-    padding: 0.9rem 0.9rem 1rem;
-    background: color-mix(in srgb, var(--bg-elevated) 22%, transparent);
-    margin: 1rem 0 1.25rem;
+    border-radius: var(--rounded-lg);
+    padding: 1.4rem 1.6rem;
+    background: var(--surface-card);
+    margin: 1.4rem 0 1.5rem;
   }
 
   .cabinet-outline h2 {
@@ -630,8 +629,8 @@ const outlineTokens = groupedCoinsWithAnchors.flatMap((group) =>
   }
 
   .coin-item {
-    border-bottom: 1px dashed var(--border);
-    padding-bottom: 1.45rem;
+    border-bottom: 1px solid var(--hairline);
+    padding-bottom: 1.6rem;
     margin-bottom: 0.35rem;
     scroll-margin-top: 6.5rem;
   }
@@ -643,9 +642,10 @@ const outlineTokens = groupedCoinsWithAnchors.flatMap((group) =>
   .coin-image {
     width: min(760px, 100%);
     display: block;
-    border: 1px dashed var(--border);
-    border-radius: 0;
-    margin: 0.5rem 0 0.8rem;
+    border: 1px solid var(--hairline);
+    border-radius: var(--rounded-md);
+    background: var(--surface-soft);
+    margin: 0.7rem 0 0.9rem;
   }
 
   @media (max-width: 720px) {

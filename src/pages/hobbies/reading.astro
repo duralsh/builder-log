@@ -37,19 +37,18 @@ import { BOOKS } from "../../lib/books";
   }
 
   .book-item {
-    border: 1px dashed var(--border);
-    border-radius: 0;
-    padding: 0.6rem;
-    background: color-mix(in srgb, var(--bg-elevated) 24%, transparent);
+    border-radius: var(--rounded-lg);
+    padding: 0.7rem;
+    background: var(--surface-card);
   }
 
   .book-cover {
     width: 100%;
     aspect-ratio: 2 / 3;
     object-fit: cover;
-    border: 1px dashed var(--border);
-    border-radius: 0;
-    background: color-mix(in srgb, var(--bg) 82%, black);
+    border: 1px solid var(--hairline);
+    border-radius: var(--rounded-sm);
+    background: var(--surface-strong);
   }
 
   .book-item h3 {

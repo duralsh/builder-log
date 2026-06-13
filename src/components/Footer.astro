@@ -1,38 +1,222 @@
+---
+const year = new Date().getFullYear();
+
+const columns = [
+  {
+    title: "Site",
+    links: [
+      { label: "Home", href: "/" },
+      { label: "CV", href: "/cv" },
+      { label: "Projects", href: "/projects" },
+      { label: "All Posts", href: "/posts" },
+    ],
+  },
+  {
+    title: "Hobbies",
+    links: [
+      { label: "Lifting", href: "/hobbies/lifting" },
+      { label: "Numismatics", href: "/hobbies/coins" },
+      { label: "Reading", href: "/hobbies/reading" },
+      { label: "Cabinet", href: "/hobbies/coins/collection" },
+    ],
+  },
+  {
+    title: "Elsewhere",
+    links: [
+      { label: "Email", href: "mailto:dogusural@gmail.com" },
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/dogus-ural" },
+      { label: "GitHub", href: "https://github.com/duralsh" },
+      { label: "X", href: "https://x.com/dural_sh" },
+    ],
+  },
+];
+---
+
 <footer>
   <div class="container footer-wrap">
-    <p>Dogus Ural · Vienna, Austria</p>
-    <div class="links">
-      <a href="mailto:dogusural@gmail.com">[email]</a>
-      <a href="https://www.linkedin.com/in/dogus-ural" target="_blank" rel="noreferrer">[linkedin]</a>
-      <a href="https://github.com/duralsh" target="_blank" rel="noreferrer">[github]</a>
-      <a href="https://x.com/dural_sh" target="_blank" rel="noreferrer">[x]</a>
+    <div class="footer-brand">
+      <a class="brand" href="/">
+        <span class="brand-dot" aria-hidden="true"></span>
+        Dogus Ural
+      </a>
+      <p class="muted">Product leader building at the intersection of AI and finance. Vienna, Austria.</p>
     </div>
+
+    <div class="footer-cols">
+      {
+        columns.map((col) => (
+          <div class="footer-col">
+            <h4>{col.title}</h4>
+            <ul>
+              {col.links.map((link) => {
+                const external = link.href.startsWith("http") || link.href.startsWith("mailto");
+                return (
+                  <li>
+                    <a href={link.href} target={external ? "_blank" : undefined} rel={external ? "noreferrer" : undefined}>
+                      {link.label}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+
+  <div class="footer-base">
+    <div class="container footer-base-inner">
+      <span class="muted">© {year} Dogus Ural</span>
+      <span class="muted">Built with Astro</span>
+    </div>
+  </div>
+
+  <!-- Signature horizon -->
+  <div class="horizon" aria-hidden="true">
+    <div class="mountain mountain--back"></div>
+    <div class="mountain mountain--mid"></div>
+    <div class="mountain mountain--front"></div>
   </div>
 </footer>
 
 <style>
   footer {
-    border-top: 1px dashed var(--border);
     margin-top: auto;
+    background: var(--surface-soft);
   }
 
   .footer-wrap {
-    padding: 1.2rem 0 1.5rem;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.8rem 1.1rem;
-    justify-content: space-between;
+    display: grid;
+    gap: 2.5rem;
+    grid-template-columns: minmax(220px, 1fr) 2fr;
+    padding: 4rem 0 2.5rem;
+  }
+
+  .brand {
+    display: inline-flex;
     align-items: center;
+    gap: 0.55rem;
+    font-family: var(--font-display);
+    font-weight: 600;
+    letter-spacing: -0.03em;
+    color: var(--ink);
+    font-size: 1.05rem;
+    text-decoration: none;
   }
 
-  .footer-wrap p {
+  .brand-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--brand-pink);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-pink) 22%, transparent);
+  }
+
+  .footer-brand p {
+    margin: 0.9rem 0 0;
+    max-width: 34ch;
+    font-size: 0.92rem;
+  }
+
+  .footer-cols {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .footer-col h4 {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.9rem;
+  }
+
+  .footer-col ul {
+    list-style: none;
     margin: 0;
-    color: var(--text-muted);
+    padding: 0;
+    display: grid;
+    gap: 0.55rem;
   }
 
-  .links {
+  .footer-col a {
+    color: var(--body);
+    text-decoration: none;
+    font-size: 0.92rem;
+  }
+
+  .footer-col a:hover {
+    color: var(--ink);
+  }
+
+  .footer-base {
+    border-top: 1px solid var(--hairline);
+  }
+
+  .footer-base-inner {
     display: flex;
+    justify-content: space-between;
     gap: 1rem;
     flex-wrap: wrap;
+    padding: 1.2rem 0;
+    font-size: 0.85rem;
+  }
+
+  /* Signature mountain horizon */
+  .horizon {
+    position: relative;
+    height: 120px;
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--surface-soft), var(--surface-strong));
+  }
+
+  .mountain {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 130%;
+    height: 0;
+    transform: translateX(-50%);
+    border-style: solid;
+    border-color: transparent;
+  }
+
+  .mountain--back {
+    border-width: 0 360px 90px 360px;
+    border-bottom-color: var(--brand-lavender);
+    opacity: 0.55;
+    margin-left: -22%;
+  }
+
+  .mountain--mid {
+    border-width: 0 300px 110px 300px;
+    border-bottom-color: var(--brand-peach);
+    opacity: 0.8;
+    margin-left: 26%;
+  }
+
+  .mountain--front {
+    border-width: 0 340px 80px 340px;
+    border-bottom-color: var(--brand-teal);
+    margin-left: -4%;
+  }
+
+  @media (max-width: 760px) {
+    .footer-wrap {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+      padding: 3rem 0 2rem;
+    }
+
+    .footer-cols {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .horizon {
+      height: 80px;
+    }
   }
 </style>

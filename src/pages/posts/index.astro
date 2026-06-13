@@ -12,12 +12,12 @@ const posts = sortByDateDesc(
   <section class="section">
     <div class="container">
       <h1>🗂️ All Posts</h1>
-      <p class="muted">Chronological feed across work, lifting, and coins.</p>
+      <p class="muted">Chronological feed across work, AI workshops, lifting, and coins.</p>
 
       <div class="post-grid">
         {
           posts.map((post) => (
-            <article class="card post-card">
+            <a class="card post-card" href={`/posts/${post.slug}`}>
               {post.data.cover && <img src={post.data.cover} alt={post.data.title} class="cover-img" loading="lazy" decoding="async" />}
               <div class="post-meta">
                 <span class="pill">{formatDate(post.data.date)}</span>
@@ -27,8 +27,7 @@ const posts = sortByDateDesc(
               </div>
               <h2>{post.data.title}</h2>
               <p class="muted">{post.data.excerpt}</p>
-              <a href={`/posts/${post.slug}`}>Read post</a>
-            </article>
+            </a>
           ))
         }
       </div>

@@ -1142,42 +1142,71 @@ const totalCoins = coins.length;
           <desc id="mintmap-desc">
             A map from Gaul to the Indus showing {mintPins.length} mints, sized by how many coins each struck.
           </desc>
-          <rect class="map-sea" x="0" y="0" width={MAP_W} height={MAP_H} />
-          <path class="map-graticule" d={graticulePath} />
-          <path class="map-land" d={landPath} />
+          <defs>
+            {/* Defined once and referenced twice — as the relief's clip and as
+                the visible coastline — rather than repeating 44 KB of path. */}
+            <path id="land-outline" d={landPath} />
+            <clipPath id="land-clip">
+              <use href="#land-outline" />
+            </clipPath>
+          </defs>
+          <g class="map-viewport">
+            <rect class="map-sea" x="0" y="0" width={MAP_W} height={MAP_H} />
+            <path class="map-graticule" d={graticulePath} vector-effect="non-scaling-stroke" />
+            {/* Natural Earth shaded relief, reprojected at build time to this
+                exact projection, clipped to land so the sea stays flat. */}
+            <image
+              class="map-relief"
+              href="/map/relief.webp"
+              x="0"
+              y="0"
+              width={MAP_W}
+              height={MAP_H}
+              preserveAspectRatio="none"
+              clip-path="url(#land-clip)"
+            />
+            <use href="#land-outline" class="map-land" vector-effect="non-scaling-stroke" />
           <g class="mint-layer">
             {mintPins.map((pin) => (
-              <a
-                class="mint"
-                href={`#mint-${pin.key}`}
-                data-mint={pin.key}
-                aria-label={`${pin.label} — ${pin.count} coin${pin.count === 1 ? "" : "s"}`}
-              >
-                <title>{pin.label}{pin.region ? " (region)" : ""} — {pin.breakdown}</title>
-                <circle class="mint-hit" cx={pin.x} cy={pin.y} r={hitRadiusFor(pin)} />
-                <circle
-                  class={`mint-dot mint-dot--${categorySlug(pin.category)}`}
-                  cx={pin.x}
-                  cy={pin.y}
-                  r={DOT_R}
-                />
-              </a>
+              /* Positioned on the outer group, sized on the inner one: the
+                 inner group is counter-scaled against the zoom so markers hold
+                 a constant screen size. Without that, zooming magnifies the
+                 dots along with the map and the crowded Aegean never separates. */
+              <g transform={`translate(${pin.x} ${pin.y})`}>
+                <a
+                  class="mint"
+                  href={`#mint-${pin.key}`}
+                  data-mint={pin.key}
+                  aria-label={`${pin.label} — ${pin.count} coin${pin.count === 1 ? "" : "s"}`}
+                >
+                  <g class="mint-scale">
+                    <title>{pin.label}{pin.region ? " (region)" : ""} — {pin.breakdown}</title>
+                    <circle class="mint-hit" cx="0" cy="0" r={hitRadiusFor(pin)} />
+                    <circle class={`mint-dot mint-dot--${categorySlug(pin.category)}`} cx="0" cy="0" r={DOT_R} />
+                  </g>
+                </a>
+              </g>
             ))}
           </g>
           {/* Labels paint in their own layer so a neighbouring marker can never
               cover one — SVG has no z-index, only document order. */}
           <g class="label-layer" aria-hidden="true">
             {mintPins.map((pin) => (
-              <text
-                class="mint-label"
-                data-mint={pin.key}
-                x={pin.x + pin.dx}
-                y={pin.y + pin.dy + (pin.dy < 0 ? -DOT_R - 3 : DOT_R + 11)}
-                text-anchor="middle"
-              >
-                {pin.label}
-              </text>
+              <g transform={`translate(${pin.x} ${pin.y})`}>
+                <g class="mint-scale">
+                  <text
+                    class="mint-label"
+                    data-mint={pin.key}
+                    x={pin.dx}
+                    y={pin.dy + (pin.dy < 0 ? -DOT_R - 3 : DOT_R + 11)}
+                    text-anchor="middle"
+                  >
+                    {pin.label}
+                  </text>
+                </g>
+              </g>
             ))}
+          </g>
           </g>
         </svg>
         </div>
@@ -1329,6 +1358,117 @@ const totalCoins = coins.length;
 
       const isCategory = (value) => sections.some((section) => section.dataset.period === value);
       const fromHash = () => decodeURIComponent(location.hash.slice(1));
+
+      const svgEl = document.querySelector(".mint-map svg");
+
+      // --- pan & zoom ------------------------------------------------------
+      // Hand-rolled rather than pulling in d3-zoom: this is the whole feature
+      // in a few dozen lines, and the page still ships no mapping library.
+      // Everything inside .map-viewport scales together, so marker spacing and
+      // hit areas stay in proportion and clicks cannot start colliding.
+      const viewport = document.querySelector(".map-viewport");
+      const figure = document.querySelector(".mint-map");
+      const MIN_K = 1;
+      // The relief carries ~2000px across this extent, so it softens past ~2x.
+      // 6x is well beyond what is needed to separate the Aegean cluster (mints
+      // 9.6 units apart become ~70px apart on a desktop display) and keeps the
+      // terrain reading as soft shading rather than obvious pixels.
+      const MAX_K = 6;
+      let k = 1;
+      let tx = 0;
+      let ty = 0;
+
+      const svgSize = () => {
+        const r = svgEl.getBoundingClientRect();
+        return { w: r.width, h: r.height, left: r.left, top: r.top };
+      };
+
+      // Keep the map covering its frame: never let panning expose empty space.
+      const clamp = () => {
+        const { w, h } = svgSize();
+        const maxX = 0;
+        const minX = w - w * k;
+        const maxY = 0;
+        const minY = h - h * k;
+        tx = Math.min(maxX, Math.max(minX, tx));
+        ty = Math.min(maxY, Math.max(minY, ty));
+      };
+
+      const applyTransform = () => {
+        clamp();
+        const { w } = svgSize();
+        const unit = w / 1000; // px per viewBox unit at k = 1
+        viewport.setAttribute("transform", `translate(${tx / unit} ${ty / unit}) scale(${k})`);
+        svgEl.style.setProperty("--k", String(k));
+        figure.classList.toggle("is-zoomed", k > 1);
+      };
+
+      const zoomAt = (clientX, clientY, factor) => {
+        const { left, top } = svgSize();
+        const px = clientX - left;
+        const py = clientY - top;
+        const next = Math.min(MAX_K, Math.max(MIN_K, k * factor));
+        if (next === k) return;
+        // hold the point under the cursor fixed
+        tx = px - (px - tx) * (next / k);
+        ty = py - (py - ty) * (next / k);
+        k = next;
+        if (k === MIN_K) { tx = 0; ty = 0; }
+        applyTransform();
+      };
+
+      svgEl.addEventListener(
+        "wheel",
+        (event) => {
+          if (!event.ctrlKey && Math.abs(event.deltaY) < 2) return;
+          event.preventDefault();
+          zoomAt(event.clientX, event.clientY, Math.pow(0.998, event.deltaY));
+        },
+        { passive: false },
+      );
+
+      const pointers = new Map();
+      let pinchStart = null;
+
+      svgEl.addEventListener("pointerdown", (event) => {
+        pointers.set(event.pointerId, event);
+        if (pointers.size === 2) {
+          const [a, b] = [...pointers.values()];
+          pinchStart = { dist: Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY), k };
+        }
+      });
+
+      svgEl.addEventListener("pointermove", (event) => {
+        if (!pointers.has(event.pointerId)) return;
+        const prev = pointers.get(event.pointerId);
+        pointers.set(event.pointerId, event);
+
+        if (pointers.size === 2 && pinchStart) {
+          const [a, b] = [...pointers.values()];
+          const dist = Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+          const factor = (dist / pinchStart.dist) * (pinchStart.k / k);
+          zoomAt((a.clientX + b.clientX) / 2, (a.clientY + b.clientY) / 2, factor);
+          return;
+        }
+        if (pointers.size === 1 && k > 1) {
+          event.preventDefault();
+          figure.classList.add("is-panning");
+          tx += event.clientX - prev.clientX;
+          ty += event.clientY - prev.clientY;
+          applyTransform();
+        }
+      });
+
+      const endPointer = (event) => {
+        pointers.delete(event.pointerId);
+        if (pointers.size < 2) pinchStart = null;
+        if (pointers.size === 0) figure.classList.remove("is-panning");
+      };
+      svgEl.addEventListener("pointerup", endPointer);
+      svgEl.addEventListener("pointercancel", endPointer);
+      svgEl.addEventListener("pointerleave", endPointer);
+
+      window.addEventListener("resize", applyTransform);
 
       // --- mint filter -----------------------------------------------------
       // Period and mint are alternative lenses on the same shelf, never
@@ -1599,14 +1739,43 @@ const totalCoins = coins.length;
     opacity: 0.55;
   }
 
-  /* Drawn as an outline rather than a silhouette: a faint wash so land still
-     reads as land, and a crisp thin coastline carrying the detail. */
+  /* The relief supplies the land tone, so the outline only has to draw the
+     coast. non-scaling-stroke keeps it hairline-crisp at every zoom level. */
   .map-land {
-    fill: color-mix(in srgb, var(--muted) 10%, transparent);
-    stroke: color-mix(in srgb, var(--muted) 75%, transparent);
-    stroke-width: 0.7;
+    fill: none;
+    stroke: color-mix(in srgb, var(--muted) 80%, transparent);
+    stroke-width: 0.9;
     stroke-linejoin: round;
     stroke-linecap: round;
+  }
+
+  .map-relief {
+    opacity: 0.85;
+  }
+
+  /* The relief ships as light-on-white; invert it for the dark palette so
+     ridges read correctly instead of glowing. */
+  :global(html[data-theme="dark"]) .map-relief {
+    filter: invert(1) brightness(0.62) contrast(1.05);
+    opacity: 0.55;
+  }
+
+  .map-viewport {
+    transform-origin: 0 0;
+  }
+
+  /* Undo the viewport zoom for markers and labels only. --k is set by the
+     pan/zoom code; the fallback keeps them correct before it runs. */
+  .mint-scale {
+    transform: scale(calc(1 / var(--k, 1)));
+  }
+
+  .mint-map.is-zoomed .map-scroll {
+    cursor: grab;
+  }
+
+  .mint-map.is-panning .map-scroll {
+    cursor: grabbing;
   }
 
   .mint {

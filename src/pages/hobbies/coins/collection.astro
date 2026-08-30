@@ -1037,10 +1037,11 @@ type MintPin = {
 };
 
 const mintCoins = new Map<string, (typeof coins)[number][]>();
-let unlocatable = 0;
 for (const coin of coins) {
   const key = mintKey(coin.mint);
-  if (key === null) { unlocatable += 1; continue; }
+  // Coins whose mint cannot be read simply have no pin; they remain listed in
+  // the cabinet below, so nothing is lost by leaving them off the map.
+  if (key === null) continue;
   if (!MINTS[key]) {
     throw new Error(`Cabinet map: no coordinates for mint "${coin.mint}" (key "${key}") on "${coin.title}". Add it to MINTS.`);
   }
@@ -1182,11 +1183,6 @@ const totalCoins = coins.length;
         </div>
         <figcaption>
           <span class="map-hint">Tap a mint to see only its coins.</span>
-          {unlocatable > 0 && (
-            <span class="map-note">
-              {unlocatable} coin{unlocatable === 1 ? "" : "s"} not shown — mint illegible.
-            </span>
-          )}
         </figcaption>
       </figure>
 
@@ -1673,10 +1669,6 @@ const totalCoins = coins.length;
     border-top: 1px solid var(--hairline);
     font-size: 0.85rem;
     color: var(--muted);
-  }
-
-  .map-note {
-    margin-left: auto;
   }
 
   /* Active mint chip in the period bar */

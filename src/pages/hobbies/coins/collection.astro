@@ -1047,7 +1047,7 @@ for (const coin of coins) {
 }
 
 const MAP_W = 1000;
-const MAP_H = 430;
+const MAP_H = 520;
 const MAP_PAD = 46;
 
 const projection = geoConicEqualArea()
@@ -1081,7 +1081,7 @@ const mintPins: MintPin[] = [...mintCoins.entries()]
   })
   .sort((a, b) => b.count - a.count);
 
-const radiusFor = (n: number) => 5 + 13 * Math.sqrt(n / maxAtMint);
+const radiusFor = (n: number) => 4 + 10 * Math.sqrt(n / maxAtMint);
 const categorySlug = (c: string) => toToken(c);
 
 const groupedCoinsWithAnchors = groupedCoins.map((group) => ({
@@ -1117,31 +1117,40 @@ const totalCoins = coins.length;
           </desc>
           <rect class="map-sea" x="0" y="0" width={MAP_W} height={MAP_H} />
           <path class="map-land" d={landPath} />
-          {mintPins.map((pin) => (
-            <a
-              class={`mint${pin.count >= 2 ? " mint--major" : ""}`}
-              href={`#mint-${pin.key}`}
-              data-mint={pin.key}
-              aria-label={`${pin.label} — ${pin.count} coin${pin.count === 1 ? "" : "s"}`}
-            >
-              <title>{pin.label}{pin.region ? " (region)" : ""} — {pin.breakdown}</title>
-              <circle class="mint-hit" cx={pin.x} cy={pin.y} r={Math.max(radiusFor(pin.count), 20)} />
-              <circle
-                class={`mint-dot mint-dot--${categorySlug(pin.category)}`}
-                cx={pin.x}
-                cy={pin.y}
-                r={radiusFor(pin.count)}
-              />
+          <g class="mint-layer">
+            {mintPins.map((pin) => (
+              <a
+                class="mint"
+                href={`#mint-${pin.key}`}
+                data-mint={pin.key}
+                aria-label={`${pin.label} — ${pin.count} coin${pin.count === 1 ? "" : "s"}`}
+              >
+                <title>{pin.label}{pin.region ? " (region)" : ""} — {pin.breakdown}</title>
+                <circle class="mint-hit" cx={pin.x} cy={pin.y} r={Math.max(radiusFor(pin.count), 18)} />
+                <circle
+                  class={`mint-dot mint-dot--${categorySlug(pin.category)}`}
+                  cx={pin.x}
+                  cy={pin.y}
+                  r={radiusFor(pin.count)}
+                />
+              </a>
+            ))}
+          </g>
+          {/* Labels paint in their own layer so a neighbouring marker can never
+              cover one — SVG has no z-index, only document order. */}
+          <g class="label-layer" aria-hidden="true">
+            {mintPins.map((pin) => (
               <text
-                class="mint-label"
+                class={`mint-label${pin.count >= 2 ? " mint-label--major" : ""}`}
+                data-mint={pin.key}
                 x={pin.x + pin.dx}
-                y={pin.y + pin.dy + (pin.dy < 0 ? -radiusFor(pin.count) : radiusFor(pin.count) + 10)}
+                y={pin.y + pin.dy + (pin.dy < 0 ? -radiusFor(pin.count) - 3 : radiusFor(pin.count) + 11)}
                 text-anchor="middle"
               >
                 {pin.label}
               </text>
-            </a>
-          ))}
+            ))}
+          </g>
         </svg>
         </div>
         <figcaption>
@@ -1302,6 +1311,7 @@ const totalCoins = coins.length;
       // Period and mint are alternative lenses on the same shelf, never
       // combined: intersecting them would strand the reader on an empty page.
       const pins = [...document.querySelectorAll(".mint")];
+      const labels = [...document.querySelectorAll(".mint-label")];
       const items = [...document.querySelectorAll(".coin-item")];
       const chip = document.getElementById("mint-chip");
       const chipLabel = document.getElementById("mint-chip-label");
@@ -1311,6 +1321,7 @@ const totalCoins = coins.length;
       const clearMint = () => {
         for (const item of items) item.hidden = false;
         for (const pin of pins) pin.classList.remove("is-active");
+        for (const label of labels) label.classList.remove("is-active");
         if (chip) { chip.hidden = true; chip.classList.remove("is-shown"); }
         for (const section of sections) section.hidden = false;
       };
@@ -1328,6 +1339,7 @@ const totalCoins = coins.length;
           section.hidden = [...section.querySelectorAll(".coin-item")].every((i) => i.hidden);
         }
         for (const pin of pins) pin.classList.toggle("is-active", pin.dataset.mint === key);
+        for (const label of labels) label.classList.toggle("is-active", label.dataset.mint === key);
         const active = pins.find((pin) => pin.dataset.mint === key);
         if (chip && chipLabel && active) {
           chipLabel.textContent = `${active.getAttribute("aria-label")}`;
@@ -1558,15 +1570,17 @@ const totalCoins = coins.length;
 
   .mint-dot {
     stroke: var(--canvas);
-    stroke-width: 1.5;
-    opacity: 0.9;
+    stroke-width: 1;
+    /* Semi-transparent so overlapping mints in the Aegean stay readable as
+       separate dots rather than merging into one blob. */
+    opacity: 0.82;
     transition: opacity 0.15s ease, stroke-width 0.15s ease;
   }
 
   .mint:hover .mint-dot,
   .mint:focus .mint-dot {
     opacity: 1;
-    stroke-width: 3;
+    stroke-width: 2.5;
   }
 
   .mint-dot--archaic-greek { fill: var(--brand-ochre); }
@@ -1578,33 +1592,30 @@ const totalCoins = coins.length;
 
   /* Twenty-three labels will not all fit; the busiest mints stay lit and the
      rest surface on hover or keyboard focus. */
+  /* Only the busiest mints carry a standing label; the rest are named by the
+     browser's own tooltip on hover, which also gives the period breakdown. */
   .mint-label {
     font-family: var(--font-body);
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
     fill: var(--ink);
     paint-order: stroke;
-    stroke: var(--surface-card);
-    stroke-width: 3.5;
+    stroke: var(--canvas);
+    stroke-width: 3;
     stroke-linejoin: round;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.15s ease;
   }
 
-  .mint--major .mint-label,
-  .mint:hover .mint-label,
-  .mint:focus .mint-label {
+  .mint-label--major,
+  .mint-label.is-active {
     opacity: 1;
   }
 
   .mint.is-active .mint-dot {
     stroke: var(--ink);
-    stroke-width: 3;
-    opacity: 1;
-  }
-
-  .mint.is-active .mint-label {
+    stroke-width: 2.5;
     opacity: 1;
   }
 

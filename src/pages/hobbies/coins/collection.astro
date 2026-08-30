@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { geoConicEqualArea, geoPath } from "d3-geo";
+import { geoConicEqualArea, geoGraticule, geoPath } from "d3-geo";
 import { feature } from "topojson-client";
 import landTopo from "world-atlas/land-50m.json";
 
@@ -1002,8 +1002,11 @@ const MINTS: Record<string, Mint> = {
   selge: { label: "Selge", lat: 37.23, lon: 31.13, dy: 12 },
   armenia: { label: "Cilician Armenia", lat: 37.45, lon: 35.82, region: true, dy: -12 },
   antioch: { label: "Antioch", lat: 36.20, lon: 36.16, dy: 14 },
-  baktria: { label: "Baktria", lat: 36.76, lon: 66.90, region: true, dy: -12 },
-  "indo-greek": { label: "Indo-Greek realm", lat: 33.20, lon: 72.00, region: true, dy: 14 },
+  baktria: { label: "Bactria", lat: 36.76, lon: 66.90, region: true, dy: -12 },
+  // Menander I ruled from Sagala (modern Sialkot); his realm ran from the Kabul
+  // river east to the Ravi, with attested mints at Taxila and Alexandria-Kapisa.
+  // Bactria proper is a separate centre ~800 km north-west, around Bactra.
+  "indo-greek": { label: "Indo-Greek realm", lat: 32.49, lon: 74.53, region: true, dy: 14 },
 };
 
 // Mints that exist but cannot be placed; counted and reported, never dropped silently.
@@ -1059,11 +1062,15 @@ const projection = geoConicEqualArea()
   );
 projection.clipExtent([[0, 0], [MAP_W, MAP_H]]);
 
+const graticulePath = (geoPath(projection)(geoGraticule().step([10, 10])()) ?? "").replace(
+  /\d+\.\d+/g,
+  (n) => String(Math.round(Number(n) * 10) / 10),
+);
+
 const landFeature = feature(landTopo as never, (landTopo as never as { objects: { land: unknown } }).objects.land as never);
 // Round to 1dp: the full-precision path is several times larger for no visible gain.
 const landPath = (geoPath(projection)(landFeature as never) ?? "").replace(/\d+\.\d+/g, (n) => String(Math.round(Number(n) * 10) / 10));
 
-const maxAtMint = Math.max(...[...mintCoins.values()].map((c) => c.length));
 const mintPins: MintPin[] = [...mintCoins.entries()]
   .map(([key, list]) => {
     const m = MINTS[key];
@@ -1081,7 +1088,26 @@ const mintPins: MintPin[] = [...mintCoins.entries()]
   })
   .sort((a, b) => b.count - a.count);
 
-const radiusFor = (n: number) => 4 + 10 * Math.sqrt(n / maxAtMint);
+// Uniform dots: size-by-count made the Aegean unreadable, and the count is in
+// the tooltip anyway. At r=5 the closest two mints (10 units apart) no longer
+// overlap at all.
+const DOT_R = 5;
+
+// A hit circle wider than the gap to the nearest mint swallows that mint's
+// centre and steals its clicks — which is what made Kalchedon, Athens, Kyzikos
+// and Pergamon unclickable. Cap every hit radius below that gap.
+const nearestGap = (pin: MintPin) => {
+  let best = Infinity;
+  for (const other of mintPins) {
+    if (other.key === pin.key) continue;
+    best = Math.min(best, Math.hypot(pin.x - other.x, pin.y - other.y));
+  }
+  return best;
+};
+// One circle only steals another's click when it covers that circle's CENTRE,
+// i.e. when the radius exceeds the gap — so 0.85 of the gap is both safe and
+// noticeably easier to tap on a phone than half of it.
+const hitRadiusFor = (pin: MintPin) => Math.max(7, Math.min(18, nearestGap(pin) * 0.85));
 const categorySlug = (c: string) => toToken(c);
 
 const groupedCoinsWithAnchors = groupedCoins.map((group) => ({
@@ -1116,6 +1142,7 @@ const totalCoins = coins.length;
             A map from Gaul to the Indus showing {mintPins.length} mints, sized by how many coins each struck.
           </desc>
           <rect class="map-sea" x="0" y="0" width={MAP_W} height={MAP_H} />
+          <path class="map-graticule" d={graticulePath} />
           <path class="map-land" d={landPath} />
           <g class="mint-layer">
             {mintPins.map((pin) => (
@@ -1126,12 +1153,12 @@ const totalCoins = coins.length;
                 aria-label={`${pin.label} — ${pin.count} coin${pin.count === 1 ? "" : "s"}`}
               >
                 <title>{pin.label}{pin.region ? " (region)" : ""} — {pin.breakdown}</title>
-                <circle class="mint-hit" cx={pin.x} cy={pin.y} r={Math.max(radiusFor(pin.count), 18)} />
+                <circle class="mint-hit" cx={pin.x} cy={pin.y} r={hitRadiusFor(pin)} />
                 <circle
                   class={`mint-dot mint-dot--${categorySlug(pin.category)}`}
                   cx={pin.x}
                   cy={pin.y}
-                  r={radiusFor(pin.count)}
+                  r={DOT_R}
                 />
               </a>
             ))}
@@ -1144,7 +1171,7 @@ const totalCoins = coins.length;
                 class={`mint-label${pin.count >= 2 ? " mint-label--major" : ""}`}
                 data-mint={pin.key}
                 x={pin.x + pin.dx}
-                y={pin.y + pin.dy + (pin.dy < 0 ? -radiusFor(pin.count) - 3 : radiusFor(pin.count) + 11)}
+                y={pin.y + pin.dy + (pin.dy < 0 ? -DOT_R - 3 : DOT_R + 11)}
                 text-anchor="middle"
               >
                 {pin.label}
@@ -1551,17 +1578,24 @@ const totalCoins = coins.length;
   }
 
   .map-sea {
-    fill: var(--canvas);
+    fill: var(--surface-card);
   }
 
-  /* Mixing toward --ink keeps land readable in both themes: --ink is near-black
-     on the light palette and near-white on the dark one, so the land moves away
-     from the sea either way. */
+  .map-graticule {
+    fill: none;
+    stroke: var(--hairline);
+    stroke-width: 0.4;
+    opacity: 0.55;
+  }
+
+  /* Drawn as an outline rather than a silhouette: a faint wash so land still
+     reads as land, and a crisp thin coastline carrying the detail. */
   .map-land {
-    fill: color-mix(in srgb, var(--surface-strong) 88%, var(--ink));
-    stroke: color-mix(in srgb, var(--hairline) 40%, var(--ink));
-    stroke-width: 0.8;
+    fill: color-mix(in srgb, var(--muted) 10%, transparent);
+    stroke: color-mix(in srgb, var(--muted) 75%, transparent);
+    stroke-width: 0.7;
     stroke-linejoin: round;
+    stroke-linecap: round;
   }
 
   .mint {
@@ -1569,18 +1603,15 @@ const totalCoins = coins.length;
   }
 
   .mint-dot {
-    stroke: var(--canvas);
-    stroke-width: 1;
-    /* Semi-transparent so overlapping mints in the Aegean stay readable as
-       separate dots rather than merging into one blob. */
-    opacity: 0.82;
-    transition: opacity 0.15s ease, stroke-width 0.15s ease;
+    stroke: var(--surface-card);
+    stroke-width: 1.2;
+    transition: r 0.12s ease, stroke-width 0.12s ease;
   }
 
   .mint:hover .mint-dot,
   .mint:focus .mint-dot {
-    opacity: 1;
-    stroke-width: 2.5;
+    r: 7.5;
+    stroke-width: 2;
   }
 
   .mint-dot--archaic-greek { fill: var(--brand-ochre); }
@@ -1600,7 +1631,7 @@ const totalCoins = coins.length;
     font-weight: 600;
     fill: var(--ink);
     paint-order: stroke;
-    stroke: var(--canvas);
+    stroke: var(--surface-card);
     stroke-width: 3;
     stroke-linejoin: round;
     opacity: 0;
@@ -1614,9 +1645,9 @@ const totalCoins = coins.length;
   }
 
   .mint.is-active .mint-dot {
+    r: 7.5;
     stroke: var(--ink);
-    stroke-width: 2.5;
-    opacity: 1;
+    stroke-width: 2;
   }
 
   .mint-map figcaption {

@@ -442,14 +442,100 @@ const coins = [
     axis: "",
     image: "/coins/armenia-levon-i-tram.png",
   },
+  {
+    title: "CARACALLA (198-217)",
+    type: "Denarius",
+    date: "AD 212",
+    mint: "Rome",
+    obv: "ANTONINVS PIVS AVG BRIT, laureate head of Caracalla right.",
+    rev: "PM TR P XV COS III P P, Annona seated left, holding grain ears and cornucopiae, modius to left.",
+    refs: "RIC 195; RSC 205.",
+    notes: "Ex AGORA Wien, Auction 2, lot 74.",
+    condition: "About extremely fine / choice very fine",
+    weight: "2.49 g",
+    diameter: "19 mm",
+    axis: "12 h",
+    image: "/coins/caracalla-denarius-ad-212-annona.jpg",
+  },
+  {
+    title: "SELEUCIS AND PIERIA, Antioch. Philip I 'the Arab' (244-249)",
+    type: "BI Tetradrachm",
+    date: "AD 244-249",
+    mint: "Antioch",
+    obv: "AYTOK K M IOYΛ ΦIΛIΠΠOY CEB, radiate, draped and cuirassed bust right.",
+    rev: "ΔHMAPX EΞOYCIAC YΠATO A, S C in exergue. Eagle standing left on palm branch, head left, wings spread, wreath in beak.",
+    refs: "Prieur 339.",
+    notes: "Ex Elegius Numismatik, Web Auction 4, lot 183.",
+    condition: "Extremely fine",
+    weight: "10.51 g",
+    diameter: "26.27 mm",
+    axis: "",
+    image: "/coins/philip-i-tetradrachm-antioch.jpg",
+  },
+  {
+    title: "LICINIUS I (308-324)",
+    type: "Æ Follis",
+    date: "AD 313",
+    mint: "Heraclea",
+    obv: "IMP C VAL LICIN LICINIVS P F AVG, laureate head of Licinius right.",
+    rev: "IOVI CONSERVATORI AVGG, Jupiter standing left, holding sceptre and Victory on globe, eagle with laurel wreath in beak below; Δ in right field, SMHT in exergue.",
+    refs: "RIC 73.",
+    notes: "Ex AGORA Wien, Auction 2, lot 142.",
+    condition: "Choice extremely fine, matte light-brown patina, unusually well centred",
+    weight: "3.72 g",
+    diameter: "22 mm",
+    axis: "5 h",
+    image: "/coins/licinius-i-follis-heraclea.jpg",
+  },
+  {
+    title: "CONSTANTINE I 'the Great' (306-337)",
+    type: "Æ Nummus",
+    date: "AD 318-319",
+    mint: "Ticinum (1st officina)",
+    obv: "IMP CONSTANTINVS MAX AVG, laureate, helmeted and cuirassed bust right.",
+    rev: "VICTORIAE LAETAE PRINC PERP, two Victories standing facing, together holding shield inscribed VOT PR on altar; PT in exergue.",
+    refs: "RIC 82.",
+    notes: "Ex AGORA Wien, Auction 2, lot 149.",
+    condition: "Extremely fine / choice very fine",
+    weight: "2.11 g",
+    diameter: "18 mm",
+    axis: "12 h",
+    image: "/coins/constantine-i-nummus-ticinum.jpg",
+  },
+  {
+    title: "CONSTANTINE I 'the Great' (306-337)",
+    type: "Æ Nummus",
+    date: "AD 321-324",
+    mint: "Nicomedia (2nd officina)",
+    obv: "IMP C FL VAL CONSTANTINVS P F AVG, radiate, draped and cuirassed bust right.",
+    rev: "IOVI CONSERVATORI, Jupiter standing left, holding Victory on globe and eagle-tipped sceptre; X IIΓ above captive on ground right, eagle to left holding wreath in beak; SMNB in exergue.",
+    refs: "RIC VII 43.",
+    notes: "Ex AGORA Wien, Auction 2, lot 166.",
+    condition: "Extremely fine, well centred, dark green patina",
+    weight: "2.96 g",
+    diameter: "20 mm",
+    axis: "12 h",
+    image: "/coins/constantine-i-nummus-nicomedia.jpg",
+  },
 ];
 
-const parseStartYear = (date: string) => {
-  const matches = [...date.matchAll(/\d{2,4}/g)].map((m) => Number(m[0]));
-  if (matches.length === 0) return 0;
-  const first = matches[0];
-  return /BC/i.test(date) ? -first : first;
+// "AD 212" -> 212, "Circa 167-148 BC" -> -167, "Ca. 4th century BC" -> -400.
+// Returns null when the string names no year, so callers can fall back.
+const parseStartYear = (value: string) => {
+  const bc = /BC/i.test(value);
+  const century = value.match(/(\d{1,2})(?:st|nd|rd|th)\b/i);
+  if (century) {
+    const n = Number(century[1]);
+    return bc ? -(n * 100) : (n - 1) * 100 + 1;
+  }
+  const matches = [...value.matchAll(/\d{2,4}/g)].map((m) => Number(m[0]));
+  if (matches.length === 0) return null;
+  return bc ? -matches[0] : matches[0];
 };
+
+// A few entries date the coin only in prose ("Roman Imperial period",
+// "Travel Series issue"); those carry the reign years in the title instead.
+const yearFor = (coin: (typeof coins)[number]) => parseStartYear(coin.date) ?? parseStartYear(coin.title) ?? 0;
 
 const toToken = (value: string) =>
   value
@@ -467,7 +553,7 @@ const buildAnchor = (value: string) => {
 
 const categoryFor = (coin: (typeof coins)[number]) => {
   if (/ARMENIA|Levon/i.test(coin.title)) return "Medieval";
-  const year = parseStartYear(coin.date);
+  const year = yearFor(coin);
   if (year >= 1) return "Roman Imperial";
   if (year <= -500) return "Archaic Greek";
   if (year < 0) return "Classical & Hellenistic Greek";
@@ -479,6 +565,7 @@ const categories = [
   "Classical & Hellenistic Greek",
   "Roman Imperial",
   "Medieval",
+  "Other",
 ] as const;
 
 const groupedCoins = categories
@@ -486,7 +573,7 @@ const groupedCoins = categories
     category,
     items: coins
       .filter((coin) => categoryFor(coin) === category)
-      .sort((a, b) => parseStartYear(a.date) - parseStartYear(b.date)),
+      .sort((a, b) => yearFor(a) - yearFor(b)),
   }))
   .filter((group) => group.items.length > 0);
 

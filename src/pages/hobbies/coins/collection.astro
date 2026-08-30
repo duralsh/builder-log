@@ -1,5 +1,8 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { geoConicEqualArea, geoPath } from "d3-geo";
+import { feature } from "topojson-client";
+import landTopo from "world-atlas/land-50m.json";
 
 const coins = [
   {
@@ -969,12 +972,125 @@ if (uncategorised.length > 0) {
   );
 }
 
+// ---------------------------------------------------------------------------
+// Mint map. Everything below runs at build time, so the projection, the
+// coastline and the marker positions are baked into the HTML as inline SVG —
+// no mapping library reaches the browser.
+// ---------------------------------------------------------------------------
+
+type Mint = { label: string; lat: number; lon: number; region?: boolean; dx?: number; dy?: number };
+
+const MINTS: Record<string, Mint> = {
+  lugdunum: { label: "Lugdunum", lat: 45.76, lon: 4.83 },
+  ticinum: { label: "Ticinum", lat: 45.19, lon: 9.16, dy: -10 },
+  rome: { label: "Rome", lat: 41.89, lon: 12.49 },
+  siscia: { label: "Siscia", lat: 45.49, lon: 16.37 },
+  corinth: { label: "Corinth", lat: 37.94, lon: 22.93, dy: 12 },
+  athens: { label: "Athens", lat: 37.98, lon: 23.73, dx: 8, dy: 8 },
+  amphipolis: { label: "Amphipolis", lat: 40.82, lon: 23.84, dy: -10 },
+  chersonesos: { label: "Chersonesos", lat: 40.30, lon: 26.40, dy: 14 },
+  phokaia: { label: "Phokaia", lat: 38.67, lon: 26.76, dx: -6, dy: 10 },
+  miletos: { label: "Miletos", lat: 37.53, lon: 27.28, dy: 12 },
+  pergamon: { label: "Pergamon", lat: 39.12, lon: 27.18, dx: 6, dy: -8 },
+  kyzikos: { label: "Kyzikos", lat: 40.39, lon: 27.89, dy: -12 },
+  heraclea: { label: "Heraclea", lat: 40.97, lon: 27.95, dy: -22 },
+  sardes: { label: "Sardes", lat: 38.49, lon: 28.04, dx: 10 },
+  rhodes: { label: "Rhodes", lat: 36.44, lon: 28.22, dy: 14 },
+  kalchedon: { label: "Kalchedon", lat: 40.98, lon: 29.03, dx: 14, dy: -10 },
+  nicomedia: { label: "Nicomedia", lat: 40.77, lon: 29.92, dx: 16 },
+  lycia: { label: "Lycia", lat: 36.30, lon: 29.80, region: true, dy: 14 },
+  selge: { label: "Selge", lat: 37.23, lon: 31.13, dy: 12 },
+  armenia: { label: "Cilician Armenia", lat: 37.45, lon: 35.82, region: true, dy: -12 },
+  antioch: { label: "Antioch", lat: 36.20, lon: 36.16, dy: 14 },
+  baktria: { label: "Baktria", lat: 36.76, lon: 66.90, region: true, dy: -12 },
+  "indo-greek": { label: "Indo-Greek realm", lat: 33.20, lon: 72.00, region: true, dy: 14 },
+};
+
+// Mints that exist but cannot be placed; counted and reported, never dropped silently.
+const UNLOCATABLE = new Set(["mint illegible"]);
+
+const mintKey = (raw: string) => {
+  const lower = raw.toLowerCase().trim();
+  if (UNLOCATABLE.has(lower)) return null;
+  // Region aliases are matched on the raw string, before the comma-stripping
+  // below would reduce "Uncertain mint, Baktria" to "uncertain mint".
+  if (lower.includes("baktria")) return "baktria";
+  if (lower.includes("indo-greek")) return "indo-greek";
+  const v = lower
+    .replace(/\(.*?\)/g, " ")       // "Lugdunum (Lyons)" -> "Lugdunum"
+    .replace(/,.*$/, " ")           // "Siscia, 4th officina" -> "Siscia"
+    .replace(/\b\d+(st|nd|rd|th)\b/g, " ")
+    .replace(/\bofficina\b/g, " ")
+    .trim()
+    .replace(/\s+/g, " ");
+  if (v === "rhodos") return "rhodes";
+  return v.replace(/\s+/g, "-");
+};
+
+type MintPin = {
+  key: string; label: string; region: boolean; count: number;
+  x: number; y: number; dx: number; dy: number;
+  category: string; breakdown: string;
+};
+
+const mintCoins = new Map<string, (typeof coins)[number][]>();
+let unlocatable = 0;
+for (const coin of coins) {
+  const key = mintKey(coin.mint);
+  if (key === null) { unlocatable += 1; continue; }
+  if (!MINTS[key]) {
+    throw new Error(`Cabinet map: no coordinates for mint "${coin.mint}" (key "${key}") on "${coin.title}". Add it to MINTS.`);
+  }
+  const list = mintCoins.get(key) ?? [];
+  list.push(coin);
+  mintCoins.set(key, list);
+}
+
+const MAP_W = 1000;
+const MAP_H = 430;
+const MAP_PAD = 46;
+
+const projection = geoConicEqualArea()
+  .parallels([32, 46])
+  .rotate([-38, 0])
+  .fitExtent(
+    [[MAP_PAD, MAP_PAD], [MAP_W - MAP_PAD, MAP_H - MAP_PAD]],
+    { type: "MultiPoint", coordinates: [...mintCoins.keys()].map((k) => [MINTS[k].lon, MINTS[k].lat]) } as never,
+  );
+projection.clipExtent([[0, 0], [MAP_W, MAP_H]]);
+
+const landFeature = feature(landTopo as never, (landTopo as never as { objects: { land: unknown } }).objects.land as never);
+// Round to 1dp: the full-precision path is several times larger for no visible gain.
+const landPath = (geoPath(projection)(landFeature as never) ?? "").replace(/\d+\.\d+/g, (n) => String(Math.round(Number(n) * 10) / 10));
+
+const maxAtMint = Math.max(...[...mintCoins.values()].map((c) => c.length));
+const mintPins: MintPin[] = [...mintCoins.entries()]
+  .map(([key, list]) => {
+    const m = MINTS[key];
+    const [x, y] = projection([m.lon, m.lat]) ?? [0, 0];
+    const sorted = [...list].sort((a, b) => yearFor(a) - yearFor(b));
+    const counts = new Map<string, number>();
+    for (const c of list) counts.set(categoryFor(c), (counts.get(categoryFor(c)) ?? 0) + 1);
+    return {
+      key, label: m.label, region: Boolean(m.region), count: list.length,
+      x: Math.round(x * 10) / 10, y: Math.round(y * 10) / 10,
+      dx: m.dx ?? 0, dy: m.dy ?? 0,
+      category: categoryFor(sorted[0]),
+      breakdown: [...counts.entries()].map(([c, n]) => `${c}: ${n}`).join(" · "),
+    };
+  })
+  .sort((a, b) => b.count - a.count);
+
+const radiusFor = (n: number) => 5 + 13 * Math.sqrt(n / maxAtMint);
+const categorySlug = (c: string) => toToken(c);
+
 const groupedCoinsWithAnchors = groupedCoins.map((group) => ({
   ...group,
   anchor: buildAnchor(group.category),
   items: group.items.map((coin) => ({
     ...coin,
     anchor: buildAnchor(`${coin.title}-${coin.type}`),
+    mintKey: mintKey(coin.mint) ?? "",
   })),
 }));
 
@@ -992,6 +1108,52 @@ const totalCoins = coins.length;
       <h1>Numismatic Cabinet</h1>
       <p class="muted">A curated cabinet focused on Classical Greek tetradrachms and Roman Republic silver denarii.</p>
 
+      <figure class="mint-map">
+        <div class="map-scroll">
+        <svg viewBox={`0 0 ${MAP_W} ${MAP_H}`} role="img" aria-labelledby="mintmap-title mintmap-desc">
+          <title id="mintmap-title">Where the cabinet was struck</title>
+          <desc id="mintmap-desc">
+            A map from Gaul to the Indus showing {mintPins.length} mints, sized by how many coins each struck.
+          </desc>
+          <rect class="map-sea" x="0" y="0" width={MAP_W} height={MAP_H} />
+          <path class="map-land" d={landPath} />
+          {mintPins.map((pin) => (
+            <a
+              class={`mint${pin.count >= 2 ? " mint--major" : ""}`}
+              href={`#mint-${pin.key}`}
+              data-mint={pin.key}
+              aria-label={`${pin.label} — ${pin.count} coin${pin.count === 1 ? "" : "s"}`}
+            >
+              <title>{pin.label}{pin.region ? " (region)" : ""} — {pin.breakdown}</title>
+              <circle class="mint-hit" cx={pin.x} cy={pin.y} r={Math.max(radiusFor(pin.count), 20)} />
+              <circle
+                class={`mint-dot mint-dot--${categorySlug(pin.category)}`}
+                cx={pin.x}
+                cy={pin.y}
+                r={radiusFor(pin.count)}
+              />
+              <text
+                class="mint-label"
+                x={pin.x + pin.dx}
+                y={pin.y + pin.dy + (pin.dy < 0 ? -radiusFor(pin.count) : radiusFor(pin.count) + 10)}
+                text-anchor="middle"
+              >
+                {pin.label}
+              </text>
+            </a>
+          ))}
+        </svg>
+        </div>
+        <figcaption>
+          <span class="map-hint">Tap a mint to see only its coins.</span>
+          {unlocatable > 0 && (
+            <span class="map-note">
+              {unlocatable} coin{unlocatable === 1 ? "" : "s"} not shown — mint illegible.
+            </span>
+          )}
+        </figcaption>
+      </figure>
+
       <nav class="period-nav" id="cabinet" aria-label="Filter by period">
         <a class="period is-active" href="#cabinet" data-period="all">
           All <span class="period-count">{totalCoins}</span>
@@ -1001,6 +1163,10 @@ const totalCoins = coins.length;
             {SHORT_LABEL[group.category] ?? group.category} <span class="period-count">{group.items.length}</span>
           </a>
         ))}
+        <span class="mint-chip" id="mint-chip" hidden>
+          <span id="mint-chip-label"></span>
+          <button type="button" id="mint-chip-clear" aria-label="Clear mint filter">×</button>
+        </span>
       </nav>
 
       {groupedCoinsWithAnchors.map((group) => (
@@ -1022,7 +1188,7 @@ const totalCoins = coins.length;
           </details>
           <ol class="coin-list">
             {group.items.map((coin) => (
-              <li class="coin-item" id={coin.anchor}>
+              <li class="coin-item" id={coin.anchor} data-mint={coin.mintKey}>
                 <h3>
                   {coin.title} - {coin.type}
                 </h3>
@@ -1132,16 +1298,88 @@ const totalCoins = coins.length;
       const isCategory = (value) => sections.some((section) => section.dataset.period === value);
       const fromHash = () => decodeURIComponent(location.hash.slice(1));
 
+      // --- mint filter -----------------------------------------------------
+      // Period and mint are alternative lenses on the same shelf, never
+      // combined: intersecting them would strand the reader on an empty page.
+      const pins = [...document.querySelectorAll(".mint")];
+      const items = [...document.querySelectorAll(".coin-item")];
+      const chip = document.getElementById("mint-chip");
+      const chipLabel = document.getElementById("mint-chip-label");
+      const chipClear = document.getElementById("mint-chip-clear");
+      const isMint = (value) => pins.some((pin) => pin.dataset.mint === value);
+
+      const clearMint = () => {
+        for (const item of items) item.hidden = false;
+        for (const pin of pins) pin.classList.remove("is-active");
+        if (chip) { chip.hidden = true; chip.classList.remove("is-shown"); }
+        for (const section of sections) section.hidden = false;
+      };
+
+      const applyMint = (key) => {
+        apply("all");                       // drop any period selection first
+        let shown = 0;
+        for (const item of items) {
+          const match = item.dataset.mint === key;
+          item.hidden = !match;
+          if (match) shown += 1;
+        }
+        // a section with nothing left in it should go too, heading and all
+        for (const section of sections) {
+          section.hidden = [...section.querySelectorAll(".coin-item")].every((i) => i.hidden);
+        }
+        for (const pin of pins) pin.classList.toggle("is-active", pin.dataset.mint === key);
+        const active = pins.find((pin) => pin.dataset.mint === key);
+        if (chip && chipLabel && active) {
+          chipLabel.textContent = `${active.getAttribute("aria-label")}`;
+          chip.hidden = false;
+          chip.classList.add("is-shown");
+        }
+        return shown;
+      };
+
+      for (const pin of pins) {
+        pin.addEventListener("click", (event) => {
+          event.preventDefault();
+          const key = pin.dataset.mint;
+          const already = pin.classList.contains("is-active");
+          if (already) {
+            clearMint();
+            history.replaceState(null, "", location.pathname + location.search);
+            return;
+          }
+          applyMint(key);
+          history.replaceState(null, "", `#mint-${key}`);
+          const first = sections.find((section) => !section.hidden);
+          if (!first) return;
+          const top = first.getBoundingClientRect().top + window.scrollY - headerHeight() - nav.offsetHeight - 12;
+          window.scrollTo({ top: Math.max(0, top) });
+        });
+      }
+
+      if (chipClear) {
+        chipClear.addEventListener("click", () => {
+          clearMint();
+          history.replaceState(null, "", location.pathname + location.search);
+        });
+      }
+
+      // choosing a period must drop the mint lens
+      for (const pill of pills) {
+        pill.addEventListener("click", () => clearMint(), true);
+      }
+
       // A category hash filters; a coin hash leaves everything shown so the
       // browser's own anchor jump still lands on it.
       const initial = fromHash();
-      if (initial) apply(initial);
+      if (initial.startsWith("mint-") && isMint(initial.slice(5))) applyMint(initial.slice(5));
+      else if (initial) apply(initial);
 
       // Back/forward and hand-edited hashes. Guarded on isCategory so that
       // clicking a coin link doesn't silently reset the active filter.
       window.addEventListener("hashchange", () => {
         const next = fromHash();
-        if (isCategory(next)) apply(next);
+        if (next.startsWith("mint-") && isMint(next.slice(5))) applyMint(next.slice(5));
+        else if (isCategory(next)) { clearMint(); apply(next); }
       });
     })();
   </script>
@@ -1273,6 +1511,154 @@ const totalCoins = coins.length;
     display: none;
   }
 
+  .mint-map {
+    margin: 1.6rem 0 0;
+    padding: 0;
+    border: 1px solid var(--hairline);
+    border-radius: var(--rounded-lg);
+    background: var(--surface-card);
+    overflow: hidden;
+  }
+
+  /* The map is 2.3:1, so on a phone it would render ~150px tall and the smaller
+     mints would be 2px wide. Give it a floor and let it pan instead. */
+  .map-scroll {
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .mint-map svg {
+    display: block;
+    width: 100%;
+    min-width: 660px;
+    height: auto;
+  }
+
+  .mint-hit {
+    fill: transparent;
+  }
+
+  .map-sea {
+    fill: var(--canvas);
+  }
+
+  /* Mixing toward --ink keeps land readable in both themes: --ink is near-black
+     on the light palette and near-white on the dark one, so the land moves away
+     from the sea either way. */
+  .map-land {
+    fill: color-mix(in srgb, var(--surface-strong) 88%, var(--ink));
+    stroke: color-mix(in srgb, var(--hairline) 40%, var(--ink));
+    stroke-width: 0.8;
+    stroke-linejoin: round;
+  }
+
+  .mint {
+    cursor: pointer;
+  }
+
+  .mint-dot {
+    stroke: var(--canvas);
+    stroke-width: 1.5;
+    opacity: 0.9;
+    transition: opacity 0.15s ease, stroke-width 0.15s ease;
+  }
+
+  .mint:hover .mint-dot,
+  .mint:focus .mint-dot {
+    opacity: 1;
+    stroke-width: 3;
+  }
+
+  .mint-dot--archaic-greek { fill: var(--brand-ochre); }
+  .mint-dot--classical-hellenistic-greek { fill: var(--brand-teal); }
+  .mint-dot--greco-baktrian-indo-greek { fill: var(--brand-pink); }
+  .mint-dot--roman-imperial { fill: var(--brand-coral); }
+  .mint-dot--islamic { fill: var(--brand-mint); }
+  .mint-dot--medieval { fill: var(--brand-lavender); }
+
+  /* Twenty-three labels will not all fit; the busiest mints stay lit and the
+     rest surface on hover or keyboard focus. */
+  .mint-label {
+    font-family: var(--font-body);
+    font-size: 11px;
+    font-weight: 500;
+    fill: var(--ink);
+    paint-order: stroke;
+    stroke: var(--surface-card);
+    stroke-width: 3.5;
+    stroke-linejoin: round;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .mint--major .mint-label,
+  .mint:hover .mint-label,
+  .mint:focus .mint-label {
+    opacity: 1;
+  }
+
+  .mint.is-active .mint-dot {
+    stroke: var(--ink);
+    stroke-width: 3;
+    opacity: 1;
+  }
+
+  .mint.is-active .mint-label {
+    opacity: 1;
+  }
+
+  .mint-map figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1rem;
+    padding: 0.7rem 1rem 0.9rem;
+    border-top: 1px solid var(--hairline);
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .map-note {
+    margin-left: auto;
+  }
+
+  /* Active mint chip in the period bar */
+  .mint-chip {
+    display: none;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.35rem 0.5rem 0.35rem 0.8rem;
+    border-radius: var(--rounded-pill);
+    border: 1px solid var(--ink);
+    background: var(--ink);
+    color: var(--canvas);
+    font-size: 0.85rem;
+    font-weight: 500;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .mint-chip.is-shown {
+    display: inline-flex;
+  }
+
+  .mint-chip button {
+    all: unset;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0 0.25rem;
+    font-size: 1rem;
+    opacity: 0.75;
+  }
+
+  .mint-chip button:hover {
+    opacity: 1;
+  }
+
+  .coin-item[hidden] {
+    display: none;
+  }
+
   .coin-category {
     margin-top: 1.3rem;
     scroll-margin-top: 6.5rem;
@@ -1311,6 +1697,10 @@ const totalCoins = coins.length;
   }
 
   @media (max-width: 720px) {
+    .mint-label {
+      font-size: 15px;
+    }
+
     /* Wrapping to three rows costs ~126px of a small viewport on top of an
        already-tall wrapped header, so scroll the pills sideways instead. */
     .period-nav {

@@ -7,12 +7,31 @@ const allPosts = sortByDateDesc(await getCollection("posts", ({ data }) => !data
 
 const roles = [
   {
+    title: "Head of AI",
+    company: "AVILOO GmbH",
+    location: "Wiener Neudorf / Vienna",
+    start: new Date("2026-04-26"),
+    end: null,
+    dates: "Apr 2026 – Present",
+    description:
+      "AVILOO is the global leader in independent battery diagnostics for electric vehicles — manufacturer-independent tests that read battery health down to the individual cell, used by OEM dealer networks, fleets, leasing operators, and remarketing platforms across more than 30 countries. I lead the company-wide AI transformation.",
+    links: [{ label: "aviloo.com", url: "https://aviloo.com/en" }],
+    bullets: [
+      "Own AVILOO’s AI strategy and roadmap end to end — from where AI belongs in the business to what actually ships",
+      "Drive internal AI enablement across engineering, operations, and go-to-market: agentic workflows, internal tooling, and the training and adoption work that makes them stick",
+      "Built AI-powered strategy dashboards that turn operational and battery-diagnostic data into decisions leadership can act on",
+      "Moved company localisation onto agentic workflows — content now ships in 28 languages without a manual translation loop",
+      "Building the AI platform underneath it all: data pipelines, model serving, evaluation harnesses, and governance",
+      "Run a recurring internal workshop series that takes whole teams from LLM fundamentals to writing custom skills and wiring models into real tools via MCP",
+    ],
+  },
+  {
     title: "Director of Product",
     company: "Arena Inc.",
     location: "Vienna / New York",
     start: new Date("2024-02-01"),
-    end: null,
-    dates: "Feb 2024 – Present",
+    end: new Date("2026-04-26"),
+    dates: "Feb 2024 – Apr 2026",
     description:
       "Arena is a SocialFi platform combining embedded wallets, perpetual trading, token launches, and social features.",
     links: [
@@ -20,13 +39,13 @@ const roles = [
       { label: "arenatrade.ai", url: "https://arenatrade.ai" },
     ],
     bullets: [
+      "Enabled AI agents across the social platform and designed an agent economy layer within the social app",
       "Led a team of 12 engineers and 3 designers",
       "Integrated perpetuals trading via Hyperliquid; $100M volume in first month",
       "DEX reached $500M cumulative volume since May 2025",
       "Scaled platform from ~2k to ~16k DAU",
       "Shipped embedded wallets (EVM + Solana), account abstraction, cross-chain protocols",
       "Social login to wallet provisioning (Twitter, Apple, Google, Facebook, TikTok)",
-      "Enabled AI agents across the social platform and designed an agent economy layer within the social app",
       "Launched platform token with staking and revenue sharing; ~$200M FDV peak",
     ],
   },
@@ -118,6 +137,10 @@ const rolePosts = (start: Date, end: Date | null) =>
   <section class="cv-heading">
     <div class="container">
       <h1>CV</h1>
+      <p class="muted cv-lede">
+        Nearly a decade across embedded engineering, fintech, and consumer product — now focused entirely on AI. I lead
+        the AI transformation at AVILOO, the global leader in independent EV battery diagnostics.
+      </p>
     </div>
   </section>
 
@@ -178,6 +201,15 @@ const rolePosts = (start: Date, end: Date | null) =>
       </ul>
       <h2>Skills</h2>
       <p>
+        <strong>AI:</strong> AI strategy and transformation, agentic workflows, LLM application design, prompt and
+        context engineering, evals and benchmarking, MCP and tool integration, model routing and cost control,
+        org-wide AI enablement and training
+      </p>
+      <p>
+        <strong>AI platform &amp; data:</strong> data pipelines, model serving, evaluation harnesses, analytics and
+        strategy dashboards, observability, governance
+      </p>
+      <p>
         <strong>Product:</strong> strategy, roadmaps, discovery, execution, growth loops, stakeholder management, user
         research, launch planning, competitive analysis
       </p>
@@ -202,6 +234,11 @@ const rolePosts = (start: Date, end: Date | null) =>
 
   .cv-heading h1 {
     margin-bottom: 0;
+  }
+
+  .cv-lede {
+    margin: 0.9rem 0 0;
+    max-width: 66ch;
   }
 
   .cv-work {

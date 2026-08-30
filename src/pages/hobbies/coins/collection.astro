@@ -1168,7 +1168,7 @@ const totalCoins = coins.length;
           <g class="label-layer" aria-hidden="true">
             {mintPins.map((pin) => (
               <text
-                class={`mint-label${pin.count >= 2 ? " mint-label--major" : ""}`}
+                class="mint-label"
                 data-mint={pin.key}
                 x={pin.x + pin.dx}
                 y={pin.y + pin.dy + (pin.dy < 0 ? -DOT_R - 3 : DOT_R + 11)}
@@ -1375,6 +1375,21 @@ const totalCoins = coins.length;
         }
         return shown;
       };
+
+      // The label layer is a sibling of the marker layer, not a child, so CSS
+      // cannot reach from a hovered marker to its label — wire it up here.
+      const labelFor = (key) => labels.find((label) => label.dataset.mint === key);
+      for (const pin of pins) {
+        const label = labelFor(pin.dataset.mint);
+        if (label) {
+          const show = () => label.classList.add("is-hovered");
+          const hide = () => label.classList.remove("is-hovered");
+          pin.addEventListener("mouseenter", show);
+          pin.addEventListener("mouseleave", hide);
+          pin.addEventListener("focus", show);
+          pin.addEventListener("blur", hide);
+        }
+      }
 
       for (const pin of pins) {
         pin.addEventListener("click", (event) => {
@@ -1623,8 +1638,8 @@ const totalCoins = coins.length;
 
   /* Twenty-three labels will not all fit; the busiest mints stay lit and the
      rest surface on hover or keyboard focus. */
-  /* Only the busiest mints carry a standing label; the rest are named by the
-     browser's own tooltip on hover, which also gives the period breakdown. */
+  /* Every mint behaves the same: named on hover or focus, and while selected.
+     No standing labels, so the map stays clean and nothing looks arbitrary. */
   .mint-label {
     font-family: var(--font-body);
     font-size: 12px;
@@ -1639,7 +1654,7 @@ const totalCoins = coins.length;
     transition: opacity 0.15s ease;
   }
 
-  .mint-label--major,
+  .mint-label.is-hovered,
   .mint-label.is-active {
     opacity: 1;
   }

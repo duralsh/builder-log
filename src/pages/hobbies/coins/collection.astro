@@ -1104,6 +1104,71 @@ type MintPin = {
   category: string; breakdown: string;
 };
 
+// Each coin's issuing authority linked to its Wikipedia article — the ruler for
+// royal and imperial issues, the city or region for civic ones. Every slug below
+// was checked against the Wikipedia API; a title with no entry simply renders
+// unlinked, but a label that is not actually present in its title is a mapping
+// bug and fails the build.
+const ISSUER_WIKI: Record<string, { label: string; slug: string }> = {
+  "ABBASID CALIPHATE": { label: "ABBASID CALIPHATE", slug: "Abbasid_Caliphate" },
+  "ANTONINUS PIUS": { label: "ANTONINUS PIUS", slug: "Antoninus_Pius" },
+  "ANTONINUS PIUS with MARCUS AURELIUS as Caesar": { label: "ANTONINUS PIUS", slug: "Antoninus_Pius" },
+  "ATTICA, Athens": { label: "Athens", slug: "Classical_Athens" },
+  "BAKTRIA, Antimachos I Theos (174-165 BC)": { label: "Antimachos I Theos", slug: "Antimachus_I" },
+  "BAKTRIA, Demetrios I Aniketos (200-185 BC)": { label: "Demetrios I Aniketos", slug: "Demetrius_I_of_Bactria" },
+  "BAKTRIA, Eukratides I Megas (171-145 BC)": { label: "Eukratides I Megas", slug: "Eucratides_I" },
+  "BAKTRIA, Eukratides II Soter (145-140 BC)": { label: "Eukratides II Soter", slug: "Eucratides_II" },
+  "BAKTRIA, Euthydemos I (225-200 BC)": { label: "Euthydemos I", slug: "Euthydemus_I" },
+  "BAKTRIA, Euthydemos II (185-180 BC)": { label: "Euthydemos II", slug: "Euthydemus_II" },
+  "BAKTRIA, Heliokles I Dikaios (145-130 BC)": { label: "Heliokles I Dikaios", slug: "Heliocles_I" },
+  "BAKTRIA, Sophytes (Sophytos)": { label: "Sophytes (Sophytos)", slug: "Sophytes" },
+  "CARACALLA (198-217)": { label: "CARACALLA", slug: "Caracalla" },
+  "CARIA, Rhodes": { label: "Rhodes", slug: "Rhodes" },
+  "CONSTANTINE I 'the Great' (306-337)": { label: "CONSTANTINE I 'the Great'", slug: "Constantine_the_Great" },
+  "CONSTANTINE I 'the Great' (307-337)": { label: "CONSTANTINE I 'the Great'", slug: "Constantine_the_Great" },
+  "CORINTHIA, Corinth": { label: "Corinth", slug: "Ancient_Corinth" },
+  "DIOCLETIAN (284-305)": { label: "DIOCLETIAN", slug: "Diocletian" },
+  "DYNASTS of LYCIA, uncertain": { label: "LYCIA", slug: "Lycia" },
+  "GORDIAN III (238-244)": { label: "GORDIAN III", slug: "Gordian_III" },
+  "HADRIAN (117-138)": { label: "HADRIAN", slug: "Hadrian" },
+  "INDO-GREEK KINGDOM, Menander I Soter (165-130 BC)": { label: "Menander I Soter", slug: "Menander_I" },
+  "IONIA, Miletos": { label: "Miletos", slug: "Miletus" },
+  "IONIA, Phokaia": { label: "Phokaia", slug: "Phocaea" },
+  "ISLANDS off KARIA, Rhodos": { label: "Rhodos", slug: "Rhodes" },
+  "KINGDOM OF MACEDON, Alexander III 'the Great' (336-323 BC)": { label: "Alexander III 'the Great'", slug: "Alexander_the_Great" },
+  "KINGS OF PERGAMON, Eumenes I (in the name of Philetairos)": { label: "Eumenes I", slug: "Eumenes_I" },
+  "KINGS OF THRACE, Kalchedon, in the name of Lysimachos (305-281 BC)": { label: "Lysimachos", slug: "Lysimachus" },
+  "LICINIUS I (308-324)": { label: "LICINIUS I", slug: "Licinius" },
+  "MACEDON under Roman Protectorate, First Meris": { label: "MACEDON", slug: "Macedonia_(Roman_province)" },
+  "MARCUS AURELIUS": { label: "MARCUS AURELIUS", slug: "Marcus_Aurelius" },
+  "MAXIMINUS I THRAX (AD 235-238)": { label: "MAXIMINUS I THRAX", slug: "Maximinus_Thrax" },
+  "MYSIA, Kyzikos": { label: "Kyzikos", slug: "Cyzicus" },
+  "NERVA (96-98)": { label: "NERVA", slug: "Nerva" },
+  "PHILIP I 'the Arab' (244-249)": { label: "PHILIP I 'the Arab'", slug: "Philip_the_Arab" },
+  "PHILIP II (247-249)": { label: "PHILIP II", slug: "Philip_II_(Roman_emperor)" },
+  "PISIDIA, Selge": { label: "Selge", slug: "Selge" },
+  "PROBUS (276-282)": { label: "PROBUS", slug: "Probus_(emperor)" },
+  "SELEUCIS AND PIERIA, Antioch. Philip I 'the Arab' (244-249)": { label: "Philip I 'the Arab'", slug: "Philip_the_Arab" },
+  "THRACE, Chersonesos": { label: "Chersonesos", slug: "Gallipoli" },
+  "TRAJAN (AD 98-117)": { label: "TRAJAN", slug: "Trajan" },
+  "VALERIAN I": { label: "VALERIAN I", slug: "Valerian_(emperor)" },
+};
+
+const issuerLink = (title: string) => {
+  const entry = ISSUER_WIKI[title];
+  if (!entry) return null;
+  const at = title.indexOf(entry.label);
+  if (at < 0) {
+    throw new Error(`Cabinet: issuer label "${entry.label}" does not occur in title "${title}".`);
+  }
+  return {
+    url: `https://en.wikipedia.org/wiki/${entry.slug}`,
+    label: entry.label,
+    before: title.slice(0, at),
+    after: title.slice(at + entry.label.length),
+  };
+};
+
 const mintCoins = new Map<string, (typeof coins)[number][]>();
 for (const coin of coins) {
   const key = mintKey(coin.mint);
@@ -1186,6 +1251,7 @@ const groupedCoinsWithAnchors = groupedCoins.map((group) => ({
     ...coin,
     anchor: buildAnchor(`${coin.title}-${coin.type}`),
     mintKey: mintKey(coin.mint) ?? "",
+    wiki: issuerLink(coin.title),
   })),
 }));
 
@@ -1324,7 +1390,18 @@ const totalCoins = coins.length;
             {group.items.map((coin) => (
               <li class="coin-item" id={coin.anchor} data-mint={coin.mintKey}>
                 <h3>
-                  {coin.title} - {coin.type}
+                  {coin.wiki ? (
+                    <>
+                      {coin.wiki.before}
+                      <a class="issuer" href={coin.wiki.url} target="_blank" rel="noreferrer">
+                        {coin.wiki.label}
+                      </a>
+                      {coin.wiki.after}
+                    </>
+                  ) : (
+                    coin.title
+                  )}{" "}
+                  - {coin.type}
                 </h3>
                 <p class="muted">
                   {coin.date} · {coin.mint}
@@ -2029,6 +2106,24 @@ const totalCoins = coins.length;
     padding-left: 1.25rem;
     display: grid;
     gap: 1.4rem;
+  }
+
+  /* Kept quiet inside the heading: a dotted rule that firms up on hover, so the
+     link reads as an aside rather than competing with the title. */
+  .issuer {
+    color: inherit;
+    text-decoration: underline dotted;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--muted);
+    transition: text-decoration-color 0.15s ease;
+  }
+
+  .issuer:hover {
+    text-decoration: underline solid;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 4px;
+    text-decoration-color: var(--ink);
   }
 
   .coin-item {

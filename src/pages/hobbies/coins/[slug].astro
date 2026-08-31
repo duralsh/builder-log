@@ -1,0 +1,231 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { coins, categoryFor, coinSlug, issuerLink, yearFor, type Coin } from "../../../lib/coins";
+
+export function getStaticPaths() {
+  const ordered = [...coins].sort((a, b) => yearFor(a) - yearFor(b));
+  return ordered.map((coin, i) => ({
+    params: { slug: coinSlug(coin) },
+    props: {
+      coin,
+      prev: ordered[i - 1] ?? null,
+      next: ordered[i + 1] ?? null,
+    },
+  }));
+}
+
+interface Props {
+  coin: Coin;
+  prev: Coin | null;
+  next: Coin | null;
+}
+
+const { coin, prev, next } = Astro.props;
+const wiki = issuerLink(coin.title);
+const category = categoryFor(coin);
+const small = coin.image.replace(".webp", "-sm.webp");
+
+const facts: [string, string][] = [
+  ["Denomination", coin.type],
+  ["Date", coin.date],
+  ["Mint", coin.mint],
+  ["Weight", coin.weight],
+  ["Diameter", coin.diameter],
+  ["Die axis", coin.axis],
+  ["Condition", coin.condition],
+  ["References", coin.refs],
+];
+---
+
+<BaseLayout
+  title={`${coin.title} — ${coin.type} | Numismatic Cabinet`}
+  description={`${coin.title}, ${coin.type}. ${coin.date}, ${coin.mint}. ${coin.obv}`}
+  image={coin.image}
+>
+  <section class="section coin-page">
+    <div class="container">
+      <p class="crumbs muted">
+        <a href="/hobbies/coins/collection">Numismatic Cabinet</a> ·
+        <a href={`/hobbies/coins/collection#${category.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`}>{category}</a>
+      </p>
+
+      <h1>
+        {wiki ? (
+          <>
+            {wiki.before}
+            <a class="issuer" href={wiki.url} target="_blank" rel="noreferrer">{wiki.label}</a>
+            {wiki.after}
+          </>
+        ) : (
+          coin.title
+        )}
+      </h1>
+      <p class="muted lede">{coin.type} · {coin.date} · {coin.mint}</p>
+
+      <img
+        class="hero-coin"
+        src={coin.image}
+        srcset={`${small} 760w, ${coin.image} 1520w`}
+        sizes="(max-width: 900px) 100vw, 860px"
+        width={coin.width}
+        height={coin.height}
+        alt={`${coin.title} ${coin.type}, obverse and reverse`}
+        decoding="async"
+      />
+
+      <div class="faces">
+        <p><strong>Obverse.</strong> {coin.obv}</p>
+        <p><strong>Reverse.</strong> {coin.rev}</p>
+      </div>
+
+      <dl class="facts">
+        {facts.filter(([, v]) => v && v.trim()).map(([k, v]) => (
+          <>
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </>
+        ))}
+      </dl>
+
+      {coin.notes && <p class="notes muted">{coin.notes}</p>}
+
+      <nav class="coin-nav" aria-label="Adjacent coins">
+        {prev ? (
+          <a class="step" href={`/hobbies/coins/${coinSlug(prev)}`}>
+            <span class="muted">← Earlier</span>
+            <span>{prev.title}</span>
+          </a>
+        ) : (
+          <span />
+        )}
+        {next && (
+          <a class="step step--next" href={`/hobbies/coins/${coinSlug(next)}`}>
+            <span class="muted">Later →</span>
+            <span>{next.title}</span>
+          </a>
+        )}
+      </nav>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .coin-page .container {
+    max-width: 880px;
+  }
+
+  .crumbs {
+    font-size: 0.88rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .coin-page h1 {
+    font-size: clamp(1.5rem, 3.4vw, 2.2rem);
+    margin-bottom: 0.4rem;
+  }
+
+  .lede {
+    margin-bottom: 1.6rem;
+  }
+
+  .issuer {
+    color: inherit;
+    text-decoration: underline dotted;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 5px;
+    text-decoration-color: var(--muted);
+  }
+
+  .issuer:hover {
+    text-decoration: underline solid;
+    text-decoration-color: var(--ink);
+  }
+
+  .hero-coin {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--hairline);
+    border-radius: var(--rounded-md);
+    background: var(--surface-soft);
+  }
+
+  .faces {
+    margin: 1.6rem 0 0;
+    display: grid;
+    gap: 0.5rem;
+  }
+
+  .faces p {
+    margin: 0;
+    max-width: 68ch;
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.4rem 1.4rem;
+    margin: 1.6rem 0 0;
+    padding: 1.2rem 1.4rem;
+    background: var(--surface-card);
+    border-radius: var(--rounded-md);
+  }
+
+  .facts dt {
+    color: var(--muted);
+    font-size: 0.88rem;
+  }
+
+  .facts dd {
+    margin: 0;
+    font-size: 0.94rem;
+  }
+
+  .notes {
+    margin: 1.2rem 0 0;
+    max-width: 68ch;
+    font-size: 0.92rem;
+  }
+
+  .coin-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-top: 2.4rem;
+    padding-top: 1.4rem;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .step {
+    display: grid;
+    gap: 0.15rem;
+    max-width: 22rem;
+    color: var(--ink);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  .step--next {
+    text-align: right;
+  }
+
+  .step:hover span:last-child {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .step .muted {
+    font-size: 0.8rem;
+  }
+
+  @media (max-width: 560px) {
+    .facts {
+      grid-template-columns: 1fr;
+      gap: 0.1rem 0;
+    }
+
+    .facts dd {
+      margin-bottom: 0.6rem;
+    }
+  }
+</style>

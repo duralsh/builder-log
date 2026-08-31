@@ -1,0 +1,189 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { coins, categoryFor, coinSlug } from "../../../lib/coins";
+
+// Millimetres to CSS pixels. 3.78px is roughly 1mm at a nominal 96dpi, so the
+// plate is close to life size on a typical desktop screen — but screens vary,
+// so the honest claim is relative scale, not absolute.
+const PX_PER_MM = 3.78;
+
+const mm = (value: string) => {
+  const m = value.trim().match(/^([\d.]+)/);
+  return m ? Number(m[1]) : null;
+};
+
+const measured = coins
+  .map((coin) => ({ coin, d: mm(coin.diameter) }))
+  .filter((x): x is { coin: (typeof coins)[number]; d: number } => x.d !== null)
+  .sort((a, b) => b.d - a.d);
+
+const unmeasured = coins.length - measured.length;
+const largest = measured[0];
+const smallest = measured[measured.length - 1];
+
+// A ruler to anchor the eye, in the same units as the discs.
+const ticks = [0, 10, 20, 30];
+---
+
+<BaseLayout
+  title="Coins at true scale | Numismatic Cabinet"
+  description={`${measured.length} coins drawn at their real relative size, from a ${smallest.d} mm obol to a ${largest.d} mm tetradrachm.`}
+>
+  <section class="section">
+    <div class="container">
+      <p class="crumbs muted"><a href="/hobbies/coins/collection">Numismatic Cabinet</a></p>
+      <h1>At true scale</h1>
+      <p class="muted lede">
+        {measured.length} coins drawn at their real relative size — from a {smallest.d} mm {smallest.coin.type.replace(/^(AR|Æ|BI|Silvered Æ)\s*/, "").toLowerCase()} to a {largest.d} mm tetradrachm, a
+        three-and-a-half-fold spread that the catalogue photographs flatten away. Each disc is the coin's actual
+        diameter; sizes are exact relative to one another, and close to life size on a typical desktop screen.
+      </p>
+
+      <div class="ruler" aria-hidden="true">
+        {ticks.map((t) => (
+          <span class="tick" style={`left:${t * PX_PER_MM}px`}>
+            <em>{t}</em>
+          </span>
+        ))}
+        <span class="ruler-unit">mm</span>
+      </div>
+
+      <ul class="plate">
+        {measured.map(({ coin, d }) => (
+          <li class="specimen" style={`--d:${(d * PX_PER_MM).toFixed(1)}px`}>
+            <a href={`/hobbies/coins/${coinSlug(coin)}`} class="disc" aria-label={`${coin.title}, ${d} mm`}>
+              <img src={coin.image.replace(".webp", "-sm.webp")} alt="" loading="lazy" decoding="async" />
+            </a>
+            <span class="mm">{d} mm</span>
+            <span class="who">{coin.title}</span>
+            <span class="what muted">{coin.type}</span>
+          </li>
+        ))}
+      </ul>
+
+      {unmeasured > 0 && (
+        <p class="muted footnote">
+          {unmeasured} further coins are not shown: their diameter has not been measured, and a photograph cannot
+          supply it.
+        </p>
+      )}
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .crumbs {
+    font-size: 0.88rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .lede {
+    max-width: 62ch;
+    margin-bottom: 2.2rem;
+  }
+
+  .ruler {
+    position: relative;
+    height: 34px;
+    width: 113px;             /* 30 mm at the plate's scale */
+    margin: 0 0 2.4rem;
+    border-top: 2px solid var(--muted);
+  }
+
+  .tick {
+    position: absolute;
+    top: 0;
+    width: 1px;
+    height: 7px;
+    background: var(--muted);
+  }
+
+  .tick em {
+    position: absolute;
+    top: 11px;
+    left: 0;
+    transform: translateX(-50%);
+    font-style: normal;
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .ruler-unit {
+    position: absolute;
+    top: 11px;
+    left: 124px;
+    white-space: nowrap;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .plate {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 2rem 1.6rem;
+  }
+
+  .specimen {
+    display: grid;
+    justify-items: center;
+    gap: 0.15rem;
+    width: max(var(--d), 8.5rem);
+  }
+
+  /* The disc is the coin's true diameter; the photograph inside is only a fill,
+     cropped to the obverse rather than precisely registered. */
+  .disc {
+    width: var(--d);
+    height: var(--d);
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid var(--hairline);
+    background: var(--surface-soft);
+    display: block;
+    margin-bottom: 0.5rem;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  .disc:hover {
+    border-color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  .disc img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left center;
+    display: block;
+  }
+
+  .mm {
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink);
+    font-weight: 600;
+  }
+
+  .who {
+    font-size: 0.74rem;
+    text-align: center;
+    line-height: 1.25;
+    color: var(--body);
+    max-width: 14ch;
+  }
+
+  .what {
+    font-size: 0.7rem;
+  }
+
+  .footnote {
+    margin-top: 2.6rem;
+    font-size: 0.88rem;
+    max-width: 60ch;
+  }
+</style>

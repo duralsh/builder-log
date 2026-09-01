@@ -6,7 +6,10 @@ import { formatDate, sortByDateDesc } from "../../lib/posts";
 const posts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("coins")));
 ---
 
-<BaseLayout title="Numismatics | Dogus Ural">
+<BaseLayout
+  title="Numismatics | Dogus Ural"
+  description="Numismatics notes by Dogus Ural: Greek silver, the Greco-Baktrian and Indo-Greek kings, and Roman imperial coinage."
+>
   <section class="section">
     <div class="container">
       <h1>Numismatics</h1>

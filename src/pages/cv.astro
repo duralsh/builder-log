@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { sortByDateDesc } from "../lib/posts";
+import { PERSON } from "../lib/person";
 
 const allPosts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("work")));
 
@@ -133,7 +134,11 @@ const rolePosts = (start: Date, end: Date | null) =>
   allPosts.filter((post) => post.data.date >= start && (end ? post.data.date < end : true));
 ---
 
-<BaseLayout title="CV | Dogus Ural">
+<BaseLayout
+  title="CV — Dogus Ural, Head of AI at AVILOO"
+  description="Dogus Ural's CV. Head of AI at AVILOO in Vienna, leading the company-wide AI transformation. Previously Director of Product at Arena and embedded software engineer at Snap."
+  jsonLd={PERSON}
+>
   <section class="cv-heading">
     <div class="container">
       <h1>CV</h1>

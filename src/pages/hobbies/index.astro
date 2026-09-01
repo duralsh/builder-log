@@ -9,7 +9,10 @@ const lifting = sortByDateDesc(
 const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("coins")));
 ---
 
-<BaseLayout title="Hobbies | Dogus Ural">
+<BaseLayout
+  title="Hobbies | Dogus Ural"
+  description="Dogus Ural's hobbies: a cabinet of Greek, Roman, Baktrian and Islamic coins, a lifting log, and a reading shelf."
+>
   <section class="section">
     <div class="container">
       <h1>Hobbies</h1>

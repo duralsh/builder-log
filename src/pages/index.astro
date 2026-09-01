@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import { STOIC_QUOTES } from "../lib/stoicQuotes";
+import { PERSON } from "../lib/person";
 
 const features = [
   {
@@ -55,8 +56,9 @@ const features = [
 ---
 
 <BaseLayout
-  title="Dogus Ural"
+  title="Dogus Ural — Head of AI at AVILOO, Vienna"
   description="Head of AI at AVILOO. Engineering, fintech, and product background, now focused entirely on AI."
+  jsonLd={PERSON}
 >
   <section class="section hero-section">
     <div class="container hero">

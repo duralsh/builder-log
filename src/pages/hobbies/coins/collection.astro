@@ -394,9 +394,6 @@ const totalCoins = coins.length;
                     <strong>Notes:</strong> {coin.notes}
                   </p>
                 ) : null}
-                <p class="permalink">
-                  <a href={`/hobbies/coins/${coin.slug}`}>Open this coin →</a>
-                </p>
                 {coin.condition ? (
                   <p>
                     <strong>Condition:</strong> {coin.condition}
@@ -413,6 +410,9 @@ const totalCoins = coins.length;
                     ) : null}
                   </p>
                 ) : null}
+                <p class="permalink">
+                  <a href={`/hobbies/coins/${coin.slug}`}>Open this coin →</a>
+                </p>
               </li>
             ))}
           </ol>
@@ -1056,9 +1056,32 @@ const totalCoins = coins.length;
     opacity: 1;
   }
 
+  /* An action, not another data row: it closes the entry rather than
+     interrupting the specification list, and carries a chip affordance so it
+     does not read as one more <strong>-labelled field. */
   .permalink {
-    margin: 0.9rem 0 0.15rem;
-    font-size: 0.88rem;
+    margin: 1.15rem 0 0;
+  }
+
+  .permalink a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.85rem;
+    border: 1px solid var(--hairline);
+    border-radius: var(--rounded-pill);
+    background: var(--surface-card);
+    color: var(--muted);
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-decoration: none;
+    transition: color 0.15s ease, border-color 0.15s ease;
+  }
+
+  .permalink a:hover,
+  .permalink a:focus-visible {
+    color: var(--ink);
+    border-color: var(--ink);
   }
 
   .plate-link {

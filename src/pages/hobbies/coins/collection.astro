@@ -352,7 +352,15 @@ const totalCoins = coins.length;
           <ol class="coin-list">
             {group.items.map((coin) => (
               <li class="coin-item" id={coin.anchor} data-mint={coin.mintKey}>
-                <h3>
+                <h3 class="coin-heading">
+                  {/* An overlay rather than a wrapper: HTML forbids nesting the
+                      issuer's Wikipedia link inside a link to the coin page, so
+                      this covers the heading and the issuer sits above it. */}
+                  <a
+                    class="coin-open"
+                    href={`/hobbies/coins/${coin.slug}`}
+                    aria-label={`Open ${coin.title} - ${coin.type}`}
+                  />
                   {coin.wiki ? (
                     <>
                       {coin.wiki.before}
@@ -410,9 +418,6 @@ const totalCoins = coins.length;
                     ) : null}
                   </p>
                 ) : null}
-                <p class="permalink">
-                  <a href={`/hobbies/coins/${coin.slug}`}>Open this coin →</a>
-                </p>
               </li>
             ))}
           </ol>
@@ -1109,22 +1114,48 @@ const totalCoins = coins.length;
     gap: 1.4rem;
   }
 
-  /* Kept quiet inside the heading: a dotted rule that firms up on hover, so the
-     link reads as an aside rather than competing with the title. */
-  .issuer {
-    color: inherit;
-    text-decoration: underline dotted;
+  /* The heading opens the coin; the issuer's name opens Wikipedia. Two
+     destinations in one line, so the issuer is marked clearly rather than
+     quietly. */
+  .coin-heading {
+    position: relative;
+  }
+
+  .coin-open {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+  }
+
+  .coin-heading:has(.coin-open:hover) {
+    text-decoration: underline;
     text-decoration-thickness: 1px;
-    text-underline-offset: 4px;
+    text-underline-offset: 5px;
     text-decoration-color: var(--muted);
+  }
+
+  .issuer {
+    position: relative;
+    z-index: 1;
+    color: var(--accent);
+    text-decoration: underline solid;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 4px;
+    text-decoration-color: color-mix(in srgb, var(--accent) 55%, transparent);
     transition: text-decoration-color 0.15s ease;
   }
 
-  .issuer:hover {
-    text-decoration: underline solid;
-    text-decoration-thickness: 1px;
-    text-underline-offset: 4px;
-    text-decoration-color: var(--ink);
+  .issuer::after {
+    content: "\2197";
+    margin-left: 0.15em;
+    font-size: 0.7em;
+    vertical-align: 0.35em;
+    text-decoration: none;
+  }
+
+  .issuer:hover,
+  .issuer:focus-visible {
+    text-decoration-color: var(--accent);
   }
 
   .coin-item {

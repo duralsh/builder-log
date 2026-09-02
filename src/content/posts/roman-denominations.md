@@ -4,7 +4,7 @@ date: 2026-09-01
 tags: ["coins"]
 excerpt: "Seven centuries of Roman money, from bronze weighed on scales to the gold solidus that outlived the empire that struck it."
 cover: "/covers/coins-denarius.svg"
-draft: false
+draft: true
 ---
 
 Roman money changed more than most people expect. The denarius that paid a legionary under Augustus was not the coin that paid one under Gallienus, though both carried the name. Weights fell, silver was diluted, and denominations were invented, abandoned and revived over roughly seven hundred years. What follows is the sequence, with numbers where the numbers are known.

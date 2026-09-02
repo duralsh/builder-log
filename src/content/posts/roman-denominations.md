@@ -36,9 +36,20 @@ The Augustan reform, usually placed around 23 BC, produced the arrangement that 
 - **Sestertius**, brass, about 25–28 g
 - **Dupondius**, brass, about 12.5 g — 2 asses
 - **As**, copper, about 11 g
-- **Semis** and **quadrans** below it
+- **Semis**, brass, about 3.5 g — half an as
+- **Quadrans**, copper, about 3 g — a quarter of an as
 
 The metal mattered as much as the size. The sestertius and dupondius were struck in *orichalcum*, a brass alloy that is distinctly yellower than the red copper of the as. Since a dupondius and an as were close in diameter, colour was how you told two asses from one. From Nero onward the dupondius also carried a radiate crown, which made the distinction visible even on a worn coin.
+
+The same logic runs to the bottom of the system. A semis and a quadrans weigh about the same, but the semis is brass and passes for twice the copper quadrans. Metal, not mass, set the value.
+
+Almost every imperial bronze of this period carries the letters **SC**, for *senatus consulto*, by decree of the senate. The traditional reading is that Augustus left base metal to the senate and kept gold and silver for himself, a split that mattered because armies were paid in precious metal. How much the letters really signify is disputed. They may mark authority over striking, or only the authorisation of the types and honours shown.
+
+## What actually circulated
+
+A system on paper is not the same as the coins in a purse. A dolium set into the counter of the thermopolium of Vetutius Placidus at Pompeii held 1,385 bronze coins, some 585 sestertii in all — likely several days' takings rather than one afternoon's. Asses account for 63.3% of them. The small change the system implies should be everywhere is almost absent: one semis, one triens, four quadrantes, one sextans.
+
+For scale, a labourer in the early empire could expect around a denarius a day. On that reckoning an aureus was close to a month's wages, and the as that bought lunch at a Pompeian counter was a fraction of a morning's.
 
 ## Nero's reduction
 

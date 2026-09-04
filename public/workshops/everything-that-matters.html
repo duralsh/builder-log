@@ -1,0 +1,1832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Everything That Matters — AI Cheatsheet — Workshop #5</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reset.css" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400;1,8..60,500;1,8..60,600;1,8..60,700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --terracotta: #c96442;
+      --terracotta-deep: #a8502f;
+      --coral: #d97757;
+      --olive: #869959;
+      --magenta: #C75B7E;
+      --lavender: #9D86C4;
+      --sky: #7BA0CC;
+      --sky-deep: #4f73a0;
+      --sage: #A8C0A9;
+      --beige: #E8DFC8;
+      --cream: #f5f4ed;
+      --paper: #faf9f5;
+      --ink: #141413;
+      --ink-soft: #4d4c48;
+      --muted: #87867f;
+    }
+
+    /* Reveal overrides */
+    .reveal {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      font-size: 26px;
+      color: var(--ink);
+      font-weight: 400;
+      letter-spacing: -0.005em;
+    }
+
+    .reveal .slides { text-align: left; }
+
+    .reveal .slides > section,
+    .reveal .slides > section > section {
+      padding: 56px 88px 110px 88px;
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    .reveal h1, .reveal h2, .reveal h3 {
+      font-family: 'Source Serif 4', 'Tiempos', Georgia, serif;
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+      text-transform: none;
+      color: var(--ink);
+      margin: 0 0 0.35em 0;
+    }
+
+    .reveal h1 { font-size: 4em; }
+    .reveal h2 { font-size: 2.2em; }
+    .reveal h3 { font-size: 1.5em; }
+
+    .reveal p, .reveal li { line-height: 1.5; color: var(--ink-soft); }
+
+    .reveal ul { list-style: none; margin-left: 0; padding-left: 0; }
+
+    .reveal ul li {
+      margin: 0.45em 0;
+      padding-left: 1.4em;
+      position: relative;
+      font-size: 0.95em;
+    }
+
+    .reveal ul li::before {
+      content: "→";
+      position: absolute;
+      left: 0;
+      color: var(--terracotta);
+      font-weight: 500;
+    }
+
+    .reveal code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+      background: rgba(217, 118, 79, 0.1);
+      color: var(--terracotta-deep);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    .reveal pre {
+      background: var(--ink);
+      color: var(--paper);
+      padding: 22px 26px;
+      border-radius: 6px;
+      font-size: 0.62em;
+      line-height: 1.55;
+      box-shadow: none;
+      margin: 0.7em 0;
+      width: auto;
+    }
+
+    .reveal pre code {
+      background: transparent;
+      color: var(--paper);
+      padding: 0;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Paste-in appendix slides — dense, selectable blocks sitting below the techniques and instruction-stack slides */
+    .paste-slide .slide-content { max-width: 1330px; }
+    .paste-slide h2 { font-size: 1.45em; margin-bottom: 4px; }
+    .paste-where {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.62em;
+      color: var(--muted);
+      line-height: 1.5;
+      margin: 0;
+      max-width: none;
+    }
+    .reveal pre.paste-block {
+      font-size: 12.5px;
+      line-height: 1.5;
+      padding: 18px 22px;
+      margin: 12px 0 0 0;
+      user-select: text;
+    }
+    .reveal pre.paste-block.roomy { font-size: 16px; line-height: 1.62; }
+    .reveal pre.paste-block.narrow { max-width: 820px; }
+    .paste-hint {
+      font-family: 'Inter', sans-serif;
+      font-size: 11.5px;
+      letter-spacing: 0.03em;
+      color: var(--muted);
+      opacity: 0.8;
+      margin: 12px 0 0 0;
+    }
+
+    .reveal a {
+      color: var(--terracotta-deep);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(217, 118, 79, 0.3);
+    }
+
+    /* Slide types */
+    .slide-cream { background: var(--cream); }
+    .slide-paper { background: var(--paper); }
+
+    /* Letterbox area matches the slide ground, so off-ratio screens show no white bands */
+    .reveal-viewport { background: var(--cream); }
+
+    /* Layout helpers */
+    .slide-content {
+      max-width: 1140px;
+      margin: 0 auto;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .slide-content.center { justify-content: center; }
+
+    .chip {
+      display: inline-block;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55em;
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--ink);
+      border: 1px solid var(--ink);
+      border-radius: 999px;
+      padding: 6px 14px;
+      margin-bottom: 20px;
+      width: fit-content;
+    }
+    .chip-light { border-color: rgba(26, 24, 20, 0.4); color: rgba(26, 24, 20, 0.7); }
+    .chip-terracotta { background: var(--terracotta); border-color: var(--terracotta); color: var(--ink); }
+
+    .lede {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.35em;
+      line-height: 1.35;
+      color: var(--ink);
+      max-width: 900px;
+      font-weight: 300;
+      margin: 0 0 16px 0;
+    }
+
+    .sub {
+      font-size: 0.92em;
+      color: var(--muted);
+      max-width: 880px;
+      line-height: 1.5;
+      margin: 0 0 24px 0;
+    }
+
+    .footer-mark {
+      position: absolute;
+      bottom: 38px; left: 88px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 500;
+      color: var(--ink); opacity: 0.45;
+      display: flex; align-items: center; gap: 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .page-num {
+      position: absolute;
+      bottom: 38px; right: 88px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; color: var(--ink); opacity: 0.4;
+      letter-spacing: 0.04em;
+    }
+
+    /* Two-column layouts */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+
+    .col-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.55em; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--muted); margin-bottom: 12px;
+    }
+
+    .col-card {
+      background: var(--paper);
+      border: 1px solid rgba(26, 24, 20, 0.08);
+      border-radius: 10px;
+      padding: 22px 26px;
+      font-size: 0.9em;
+    }
+    .col-card.bad { border-left: 4px solid #B85450; }
+    .col-card.good { border-left: 4px solid var(--olive); }
+
+    /* Cover slide */
+    .cover-top { position: absolute; top: 60px; left: 88px; display: flex; align-items: center; gap: 18px; }
+    .cover-eyebrow {
+      font-family: 'Inter', sans-serif;
+      font-size: 13px; font-weight: 600;
+      letter-spacing: 0.13em; text-transform: uppercase;
+      color: var(--ink); opacity: 0.85;
+    }
+    .cover-title { font-size: 4.2em; font-weight: 500; line-height: 1; max-width: 16ch; letter-spacing: -0.01em; margin: 0; }
+    .reveal .cover-subtitle {
+      font-family: 'Source Serif 4', serif;
+      font-size: 1.45em; font-weight: 600; font-style: italic;
+      color: var(--ink); margin: 22px 0 0 0; max-width: 30ch; line-height: 1.35;
+    }
+    .cover-meta {
+      position: absolute; bottom: 62px; left: 88px; right: 88px;
+      font-family: 'Inter', sans-serif; font-size: 14px;
+      color: var(--ink); opacity: 0.85; line-height: 1.85;
+      border-top: 1px solid rgba(26, 24, 20, 0.25); padding-top: 22px;
+    }
+    .cover-meta strong { font-weight: 600; opacity: 1; }
+    .cover-link { color: var(--ink); border-bottom: 1px solid rgba(26, 24, 20, 0.4); font-weight: 500; }
+    .cover-link:hover { border-bottom-color: var(--ink); opacity: 1; }
+
+    /* Chapter divider slides */
+    .chapter-divider { height: 100%; display: flex; flex-direction: column; justify-content: flex-end; padding-bottom: 20px; }
+    .title-emoji { font-size: 0.55em; display: inline-block; margin-left: 0.25em; vertical-align: 0.15em; line-height: 1; }
+    .chapter-num {
+      font-family: 'Inter', sans-serif; font-size: 0.55em; font-weight: 500;
+      letter-spacing: 0.05em; color: var(--ink);
+      border: 1px solid var(--ink); border-radius: 999px;
+      padding: 6px 18px; display: inline-block; width: fit-content; margin-bottom: 28px;
+    }
+    .chapter-title { font-family: 'Source Serif 4', serif; font-size: 4em; line-height: 1; font-weight: 400; color: var(--ink); }
+    .reveal .chapter-blurb {
+      font-family: 'Source Serif 4', serif; font-size: 1.15em; line-height: 1.4;
+      max-width: 24ch; margin-top: 22px; color: var(--ink); font-weight: 500;
+    }
+
+    /* Hero text */
+    .hero-quote { font-family: 'Source Serif 4', serif; font-size: 3em; line-height: 1.1; font-weight: 300; max-width: 18ch; color: var(--ink); margin: 0; }
+    .hero-quote em { font-style: italic; color: var(--terracotta-deep); }
+
+    /* Trio cards */
+    .trio { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+    .trio-card { background: var(--paper); border-radius: 10px; padding: 22px 24px; border: 1px solid rgba(26, 24, 20, 0.08); }
+    .trio-card h4 { font-family: 'Source Serif 4', serif; font-size: 1.2em; font-weight: 500; margin: 0 0 10px 0; color: var(--ink); }
+    .trio-card p { font-size: 0.72em; line-height: 1.5; color: var(--ink-soft); margin: 0 0 10px 0; }
+    .trio-card .tag { font-size: 0.5em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--terracotta); margin-bottom: 10px; display: block; }
+    .trio-card .examples { font-size: 0.65em; color: var(--muted); font-style: italic; margin: 6px 0 0 0; line-height: 1.45; padding-top: 10px; border-top: 1px solid rgba(26, 24, 20, 0.08); }
+
+    /* Step list */
+    .step-list { display: grid; grid-template-columns: auto 1fr; gap: 16px 24px; margin-top: 20px; }
+    .step-num { font-family: 'Source Serif 4', serif; font-size: 1.6em; color: var(--terracotta); line-height: 1; font-weight: 500; }
+    .step-body { padding-top: 6px; }
+    .step-body h4 { font-family: 'Source Serif 4', serif; font-size: 1.05em; margin: 0 0 4px 0; color: var(--ink); font-weight: 500; }
+    .step-body p { font-size: 0.78em; color: var(--ink-soft); margin: 0; line-height: 1.5; }
+
+    /* Logo */
+    .claude-logo { display: inline-flex; align-items: center; gap: 10px; font-family: 'Source Serif 4', serif; font-size: 1.05em; font-weight: 400; color: var(--ink); }
+    .claude-logo svg { width: 22px; height: 22px; }
+
+    /* Callout */
+    .callout { background: rgba(217, 118, 79, 0.08); border-left: 3px solid var(--terracotta); padding: 18px 24px; margin: 18px 0; border-radius: 0 6px 6px 0; font-size: 0.82em; color: var(--ink); line-height: 1.55; }
+    .callout strong { color: var(--terracotta-deep); }
+    .callout p { margin: 4px 0; color: var(--ink); }
+
+    /* Properties grid */
+    .props { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 20px; }
+    .prop { background: var(--paper); border-radius: 10px; padding: 22px 24px; border-top: 3px solid var(--terracotta); }
+    .prop h4 { font-family: 'Source Serif 4', serif; font-size: 1.15em; font-weight: 500; margin: 0 0 8px 0; color: var(--ink); }
+    .prop p { font-size: 0.72em; line-height: 1.5; color: var(--ink-soft); margin: 0; }
+
+    /* TOC list (contents slide) */
+    .toc-list { list-style: none; counter-reset: toc-counter; margin: 14px 0 0 0; padding: 0; max-width: 1000px; }
+    .toc-list li { counter-increment: toc-counter; padding: 14px 0 14px 56px; border-bottom: 1px solid rgba(26, 24, 20, 0.08); position: relative; }
+    .toc-list li:last-child { border-bottom: none; }
+    .toc-list li::before { content: counter(toc-counter, decimal-leading-zero); position: absolute; left: 0; top: 16px; font-family: 'Inter', sans-serif; font-size: 12px; font-weight: 600; color: var(--terracotta); letter-spacing: 0.08em; }
+    .toc-list a { font-family: 'Source Serif 4', serif; font-size: 1.2em; font-weight: 500; color: var(--ink); text-decoration: none; border-bottom: none; transition: color 0.15s ease; display: inline-block; }
+    .toc-list a:hover { color: var(--terracotta); border-bottom: none; }
+    .toc-list .desc { font-size: 0.78em; color: var(--ink-soft); margin: 4px 0 0 0; line-height: 1.45; }
+
+    /* Take-home */
+    .remember-list { display: grid; gap: 13px; margin-top: 6px; max-width: 920px; }
+    .remember-item { display: grid; grid-template-columns: 48px 1fr; gap: 22px; align-items: start; background: var(--paper); border-radius: 10px; padding: 16px 24px; border-left: 4px solid var(--terracotta); }
+    .remember-num { font-family: 'Source Serif 4', serif; font-size: 1.9em; color: var(--terracotta); font-weight: 500; line-height: 1; }
+    .remember-item p { font-size: 0.86em; color: var(--ink-soft); line-height: 1.5; margin: 4px 0 0 0; }
+    .remember-item p strong { color: var(--ink); }
+
+    /* Thanks footer */
+    .thanks-footer { font-family: 'Inter', sans-serif; font-size: 11px; color: var(--ink); opacity: 0.6; line-height: 1.7; letter-spacing: 0.02em; border-top: 1px solid rgba(26, 24, 20, 0.2); padding-top: 14px; }
+
+    /* Status badges */
+    .status-available { font-family: 'Inter', sans-serif; font-size: 0.5em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--olive); margin-left: 8px; vertical-align: 2px; background: rgba(134, 153, 89, 0.12); padding: 2px 8px; border-radius: 999px; }
+    .status-soon { font-family: 'Inter', sans-serif; font-size: 0.5em; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--terracotta-deep); margin-left: 8px; vertical-align: 2px; background: rgba(168, 80, 47, 0.1); padding: 2px 8px; border-radius: 999px; }
+
+    /* ============================================= */
+    /* FLOW CHART — workflow diagrams (MCP → skill → Claude → MCP) */
+    /* ============================================= */
+    .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin: 16px 0 12px 0; }
+    .flow-node {
+      background: var(--paper);
+      border: 1px solid rgba(26, 24, 20, 0.08);
+      border-top: 3px solid var(--muted);
+      border-radius: 10px;
+      padding: 10px 13px;
+      min-width: 100px;
+      max-width: 150px;
+      flex: 0 1 auto;
+    }
+    .flow-node .kicker { font-family: 'Inter', sans-serif; font-size: 0.5em; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; display: block; margin-bottom: 5px; color: var(--muted); }
+    .flow-node .name { display: block; font-family: 'Source Serif 4', serif; font-size: 0.88em; color: var(--ink); font-weight: 500; line-height: 1.15; }
+    .flow-node .det { display: block; font-size: 0.58em; color: var(--ink-soft); margin-top: 6px; line-height: 1.4; }
+    .flow-node.you   { border-top-color: var(--ink); }
+    .flow-node.you   .kicker { color: var(--ink-soft); }
+    .flow-node.skill { border-top-color: var(--terracotta); }
+    .flow-node.skill .kicker { color: var(--terracotta-deep); }
+    .flow-node.read  { border-top-color: var(--sky); }
+    .flow-node.read  .kicker { color: var(--sky-deep); }
+    .flow-node.brain { border-top-color: var(--lavender); }
+    .flow-node.brain .kicker { color: #6b5797; }
+    .flow-node.act   { border-top-color: var(--magenta); }
+    .flow-node.act   .kicker { color: #a23d61; }
+    .flow-node.out   { border-top-color: var(--olive); }
+    .flow-node.out   .kicker { color: #5f6e3e; }
+    .flow-arrow { color: var(--terracotta); font-size: 1.05em; font-weight: 600; flex: 0 0 auto; padding: 0 1px; }
+    .flow-branch { display: flex; flex-direction: column; gap: 8px; }
+
+    .flow-legend { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px 28px; margin-top: 22px; max-width: 1040px; }
+    .legend-item { display: flex; align-items: flex-start; gap: 12px; }
+    .legend-swatch { width: 14px; height: 14px; border-radius: 4px; flex: 0 0 auto; margin-top: 4px; }
+    .legend-item h4 { font-family: 'Source Serif 4', serif; font-size: 0.95em; font-weight: 500; margin: 0 0 2px 0; color: var(--ink); }
+    .legend-item p { font-size: 0.66em; color: var(--ink-soft); margin: 0; line-height: 1.4; }
+
+    @media print {
+      .reveal .controls, .reveal .progress { display: none; }
+    }
+  </style>
+  <style>
+    /* ===== #5 additions — same system, denser components ===== */
+    .ctable { width: 100%; border-collapse: collapse; margin: 6px 0 4px 0; font-size: 0.7em; }
+    .ctable th, .ctable td { text-align: left; padding: 8px 12px; border-bottom: 1px solid rgba(26,24,20,0.10); vertical-align: top; }
+    .ctable thead th { font-family: 'Inter', sans-serif; font-size: 0.85em; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); border-bottom: 1px solid rgba(26,24,20,0.25); }
+    .ctable tbody tr:last-child td { border-bottom: none; }
+    .ctable td.model { font-family: 'Source Serif 4', serif; font-size: 1.15em; font-weight: 500; color: var(--ink); white-space: nowrap; }
+    .ctable td.num { font-family: 'JetBrains Mono', monospace; font-size: 0.95em; color: var(--ink-soft); white-space: nowrap; }
+    .ctable .hl { color: var(--terracotta-deep); font-weight: 500; }
+
+    .quote { background: var(--paper); border-left: 3px solid var(--sky); padding: 14px 20px; border-radius: 0 6px 6px 0; margin: 10px 0; }
+    .quote p { font-family: 'Source Serif 4', serif; font-size: 0.88em; font-style: italic; color: var(--ink); margin: 0; line-height: 1.45; }
+    .quote cite { display: block; font-family: 'Inter', sans-serif; font-style: normal; font-size: 0.6em; color: var(--muted); margin-top: 7px; letter-spacing: 0.02em; }
+    .quote.warn { border-left-color: #B85450; }
+    .quote.good { border-left-color: var(--olive); }
+
+    .kv { display: grid; grid-template-columns: auto 1fr; gap: 9px 20px; margin: 12px 0; font-size: 0.78em; align-items: baseline; }
+    .kv dt { font-family: 'Inter', sans-serif; font-weight: 600; color: var(--terracotta-deep); white-space: nowrap; }
+    .kv dd { margin: 0; color: var(--ink-soft); line-height: 1.45; }
+
+    .big-stat { font-family: 'Source Serif 4', serif; font-size: 2.6em; line-height: 1; color: var(--terracotta); font-weight: 500; }
+    .stat-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin: 14px 0 10px 0; }
+    .stat { background: var(--paper); border-radius: 10px; padding: 16px 18px; border-top: 3px solid var(--terracotta); }
+    .stat .n { font-family: 'Source Serif 4', serif; font-size: 1.9em; line-height: 1; color: var(--terracotta); font-weight: 500; }
+    .stat .l { display: block; font-size: 0.62em; color: var(--ink-soft); margin-top: 7px; line-height: 1.4; }
+
+    .tight li { margin: 0.3em 0; font-size: 0.86em; }
+    .mini { font-size: 0.68em; color: var(--muted); line-height: 1.45; margin-top: 10px; }
+
+    /* denser contents list, for six parts */
+    .toc-list.dense li { padding-top: 6px; padding-bottom: 6px; }
+    .toc-list.dense a { font-size: 1.08em; }
+    .toc-list.dense .desc { font-size: 0.74em; margin-top: 2px; }
+
+    /* prompt-order stack — the picture of the instruction stack */
+    .layer-stack { display: grid; gap: 8px; margin: 14px 0 4px 0; }
+    .layer {
+      background: var(--paper);
+      border: 1px solid rgba(26,24,20,0.08);
+      border-left: 4px solid var(--muted);
+      border-radius: 10px;
+      padding: 9px 16px;
+      display: grid;
+      grid-template-columns: 268px 178px 1fr;
+      gap: 14px;
+      align-items: center;
+    }
+    .layer h4 { font-family: 'Source Serif 4', serif; font-size: 0.92em; font-weight: 500; margin: 0; color: var(--ink); line-height: 1.15; white-space: nowrap; }
+    .layer p { font-size: 0.6em; color: var(--muted); margin: 0; line-height: 1.35; }
+    .layer code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.56em;
+      background: rgba(26,24,20,0.04);
+      color: var(--ink-soft);
+      border-radius: 4px;
+      padding: 7px 11px;
+      display: block;
+      line-height: 1.5;
+    }
+    .layer.l-yours { border-left-color: var(--terracotta); }
+    .layer.l-yours p { color: var(--terracotta-deep); }
+    .layer.l-project { border-left-color: var(--sky); }
+    .layer.l-project p { color: var(--sky-deep); }
+    .layer.l-now { border-left-color: var(--olive); background: rgba(134,153,89,0.06); }
+    .layer.l-now p { color: #5f6e3e; }
+    .stack-edge { font-family: 'Inter', sans-serif; font-size: 0.58em; color: var(--muted); margin: 0; letter-spacing: 0.02em; }
+
+    /* denser remember-list, for slides carrying four items plus a footnote */
+    .remember-list.dense { gap: 9px; }
+    .remember-list.dense .remember-item { padding: 12px 22px; }
+    .remember-list.dense .remember-item p { font-size: 0.82em; }
+  </style>
+
+</head>
+<body>
+
+<div class="reveal">
+  <div class="slides">
+    <!-- =========================================== -->
+    <!-- 01 — COVER -->
+    <!-- =========================================== -->
+    <section data-background-color="#c96442">
+      <div class="cover-top">
+        <div class="claude-logo">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 L13.5 9 L21 10.5 L13.5 13.5 L12 22 L10.5 13.5 L3 12 L10.5 9 Z"/></svg>
+        </div>
+        <div class="cover-eyebrow">AI Workshop · #5</div>
+      </div>
+      <div class="slide-content" style="justify-content: center;">
+        <h1 class="cover-title">Everything That Matters<span class="title-emoji">📌</span></h1>
+        <p class="cover-subtitle">Four workshops of material on one deck. Every fact checked against Anthropic's docs on 30 July 2026.</p>
+      </div>
+      <div class="cover-meta">
+        <strong>Monday  · Online</strong><br>
+        Hosted by Dogus Ural<br>
+        Previously: <a href="https://www.notion.so/35611196e46d81fca4f7d26452ef9c94" class="cover-link">the internal AI hub · Workshops #1–#4 →</a>
+      </div>
+      <aside class="notes">
+        This is the cheatsheet deck. Four workshops of material, rebuilt from scratch against current sources — not a recap of old slides. Two framings to set up front: (1) if you've been to all four, this is your reference card; (2) if you've been to none, this is the whole thing. Everything on these slides was verified against Anthropic's docs on 30 July 2026. Say that out loud — it's the reason the model numbers here differ from Workshop #1.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 02 — CONTENTS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Contents</div>
+        <h2>What we'll cover.</h2>
+        <p class="sub">Six parts. Click any line to jump to that section.</p>
+        <ol class="toc-list dense">
+          <li>
+            <a href="#/part-1">How it works.</a>
+            <p class="desc">LLM, token, and the context window everything else depends on.</p>
+          </li>
+          <li>
+            <a href="#/part-2">What you're driving.</a>
+            <p class="desc">Four models, the two dials you control, and where you work.</p>
+          </li>
+          <li>
+            <a href="#/part-3">Context, in practice.</a>
+            <p class="desc">What context really is, your two jobs, the two options when a chat gets long, and the habits that keep it short.</p>
+          </li>
+          <li>
+            <a href="#/part-4">Talking to it.</a>
+            <p class="desc">What makes a prompt work, and six methods worth knowing.</p>
+          </li>
+          <li>
+            <a href="#/part-5">Trusting it.</a>
+            <p class="desc">Why it invents things, how to catch it, and when to be careful.</p>
+          </li>
+          <li>
+            <a href="#/part-6">Giving it hands.</a>
+            <p class="desc">MCP and skills in plain terms, and what you already have.</p>
+          </li>
+        </ol>
+      </div>
+      <div class="page-num">02</div>
+      <aside class="notes">
+        Each line is clickable — use it in Q&amp;A to jump. Signpost the shape: Part 1 is the mechanism, and it's the part people think they can skip. They can't — every number in Parts 2 and 3 is denominated in tokens. Part 2 is the controls you actually touch. Part 3 is the one that changes behaviour today — protect that one if you're short on time. Part 4 is craft, Part 5 is judgement, Part 6 is the tooling.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 03 — PART 1 DIVIDER -->
+    <!-- =========================================== -->
+    <section data-background-color="#7BA0CC" id="part-1">
+      <div class="chapter-divider">
+        <span class="chapter-num">Part 1</span>
+        <h2 class="chapter-title">How it<br/>works.<span class="title-emoji">🧠</span></h2>
+        <p class="chapter-blurb">Four ideas everything else rests on.</p>
+      </div>
+      <aside class="notes">
+        Keep this part brisk but don't skip it. The pitch: "Most frustration with Claude comes from a wrong mental model, not a wrong prompt." Four ideas: LLM, token, what the context window holds, and the fact that it gets re-read every turn. That's deliberately short — the practical context material lives in Part 3, with the instruction stack in its back half; models, cost and effort are Part 2. Don't get pulled into either here.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 04 — WHAT IS AN LLM -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Definition</div>
+        <h2>It predicts the next chunk of text.</h2>
+        <p class="sub">It reads everything you've given it and predicts what comes next, then does that again, and again. Every sentence is built one piece at a time. Nothing is looked up in a database.</p>
+        <div class="props">
+          <div class="prop">
+            <h4>No memory of the conversation</h4>
+            <p>It isn't recalling what you said earlier; it's re-reading it. The whole transcript is sent again every turn. (It <em>can</em> remember things about you across chats — that's a separate memory feature, not the conversation itself.)</p>
+          </div>
+          <div class="prop">
+            <h4>It is not a search engine</h4>
+            <p>Without a tool to look things up, it answers from training, not from a live source.</p>
+          </div>
+          <div class="prop">
+            <h4>It is not deterministic</h4>
+            <p>Ask the same question twice and you can get two different answers. That is normal.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Every common complaint comes from this.</strong> “It forgot.” “It made that up.” “It answered differently this time.” A predictor that re-reads instead of remembering, with no live sources, behaves exactly like that.
+        </div>
+      </div>
+      <div class="page-num">04</div>
+      <aside class="notes">
+        Resist the "fancy autocomplete" line — it's dismissive and people stop listening. Better framing: prediction at sufficient scale becomes reasoning. The three properties on this slide are the ones that explain the complaints, so land them and refer back all deck. Ask the room: "who has said 'Claude forgot what I told it'?" Most hands. Then: "it never knew — it was re-reading the transcript each time, and the transcript got too long." That sets up Part 3.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 05 — WHAT IS A TOKEN -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">The unit</div>
+        <h2>A token is a chunk of text. Everything is measured in them.</h2>
+        <p class="sub">Roughly <strong>¾ of a word</strong> in English. People assume tokens are characters or whole words; they are neither. Every limit and every price in this deck is counted in tokens, which is why it comes first.</p>
+        <div class="stat-row">
+          <div class="stat"><span class="n">~2</span><span class="l">the words <code>Hello world</code></span></div>
+          <div class="stat"><span class="n">~200</span><span class="l">a short email</span></div>
+          <div class="stat"><span class="n">~25k</span><span class="l">a 40-page Flash Test report</span></div>
+          <div class="stat"><span class="n">~1M</span><span class="l">the entire King James Bible</span></div>
+        </div>
+        <div class="callout">
+          <p><strong>Two reasons it matters:</strong></p>
+          <p><strong>1. Limits are in tokens.</strong> The context window — the next slide explains what it is — holds up to 1 million tokens on current models: roughly <strong>750,000 words</strong>, about the whole Bible. Generous, but a handful of PDFs eats it faster than you'd guess.</p>
+          <p><strong>2. Bills are in tokens.</strong> When you use the API you pay per token in and per token out. On claude.ai it's bundled into the subscription, so you don't see it, but it's still being counted.</p>
+        </div>
+      </div>
+      <div class="page-num">05</div>
+      <aside class="notes">
+        Keep this slide short — it's plumbing, but necessary plumbing. The ¾-of-a-word rule is good enough for every decision anyone in this room will make. A concrete number lands best: one long technical report is ~25k tokens, so "just paste in a few reports" is a 100k-token decision. Don't get drawn into tokenizer specifics; if asked, say it varies by model and it doesn't change any practical choice.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 06 — THE CONTEXT WINDOW -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">The space everything shares</div>
+        <h2>Everything has to fit in one window.</h2>
+        <p class="sub">Anthropic calls the <strong>context window</strong> Claude's <em>working memory</em>: everything it can see while it answers you. The size is fixed, and all of this competes for the same room.</p>
+        <dl class="kv">
+          <dt>Your instructions</dt><dd>Account-wide preferences, plus anything set on the Project you're working in — a container Part 3 explains. Loaded before you type a word.</dd>
+          <dt>The conversation</dt><dd>Every question and every answer so far, including Claude's own replies and the thinking behind them.</dd>
+          <dt>Files and results</dt><dd>Anything you attached, and everything a tool handed back: a search result, a spreadsheet, a Salesforce record.</dd>
+          <dt>Tools and connectors</dt><dd>The switches that plug Claude into outside systems — Part 6. Each one you switch on describes itself to Claude up front, whether or not you end up using it.</dd>
+        </dl>
+        <div class="callout">
+          <strong>One space, shared.</strong> A long conversation, a big attachment and a dozen connectors are all spending the same budget. Everything else in this deck is about spending it well.
+        </div>
+      </div>
+      <div class="page-num">06</div>
+      <aside class="notes">
+        Source: platform.claude.com, "Context windows", checked 30 July 2026. "Working memory" is Anthropic's own word for it, and it beats any analogy we could invent, so use theirs.
+
+        This slide exists because the next one used to do two jobs at once: define the window and explain that it gets re-read every turn. Split, they land better. Static picture first, one fixed space with four things competing for it, then the moving picture.
+
+        The fourth row is the one nobody expects and the one to say slowly: switching on a connector spends context before you type a word. It's also the setup for the connector-cost slide in Part 6, so plant it here and collect it there.
+
+        Deliberately no numbers on this slide. Sizes live in the model table in Part 2, and the room doesn't need them yet, they need the shape.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 07 — THE CONVERSATION IS RE-SENT -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">How it behaves</div>
+        <h2>The whole conversation is re-sent every turn.</h2>
+        <p class="sub">It does not build up like memory. The window is a page re-read from the top each time you press enter.</p>
+        <div class="flow">
+          <div class="flow-node you"><span class="kicker">Turn 1</span><span class="name">You ask</span><span class="det">Claude reads: your question</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node read"><span class="kicker">Turn 2</span><span class="name">You follow up</span><span class="det">Claude re-reads: Q1 + A1 + Q2</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node brain"><span class="kicker">Turn 3</span><span class="name">You follow up</span><span class="det">Claude re-reads: everything above + Q3</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-node act"><span class="kicker">Turn 20</span><span class="name">Still going</span><span class="det">Claude re-reads all of it, every time</span></div>
+        </div>
+        <div class="callout">
+          <strong>Two things follow from this.</strong> Long conversations get slower, because each turn sends more text. And as the window fills, Claude summarises the earliest turns to keep going. Your opening instruction survives, but only in compressed form.
+        </div>
+      </div>
+      <div class="page-num">07</div>
+      <aside class="notes">
+        This is the slide that makes Part 3 land, so give it time. Walk the flow left to right and say the token count out loud growing each step.
+
+        Be precise about what happens when the window fills, because the intuitive answer is wrong and it used to be on this slide. Earlier turns are not deleted. On paid plans claude.ai summarises them and keeps the full history referenceable — that's the "organising its thoughts" message people see, and the fix behind it — compaction — comes back on the when-it-gets-long slide in Part 3. Source: support.claude.com, "How large is the context window on paid Claude plans", checked 30 July 2026. The API doesn't silently drop anything either: it returns a 400 "prompt is too long". A rolling first-in-first-out fallback is documented for chat interfaces, so don't claim it never happens — just don't present it as the mechanism.
+
+        So when someone says Claude "stopped following" their instruction in a long chat, the honest answer is not that the instruction fell off the page. It's still there in compressed form, and attention has thinned across a much longer context. That's context rot, and it's Part 3 — resist explaining it here, you'll do it properly early in Part 3.
+
+        On cost: each turn does send more text, but prompt caching bills the repeated prefix at a tenth of the input price, so the real penalty is latency and window space rather than money. On claude.ai it's bundled into the subscription anyway.
+      </aside>
+    </section>
+
+
+
+    <!-- =========================================== -->
+    <!-- 08 — PART 2 DIVIDER -->
+    <!-- =========================================== -->
+    <section data-background-color="#A8C0A9" id="part-2">
+      <div class="chapter-divider">
+        <span class="chapter-num">Part 2</span>
+        <h2 class="chapter-title">What you're<br/>driving.<span class="title-emoji">🎛️</span></h2>
+        <p class="chapter-blurb">Four models, two dials, and two places to work.</p>
+      </div>
+      <aside class="notes">
+        Transition: "That's how the technology works. Now the controls you actually touch — which model, how much it may do on its own, how hard it works, and where you work." Part 1 was concepts; this is products and settings. Nothing here is theory — every slide is a choice someone makes this week.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 09 — FOUR CLAUDE MODELS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Current as of 30 July 2026</div>
+        <h2>Four Claude models.</h2>
+        <table class="ctable">
+          <thead>
+            <tr><th>Model</th><th>Built for</th><th>In / out per Mtok</th><th>Context</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="model">Fable 5</td>
+              <td>Highest capability there is. Long-running agents, deep research.</td>
+              <td class="num">$10 / $50</td><td class="num">1M</td>
+            </tr>
+            <tr>
+              <td class="model">Opus 5</td>
+              <td>Complex agentic coding and enterprise work. <span class="hl">The sensible default.</span></td>
+              <td class="num">$5 / $25</td><td class="num">1M</td>
+            </tr>
+            <tr>
+              <td class="model">Sonnet 5</td>
+              <td>Best speed-to-intelligence ratio. Most everyday work.</td>
+              <td class="num">$3 / $15</td><td class="num">1M</td>
+            </tr>
+            <tr>
+              <td class="model">Haiku 4.5</td>
+              <td>Fastest and cheapest, still near-frontier. High volume, and the helper jobs bigger models hand off.</td>
+              <td class="num">$1 / $5</td><td class="num">200k</td>
+            </tr>
+          </tbody>
+        </table>
+        <p class="mini"><strong>Everyone else:</strong> OpenAI, Google, Meta, Mistral and DeepSeek all ship competitive models. We use Claude. · Sonnet 5 is on introductory pricing of $2/$10 until 31 Aug 2026. · <em>Mythos 5</em> exists but is invitation-only, for defensive cybersecurity.</p>
+        <div class="callout">
+          <strong>The top three all hold 1 million tokens, at no extra cost per token:</strong> a 900k request bills at the same rate as a 9k one. Only Haiku 4.5 is smaller, at 200k.
+        </div>
+      </div>
+      <div class="page-num">09</div>
+      <aside class="notes">
+        Verified against platform.claude.com/docs models overview and pricing on 30 July 2026, and re-checked before shipping. Say the date out loud: this table replaces the one in Workshop #1, which said "current as of May 2026: Haiku 4.5, Sonnet 4.6, Opus 4.7" — every line of which is now wrong. That's a live demonstration of why anything written about AI needs a date on it, and it's worth thirty seconds.
+
+        Timeline if anyone asks: Fable 5 went generally available 9 June 2026; Opus 5 landed 24 July 2026 — six days before this workshop.
+
+        For a mostly non-technical room, don't dwell on the prices — they matter for API work, and the next two slides cover the two dials people actually control: autonomy and effort. The one number that matters here is the context column, which is why the callout is the callout. Max output is 128k on the top three and 64k on Haiku 4.5 if anyone asks.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 10 — PERMISSION MODES -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Dial one: autonomy</div>
+        <h2>How much may it do without asking?</h2>
+        <p class="sub">In Claude Code and Cowork — the two places to work, later in this part — you set how much Claude does between check-ins. Four modes, from careful to reckless. Chat has no such dial: every reply is already a check-in.</p>
+        <dl class="kv">
+          <dt>Manual <span style="color:var(--muted); font-weight:400;">— the default</span></dt><dd>Claude proposes, you approve each step: every file it wants to change, every command it wants to run. Right for risky work and for your first weeks.</dd>
+          <dt>Auto-accept</dt><dd>File edits go through without asking; anything riskier still prompts. For routine work you would wave through anyway — you review the result, not every step.</dd>
+          <dt>Plan mode</dt><dd>Read-only. Claude explores, asks its questions and writes a plan; nothing is touched until you approve it. Start anything big here.</dd>
+          <dt>Bypass</dt><dd>No asking at all. Only for a sandbox or a throwaway copy where nothing it does can hurt. Claude Code names the setting “dangerously” for a reason.</dd>
+        </dl>
+        <div class="callout">
+          <p><strong>The habit worth stealing: plan first, then run.</strong> Start a big task in plan mode, approve the plan, then switch to auto-accept for the execution. One approval replaces an afternoon of back-and-forth.</p>
+        </div>
+        <p class="mini"><strong>Where the switch is:</strong> in Claude Code, Shift+Tab cycles manual, auto-accept and plan; bypass has to be switched on deliberately. Cowork offers the same idea as three permission levels. How hard Claude <em>thinks</em> is a separate dial: the next slide.</p>
+      </div>
+      <div class="page-num">10</div>
+      <aside class="notes">
+        This replaces the old model-picker slide, because autonomy is the dial people actually feel day to day — it changes how the tool behaves far more than swapping models does. Walk the ladder top to bottom: the default is right until it isn't, auto-accept is for work you'd approve anyway, plan mode is the star, bypass is the warning.
+
+        Spend the time on plan mode. It is the fix for "I spent an hour steering it": the questions and the thinking happen up front, you approve one plan, then execution runs without the back-and-forth. It also pays off in Part 3, which tells the room to plan before starting — plant it here, collect it there.
+
+        On bypass, don't lecture — just say it exists so nobody discovers it unwarned, and that the setting's own name is the warning. Sandboxes and throwaway copies only.
+
+        If someone asks the old slide's question — which model should I use? — the short answer: in claude.ai and Cowork you usually don't choose, the product picks. Where you do choose, start with Opus 5 and optimise down, or start with Haiku 4.5 and move up when it falls short. And Anthropic's own guidance: "Tuning effort is often a better lever than switching models" — effort is the next slide. Fast mode if asked: research preview, Opus 5 only, up to 2.5x output speed at premium pricing, first-party API only.
+      </aside>
+    </section>
+    <!-- =========================================== -->
+    <!-- 11 — EFFORT -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Dial two: how hard it works</div>
+        <h2>Effort.</h2>
+        <p class="sub">The model menu holds the model picker, <strong>effort</strong>, and — on older models — a Thinking toggle. Effort is the one worth understanding. It sets how much work goes into every answer.</p>
+        <dl class="kv">
+          <dt>Low</dt><dd>Routine work: reformatting, quick lookups, tidying text. Stretches your usage furthest.</dd>
+          <dt>Medium</dt><dd>Also routine, when you want a bit more care but still quick.</dd>
+          <dt>High <span style="color:var(--muted); font-weight:400;">— the default</span></dt><dd>Leave it here. Right for essentially everything you'll do day to day, and it's the default in Claude Code (the developer surface — next slide) too.</dd>
+          <dt>Extra high</dt><dd>Long-running coding and agentic jobs. Deeper than High, cheaper than Max.</dd>
+          <dt>Max</dt><dd>The deepest reasoning available. Correctness-critical work, and expect to wait.</dd>
+        </dl>
+        <div class="callout">
+          <p><strong>Claude's own warning, straight off that menu:</strong> “Higher effort means more thorough responses, but takes longer and <em>uses your limits faster</em>.” So Max on an easy task buys nothing and costs real usage. Turning effort <em>down</em> is the cheapest way to stretch your allowance — the shared usage budget that claude.ai, Cowork and Claude Code all draw on.</p>
+        </div>
+        <p class="mini"><strong>Effort and Thinking are separate things.</strong> Effort sets how hard Claude works; Thinking is whether it reasons visibly first. Current models decide that themselves; only older models like Haiku 4.5 still show the manual toggle.</p>
+      </div>
+      <div class="page-num">11</div>
+      <aside class="notes">
+        This is the only control most people in the room will ever touch, so it earns a slide. The message is simple: leave it on High, drop it for bulk work, raise it for genuinely hard jobs. "Uses your limits faster" is quoted from the menu itself — that lands better than any explanation of token cost, and it's the reason turning effort down is worth knowing.
+
+        Pre-empt the obvious question: there is no thinking on/off switch on current models. Thinking is adaptive — the model decides whether a question needs it. Older 4.5-generation models had the manual toggle (called extended thinking); if someone's using Haiku 4.5 they'll still see it. Two facts if anyone's curious: you never see the raw reasoning, only a summary written by a different model — and you're charged for the full thinking, not the shorter summary you read.
+
+        If someone asks about the API: these map to low / medium / high / xhigh / max, and "Extra" is xhigh.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 12 — WHERE YOU USE IT -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Where the line actually is</div>
+        <h2>Chat or Cowork?</h2>
+        <p class="sub">Most of what people assume needs Cowork, Chat already does, including producing real spreadsheets and decks. The difference is narrower than it looks, and it's about <strong>scale, duration and repetition</strong>.</p>
+        <div class="two-col" style="margin-top:2px;">
+          <div>
+            <div class="col-label">Chat does more than people think</div>
+            <div class="col-card good" style="border-left-color: var(--sky);">
+              <ul class="tight" style="margin:0; padding-left:16px; font-size:0.76em;">
+                <li>Questions, explanations, thinking out loud</li>
+                <li>Drafting and rewriting</li>
+                <li><strong>Real files:</strong> it builds working spreadsheets, decks and documents</li>
+                <li>Up to <strong>20 uploads</strong> per conversation</li>
+                <li>All your <strong>connectors</strong>, the switches that let Claude reach Notion, Slack, Salesforce. Part 6.</li>
+              </ul>
+              <p style="margin:10px 0 0 0; font-size:0.7em; color:var(--muted); border-top:1px solid rgba(26,24,20,0.08); padding-top:9px;">You stay in it, turn by turn. Seconds per reply.</p>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">Four things only Cowork can do</div>
+            <div class="col-card good">
+              <ul class="tight" style="margin:0; padding-left:16px; font-size:0.76em;">
+                <li><strong>A whole folder</strong>, not 20 uploads</li>
+                <li>Reads and writes your files <strong>in place</strong>, with no upload and no download</li>
+                <li>Runs for <strong>hours</strong> while you do something else</li>
+                <li><strong>Repeats on a schedule</strong>, with nobody present</li>
+              </ul>
+              <p style="margin:10px 0 0 0; font-size:0.7em; color:var(--muted); border-top:1px solid rgba(26,24,20,0.08); padding-top:9px;">You describe the outcome and walk away.</p>
+            </div>
+          </div>
+        </div>
+        <p class="mini"><strong>The rule:</strong> one file and one answer, use Chat. A whole folder, an hour of work, or something you'll need again next week, use Cowork. · <strong>Claude Code</strong> is the same idea aimed at a codebase; if you write software, that's your door.</p>
+      </div>
+      <div class="page-num">12</div>
+      <aside class="notes">
+        Aim this at the room's actual split — most are claude.ai, a few are on Cowork, developers on Claude Code. The rule of thumb at the bottom is the useful bit and worth repeating: answer vs. work done. The "no upload and no download" line usually gets a rueful laugh — shuttling files in and out by hand is exactly what people do. Mention that skills work in all three but are configured differently, and that connectors are per-surface — both come back properly in Part 6. Then straight into the next slide, which makes "a whole folder, an hour of work" concrete.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 13 — JOBS WORTH HANDING OVER -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Cowork, in practice</div>
+        <h2>Jobs worth handing over.</h2>
+        <p class="sub">Each of these would be painful or impossible in Chat: too many files, too long, or it has to happen again next week.</p>
+        <dl class="kv">
+          <dt>Process an entire folder of customer reports</dt><dd>Go through a folder of 150 Flash Test reports, extract pack ID, SoH, grade and test date, then build one master spreadsheet and flag major changes.</dd>
+          <dt>Clean and reorganize a messy project folder</dt><dd>Understand what is in the folder, rename files consistently, group them by project, customer or date, identify duplicates, and show the proposed structure before changing anything.</dd>
+          <dt>Run the same monthly reporting workflow</dt><dd>Take the new exports from the folder, clean them, update the existing workbook, refresh the summary, and save the new version.</dd>
+          <dt>Turn a pile of source material into a finished deliverable</dt><dd>Read everything in a tender or RFP folder, identify the requirements, find the relevant material, create a response matrix, and draft the supporting documents.</dd>
+        </dl>
+        <div class="callout">
+          <p><strong>However you phrase it, end with this line:</strong></p>
+          <p><code>First explore my folder, then ask me questions using AskUserQuestion before you execute.</code></p>
+          <p>You get a clickable form instead of a blank text box. It interviews you, you approve the plan, then it works.</p>
+        </div>
+      </div>
+      <div class="page-num">13</div>
+      <aside class="notes">
+        You've just drawn the line on the previous slide; this is that line made concrete. Expect the obvious question anyway: "can't I do that in Chat?" For a lot of tasks, yes — Chat builds real spreadsheets and decks and takes 20 uploads. That's why every example here fails in Chat for a specific reason: too many files, too long, or it has to repeat. Say the reason out loud with each one.
+
+        Pick whichever two land with the room and skip the rest. The point is that people leave with a task in mind, not a feature list. The AskUserQuestion line is the real takeaway — it's the difference between wrestling a text box and directing a colleague, and most Cowork guides miss it entirely. Demo it live if there's time.
+
+        Practical things to mention only if asked: it uses more of your usage allowance than chat, so batch related work into one session rather than opening five. Sessions run on Anthropic's servers, so work continues when you close your laptop; you only need the desktop app open for tasks touching your own files. It always asks before deleting anything, and there are three permission modes if someone wants tighter control.
+
+        One flag for whoever owns IT, not for this room: Cowork activity isn't captured in the Compliance API, though Team/Enterprise admins can monitor it via OpenTelemetry. Worth raising separately before a wide rollout.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 14 — PART 3 DIVIDER -->
+    <!-- =========================================== -->
+    <section data-background-color="#869959" id="part-3">
+      <div class="chapter-divider">
+        <span class="chapter-num">Part 3</span>
+        <h2 class="chapter-title">Context,<br/>in practice.<span class="title-emoji">🪟</span></h2>
+        <p class="chapter-blurb">The part that changes what you do this afternoon.</p>
+      </div>
+      <aside class="notes">
+        If you only have time for one part, it's this one. Transition line: "We have talked about the context window. Now forget the technical term for a moment: context is simply everything Claude can see while it works. This part is about keeping that useful." Start with the plain-language definition, show why too much noise hurts, land the two jobs — enough signal, zero noise — then move into the habits and tools that fix it.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 15 — WHAT IS CONTEXT -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Start here</div>
+        <h2>What is context?</h2>
+        <p class="sub">Context is simply <strong>everything Claude can see right now</strong> when it answers you. It is the material Claude has to work with for this task.</p>
+        <div style="display:grid; grid-template-columns: 1fr 1fr 1fr 1fr 1.25fr; gap:14px; align-items:stretch; margin-top:18px;">
+          <div class="flow-node you" style="max-width:none;"><span class="kicker">Conversation</span><span class="name">Your conversation</span><span class="det">Your messages and Claude's previous replies</span></div>
+          <div class="flow-node skill" style="max-width:none;"><span class="kicker">Instructions</span><span class="name">Rules for this task</span><span class="det">How Claude should behave and what matters</span></div>
+          <div class="flow-node read" style="max-width:none;"><span class="kicker">Information</span><span class="name">Files & retrieved material</span><span class="det">Uploaded content or relevant information fetched for the task</span></div>
+          <div class="flow-node act" style="max-width:none;"><span class="kicker">Tools</span><span class="name">Tools & results</span><span class="det">Available tool definitions plus results from tools Claude uses</span></div>
+          <div class="flow-node out" style="max-width:none; position:relative;"><span class="kicker">Context</span><span class="name">Everything available for this answer</span><span class="det">The working set Claude can use when producing the response</span></div>
+        </div>
+        <p class="mini" style="margin-top:10px; text-align:center;">These are <strong>inputs to context</strong>, not steps in a pipeline.</p>
+        <div class="callout">
+          <strong>The practical idea:</strong> Claude can only reason from what is in front of it. Better context usually matters more than a cleverer prompt.
+        </div>
+      </div>
+      <div class="page-num">15</div>
+      <aside class="notes">
+        Start Part 3 with the plain-language definition. Do not open with Projects, memory or product vocabulary. Context just means what Claude can see for the task. Point out that these are parallel inputs, not a sequence: conversation, instructions, information, and tools/results can all contribute to the context available for an answer. Then land the line at the bottom: Claude can only work from what is in front of it. The rest of this part is about keeping that working set useful.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 16 — WHY CONTEXT MATTERS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Why it matters</div>
+        <h2>More context is not always better.</h2>
+        <p class="sub">The more irrelevant, outdated or contradictory material Claude has to keep track of, the harder it becomes to focus on the thing that matters now.</p>
+        <div class="two-col" style="margin-top:12px;">
+          <div>
+            <div class="col-label">Clean context</div>
+            <div class="col-card good">
+              <p style="margin:0 0 10px 0; font-size:0.82em;"><strong>Current task</strong></p>
+              <p style="margin:0 0 8px 0; font-size:0.76em;">Relevant instructions</p>
+              <p style="margin:0 0 8px 0; font-size:0.76em;">Relevant files and facts</p>
+              <p style="margin:0; font-size:0.76em;">Only the conversation you still need</p>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">Messy context</div>
+            <div class="col-card bad">
+              <p style="margin:0 0 10px 0; font-size:0.82em;"><strong>Current task buried in noise</strong></p>
+              <p style="margin:0 0 8px 0; font-size:0.76em;">100-message conversation</p>
+              <p style="margin:0 0 8px 0; font-size:0.76em;">Old drafts and unused files</p>
+              <p style="margin:0; font-size:0.76em;">Wrong turns Claude now reads again</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>This gradual loss of focus has a name: context rot.</strong> Nothing suddenly breaks; quality quietly gets worse as useful information has to compete with more noise. A big context window is capacity, not a target.
+        </div>
+      </div>
+      <div class="page-num">16</div>
+      <aside class="notes">
+        Lead with the experience, not the research terminology. People already know this feeling: a long chat gets muddier, old assumptions survive, and Claude starts repeating earlier mistakes. That is the phenomenon usually called context rot. Anthropic describes large-context performance as a gradient rather than a cliff. The practical lesson is simple: keep the useful material and remove the noise. Save the technical attention-budget explanation for questions rather than putting it on the main slide.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 17 — THE TWO JOBS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Your two jobs</div>
+        <h2>Feed it everything relevant, and nothing else.</h2>
+        <p class="sub">Every context decision is the same two jobs at once. They pull in opposite directions, and doing only one of them still fails.</p>
+        <div class="two-col" style="margin-top:12px;">
+          <div>
+            <div class="col-label">Job 1 · Data is king</div>
+            <div class="col-card good">
+              <p style="margin:0 0 10px 0; font-size:0.8em;">Give Claude enough to do the job well: the report, the email thread, the example, the constraint. If it can't see it, it can't use it.</p>
+              <p style="margin:0; font-size:0.72em; color:var(--muted); border-top:1px solid rgba(26,24,20,0.08); padding-top:9px;"><strong>Skip it and:</strong> Claude fills the gaps from training instead of your reality. Generic answers, wrong assumptions, confident invention. That failure gets its own part: Part 5.</p>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">Job 2 · Only the task at hand</div>
+            <div class="col-card good">
+              <p style="margin:0 0 10px 0; font-size:0.8em;">Keep the window clean: material for this task, this customer, this question. Yesterday's task belongs in yesterday's chat.</p>
+              <p style="margin:0; font-size:0.72em; color:var(--muted); border-top:1px solid rgba(26,24,20,0.08); padding-top:9px;"><strong>Skip it and:</strong> attention spreads across the noise and quality slides, which is the rot from the previous slide. Old drafts and wrong turns get read as instructions.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <p><strong>Anthropic's guiding principle, verbatim:</strong> find “the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome.” Enough signal, zero noise. The rest of this part is how.</p>
+        </div>
+      </div>
+      <div class="page-num">17</div>
+      <aside class="notes">
+        This slide is the hinge of the part. The definition slide said Claude can only reason from what is in front of it; the rot slide said more is not automatically better. Heard together those sound contradictory, and this resolves it: the goal is both jobs at once — enough signal, zero noise.
+
+        Walk the failure modes slowly, they are the payoff. Starve it and it guesses: the gaps get filled from training, not from your world, which is the hallucination material — plant it here, collect it in Part 5. Flood it and it rots: the previous slide.
+
+        The callout is Anthropic's own sentence from the context-engineering post, re-verified 2 September 2026. It is the one-line summary of everything in this part.
+
+        Close by pointing forward: the tools coming up are how you get both jobs at once. A Project retrieves just the relevant material (job 1) without loading everything (job 2); plan mode front-loads the right context before work starts; a fresh chat drops the noise while the Project keeps the substance.
+      </aside>
+    </section>
+    <!-- =========================================== -->
+    <!-- 18 — WHEN IT GETS LONG -->
+    <!-- =========================================== -->
+    <!-- Vertical stack: the techniques plus the handover prompt as a paste-in appendix. -->
+    <section>
+      <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">The fix</div>
+        <h2>When it gets long.</h2>
+        <p class="sub">Answers degrade well before the window is full: heavy users treat <strong>60% full</strong> as the most one task should need. Past that line you have two options.</p>
+        <dl class="kv" style="margin-top:14px;">
+          <dt>Option A · Open a new chat</dt><dd>If the context is valuable, have Claude write a <strong>handover file</strong> first and feed the new chat with it. You choose what survives, and the dead ends don't. The prompt is under this slide: press Down.</dd>
+          <dt>Option B · Let it run</dt><dd>The chat compacts itself automatically when the window fills. Valuable information can get lost: Claude decides what is important, not you.</dd>
+        </dl>
+        <div class="callout">
+          <strong>Everything else is prevention.</strong> Retrieval, note-taking and delegating the reading keep a chat from getting long in the first place. They live on the next slides, ending with the habits list.
+        </div>
+      </div>
+      <div class="page-num">18</div>
+      <aside class="notes">
+        Anthropic's full taxonomy for long work is compaction, note-taking and sub-agents, plus retrieval as a fourth strategy. This slide keeps only the cure. The rest are prevention and now live where people act on them: retrieval on the Projects slide next, note-taking on the Projects and instruction-stack slides, sub-agent delegation on the habits slide at the end of the part.
+
+        Once a chat is genuinely too long there are really just two options: open a new chat, with a handover file when the context is worth keeping, or let it run and auto-compact — where Claude, not you, decides what survives. Present it that simply; the room relaxes when the honest answer is short. Recommend option A plainly.
+
+        The 60% line comes from heavy users on r/ClaudeAI and r/ClaudeCode — present it as a finding, not an opinion. Claude Code shows a live context meter; claude.ai has none, so a chat that feels long is too long. And treat context as a scarce resource — the 1M window is permission to handle a big document once, not an invitation to keep one conversation running for a week.
+
+        There is no /compact in claude.ai or Cowork — compaction there is automatic-only, and you don't choose what survives it. That is the whole argument for option A: the handover prompt below this slide is the manual compaction everyone has, on every surface, and you pick what carries over. Say that out loud; it turns the appendix from a trick into the recommended option. Detail if asked: Claude Code's /compact accepts a steering instruction, and its compaction preserves architectural decisions, unresolved bugs and implementation details while discarding redundant tool output.
+
+        Q&amp;A trivia if a developer asks: the API now ships all three as features — a compaction beta, the memory tool, and tool-result clearing. Same three ideas, productised. Checked against the live post on 2 September 2026.
+      </aside>
+      </section>
+
+      <!-- 18 ↓ — PASTE-IN: THE HANDOVER PROMPT -->
+      <section class="slide-cream paste-slide" id="paste-handover">
+      <div class="slide-content">
+        <div class="chip chip-light">Option A · copy this</div>
+        <h2>The handover prompt.</h2>
+        <p class="sub">Long conversation that isn't finished? Ask for this instead of pushing on or starting from scratch, then paste the result into a fresh chat.</p>
+        <pre class="paste-block roomy narrow"><code>Summarise this conversation so I can continue in a new chat.
+
+Include:
+- The goal, in one sentence
+- Decisions we made, and why
+- What's done so far
+- What's still open, and the immediate next step
+- Any constraint or preference I gave you that still applies
+
+Leave out: dead ends, superseded drafts, and anything
+we already resolved and won't revisit.</code></pre>
+        <div class="callout">
+          <strong>The exclusions matter as much as the inclusions.</strong> Dead ends cause the recirculating-mistakes problem: a wrong turn left in the transcript gets re-read as fact and built on. In Claude Code, <code>/compact</code> does this automatically, and you can steer it with an instruction instead of accepting the default.
+        </div>
+        <p class="paste-hint">↑ Up returns to the slide, exactly where you left off</p>
+      </div>
+      <aside class="notes">
+        Appendix slide under the when-it-gets-long slide, off the linear path: Down to show it, Up to come straight back. Live-demo it if the session is going well — it takes twenty seconds and it's the most immediately usable artefact in the deck. Point out the exclusion list is the non-obvious half; most people ask for a summary and get the dead ends faithfully preserved. For Claude Code users: /compact accepts an instruction, e.g. "/compact focus on the auth refactor decisions" — much better than the generic summary.
+      </aside>
+      </section>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 19 — PROJECTS AS A CONTEXT TOOL -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">The context tool you already have</div>
+        <h2>Use a Project.</h2>
+        <p class="sub">A container you put <em>around</em> work, in chat or Cowork, rather than a place to work itself. Its job is holding your durable context so your conversations don't have to.</p>
+        <dl class="kv">
+          <dt>Instructions</dt><dd>How to behave on this job: audience, format, what's different about this customer. In every chat in the Project, so you never re-type it.</dd>
+          <dt>Knowledge files</dt><dd>What to know. <strong>Retrieved as needed rather than loaded wholesale:</strong> ten documents attached don't cost ten documents of context. This is what makes a Project a context <em>saving</em>.</dd>
+          <dt>Its own memory</dt><dd>Scoped to this Project. What Claude learns on the Bosch review doesn't leak into the board pack, and vice versa.</dd>
+          <dt>New chat, same Project</dt><dd>All of the above survives; only the accumulated mess goes. That's why starting fresh costs you nothing here.</dd>
+        </dl>
+        <div class="callout">
+          <strong>Two rules.</strong> One Project per real workstream. Make one big “work” Project and the memory turns to soup. And point it at a <em>live</em> document rather than a copy: link the SharePoint file and the Project updates itself whenever someone edits it.
+        </div>
+        <p class="mini"><strong>Cowork projects work the same way</strong>, with their own instructions, pointed at a folder on your machine. Ours is pre-written: the <code>cowork-starter</code> folder on the shared workspace.</p>
+      </div>
+      <div class="page-num">19</div>
+      <aside class="notes">
+        Framing matters here: a Project is not an alternative to Chat or Cowork, it's a container that works in both. People mis-file it as "a Cowork thing" or "a chat thing" — it's neither.
+
+        The knowledge-files point is the one that changes behaviour. Anthropic's own guidance on stretching your context lists "use a Project" first, because Projects use retrieval — only relevant content enters the window. Most people assume attaching files means carrying them in every message, so they don't attach, and then paste instead. Pasting is the expensive option.
+
+        The live-document tip is the highest-leverage habit on this slide: link a SharePoint file through the Microsoft 365 connector and the Project's context updates itself. No re-uploading, no stale copies. Practitioners do the same trick with Google Docs for meeting minutes.
+
+        The three techniques on the previous slide were compaction, note-taking and sub-agents. A Project is how you do note-taking on claude.ai without any tooling — durable state, outside the conversation, loaded fresh each time. It's also the home for layer 2 of the instruction stack on the next slide: project instructions live here.
+
+        If asked: free accounts are capped at five Projects.
+
+On the Cowork line at the bottom: global instructions there live under Settings → Cowork, and a Cowork project points at a local folder rather than uploaded files. Our cowork-starter folder — the shared workspace — has both pre-written: two files to paste in, four blanks to fill. One caveat worth stating if anyone plans to roll it out: Cowork projects are desktop-only and stored locally, so they don't sync between machines or share across the team. Everyone sets up their own.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 20 — THE INSTRUCTION STACK -->
+    <!-- =========================================== -->
+    <!-- Vertical stack: the instruction stack plus two paste-in appendix slides.
+         Down/Up moves between them; Left/Right skips them entirely. -->
+    <section>
+      <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Before you type a word</div>
+        <h2>Your prompt is the last thing it reads.</h2>
+        <p class="sub">Two layers are already loaded before you type a word. Most people never set either, then wonder why they keep repeating themselves.</p>
+        <div class="step-list">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>Instructions for Claude: account-wide.</h4>
+            <p>Click your initials → <strong>Settings → Instructions for Claude</strong>. Your role, the terms you use, how you want things written. Applied to <em>every</em> conversation you ever have. Five minutes, once.</p>
+          </div>
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Project instructions: one workstream.</h4>
+            <p>Set inside a Project, and they only apply to chats in that Project. The context for one job: who the audience is, what done looks like, what's different about this customer.</p>
+          </div>
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Then your prompt.</h4>
+            <p>Plus the Project's knowledge files, whatever Claude remembers about you, and any connectors you've switched on. Your message lands on top of all of it.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>“Write it down once” works because of this.</strong> Anything you find yourself explaining twice belongs in layer 1 or 2, not in your next prompt. · Different names elsewhere: <strong>Cowork</strong> calls layer 1 Global instructions, <strong>Claude Code</strong> reads a <code>CLAUDE.md</code> file. · <strong><a href="#/prompt-order" class="cover-link">↓ See the order, then copy both layers</a></strong>
+        </div>
+      </div>
+      <div class="page-num">20</div>
+      <aside class="notes">
+        Source: support.claude.com, "Understanding Claude's personalization features", checked 30 July 2026. The official name is "Instructions for Claude" — account-wide, under Settings. Don't call it "custom instructions" or "profile"; the UI says Instructions for Claude.
+
+        This slide exists because these layers were mentioned in four separate places in earlier versions of this deck and never shown as a stack. The insight people need is the title: your prompt runs on top of everything above it, so the fastest way to improve every future answer is to fill in layer 1 once.
+
+        Ask the room how many have set account-wide instructions. Usually almost nobody, and that's the moment the slide earns its place — it's five minutes for a permanent improvement.
+
+        Anthropic doesn't publish which layer wins on a direct conflict, so don't claim a precedence rule. What's documented is that both apply and can be used in combination. If pressed, the practical answer is to keep layer 1 general and layer 2 specific so they don't fight.
+
+        Note for later: this is also the answer to "should this be a skill or just instructions?" Instructions are how to behave, always on. A skill is how to do a particular job, and Claude reaches for it when the job comes up. That comes up naturally in Part 6.
+
+        Press Down: first the same stack as a picture, with an example line per layer, then the two slides holding the actual text so you never have to describe it. The same pair is on the linked Notion page if anyone would rather copy from there than off the projector.
+      </aside>
+      </section>
+
+      <!-- 20 ↓ — THE PROMPT ORDER, VISUALISED -->
+      <section class="slide-cream" id="prompt-order">
+        <div class="slide-content">
+          <div class="chip chip-terracotta">The same stack, as a picture</div>
+          <h2>Your prompt sits on top.</h2>
+          <p class="sub">The stack Claude reads every turn, built from the bottom up. Everything under your message was already in place before you typed it.</p>
+          <p class="stack-edge">↑ Added this turn</p>
+          <div class="layer-stack">
+            <div class="layer l-now">
+              <h4>Your prompt</h4>
+              <p>You, right now</p>
+              <code>Draft a reply to Bosch about the SoH drop.</code>
+            </div>
+            <div class="layer l-project">
+              <h4>Project instructions</h4>
+              <p>Layer 2 · per project</p>
+              <code>Fleet-customer emails. Warm and professional. Use the style guide.</code>
+            </div>
+            <div class="layer l-yours">
+              <h4>Instructions for Claude</h4>
+              <p>Layer 1 · every chat</p>
+              <code>Say when you don't know. Always include the source. Be concise.</code>
+            </div>
+            <div class="layer">
+              <h4>System prompt</h4>
+              <p>Anthropic's · fixed</p>
+              <code>Follow these safety rules. Refuse requests that could cause harm.</code>
+            </div>
+          </div>
+          <p class="stack-edge">↓ Loaded before you type a word</p>
+          <div class="callout">
+            <strong>Claude reads the whole stack, bottom to top.</strong> The base is Anthropic's restrictions, and nothing you write overrides it. Layers 1 and 2 are your standing orders, written once. So the top line can be one sentence and still land right, because everything under it is already there.
+          </div>
+        </div>
+        <aside class="notes">
+          The picture of the stack from the previous slide, built the way people actually experience it: your message on top, everything else already underneath. Point at the top row and say: that one line is the whole prompt, and it works because the three under it are already in place.
+
+          The bottom row is the one nobody realises exists. It is Anthropic's, it is mostly restrictions, and it outranks anything you write — which is the honest answer to "why did it refuse me?" You cannot see it or turn it off.
+
+          The two middle rows are the point of the exercise: the only layers you control before typing, five minutes of setup for a permanent improvement. They carry the same numbering as the paste-in slides, so layer 1 is account-wide and layer 2 is per project. Note the examples are deliberately generic on layer 1 (say when you don't know, always include the source) and job-specific on layer 2 — that split is the rule of thumb people ask for.
+
+          Down again for the two paste-in blocks with the actual text for layers 2 and 3.
+        </aside>
+      </section>
+
+      <!-- 20 ↓↓ — PASTE-IN: PERSONAL INSTRUCTIONS -->
+      <section class="slide-cream paste-slide" id="paste-personal">
+        <div class="slide-content">
+          <div class="chip chip-terracotta">Layer 1 · copy this</div>
+          <h2>Personal instructions.</h2>
+          <p class="paste-where">Your initials → <strong>Settings → Instructions for Claude</strong>. Account-wide, applies to every conversation you ever have, and nothing needs filling in. Select the block and copy.</p>
+          <pre class="paste-block"><code># Personal preferences
+
+## How to handle facts and uncertainty
+- If you're not sure, say so plainly ("I'm not sure" / "I'd need to check"). Don't guess and present it as fact.
+- Don't make up facts, numbers, names, dates, or quotes. If you don't know, say you don't know.
+- Separate fact from best guess, and say when you're guessing.
+- If my request is unclear or missing something important, ask me one quick question first.
+- If something's low-stakes and easy to undo, go ahead, but tell me what you assumed.
+- If you get something wrong, say so and fix it. Don't over-apologize.
+- Don't tell me a task is done unless you actually checked it.
+- Use plain language. If you need a technical term, define it once.
+
+## Output style
+- Be concise. Match the length of your answer to the question.
+- Write in plain sentences. Only use bullet points when the content is actually a list.
+- Don't restate my question back to me, and skip closers like "Hope this helps!"
+- No filler. Cut openers ("Great question," "I'd be happy to," "Certainly"), padding ("It's worth noting that," "At the end of the day"), and empty hedges.
+- No AI buzzwords: delve, leverage, utilize, foster, streamline, robust, seamless, game changer, tapestry, realm, transformative, elevate, harness.
+- Say things straight. Skip "It's not X, it's Y" contrasts, "what most people miss" setups, and "stands as a testament" puffery. State the point and let it stand.
+- Use active voice and concrete details: "It cut the wait from 40 minutes to 4," not "it significantly improved efficiency."
+- Don't end with a summary paragraph or a profound-sounding kicker. Stop at the last useful point.
+- Don't over-format: no emoji in headings, no bold scattered through sentences, no headers over two-line sections.
+- Don't use em dashes as a rhythm habit; a comma or period usually works.
+
+## Behavior
+- Push back when you disagree with me. Don't flatter me or just agree to be agreeable.
+- If you think what I'm asking for is a bad idea or won't work, tell me before you do it, not after.
+- When there's a real decision to make, give me the options with a quick recommendation. Don't just pick for me.
+- If a task is outside what I asked for, say so and stop. Don't wander into extra work.
+- If your answer comes from the web or a file, link where it came from so I can check it.
+- Before doing anything hard to undo (deleting, overwriting, sending, publishing), tell me what you're about to do and wait for my okay.</code></pre>
+          <p class="paste-hint">↑ Up returns to the order diagram · ↓ Down for project instructions</p>
+        </div>
+        <aside class="notes">
+          Appendix slide, off the linear path. Two Downs from the instruction-stack slide bring it up, Up puts you back on the order diagram, and Left/Right skips the whole stack, so it never interrupts the run.
+
+          Use it the moment someone asks "but what do I actually put in there?" The honest answer is that layer 1 needs no editing: copy it verbatim, live with it a week, then change the lines that annoy you. Point out that this block is itself the reason the deck reads the way it does.
+        </aside>
+      </section>
+
+      <!-- 20 ↓↓ — PASTE-IN: PROJECT INSTRUCTIONS -->
+      <section class="slide-cream paste-slide" id="paste-project">
+        <div class="slide-content">
+          <div class="chip chip-light">Layer 2 · copy this</div>
+          <h2>Project instructions.</h2>
+          <p class="paste-where">Inside a Project → <strong>Instructions</strong>. Applies only to chats in that Project. This one has blanks: replace everything in square brackets.</p>
+          <pre class="paste-block roomy"><code>## About this project
+This project is for [drafting customer emails / writing reports / etc.].
+Everything here is [internal work / for external customers / etc.].
+
+## What I want
+- Output format: [short email / one-page brief / bullet summary].
+- Tone: [warm and professional / plain and direct].
+- Always [check the uploaded style guide before drafting].
+
+## My style (examples)
+[paste 1-2 real things you've written so Claude matches your voice]</code></pre>
+          <p class="paste-hint">↑ Up returns to personal instructions · keep this short, layer 1 already covers how you write</p>
+        </div>
+        <aside class="notes">
+          The blanks are the point. Layer 2 is per-job, so it can't be generic the way layer 1 is. Three or four lines is usually enough, and anything about tone or style belongs up in layer 1 instead.
+
+          Dwell on the last section. Two real things someone has written teach Claude their voice faster than any description of it, and the six-methods slide in Part 4 gives the number: 3 to 5 examples is the sweet spot. People skip it, then wonder why the tone is off.
+        </aside>
+      </section>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 21 — WHAT TO ACTUALLY DO -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Habits, cheapest first</div>
+        <h2>What to actually do.</h2>
+        <div class="step-list" style="gap:12px 24px; margin-top:12px;">
+          <div class="step-num">1</div>
+          <div class="step-body">
+            <h4>New chat, same project.</h4>
+            <p>On claude.ai this costs you <em>nothing</em>: a fresh chat inside a Project keeps your instructions and knowledge files and drops only the accumulated mess. In Claude Code the equivalent is <em>“one task, one plan, one <code>/clear</code>.”</em></p>
+          </div>
+          <div class="step-num">2</div>
+          <div class="step-body">
+            <h4>Point at things instead of pasting them.</h4>
+            <p>“Update the auth logic in <code>src/auth/handler.rs</code>” beats pasting the file. Same for documents: a link or a path costs a handful of tokens; the contents cost thousands. Let Claude fetch what it decides it needs.</p>
+          </div>
+          <div class="step-num">3</div>
+          <div class="step-body">
+            <h4>Give precision work a fresh window.</h4>
+            <p>Numbers, tables and code degrade first in a long chat: one small error gets re-read as fact and spreads. Route exact work to its own short chat.</p>
+          </div>
+          <div class="step-num">4</div>
+          <div class="step-body">
+            <h4>Plan before you start.</h4>
+            <p>Get the plan agreed before any work happens: plan mode in Claude Code and Cowork (from Part 2); in claude.ai, ask for a plan and approve it first. One approval replaces the long back-and-forth.</p>
+          </div>
+          <div class="step-num">5</div>
+          <div class="step-body">
+            <h4>Write the durable stuff down, once.</h4>
+            <p>Project instructions in claude.ai, or a <code>CLAUDE.md</code> file for Claude Code. Loaded fresh every chat, so it never rots and never gets re-explained. The Project and the instruction stack from the last two slides are where this lives.</p>
+          </div>
+          <div class="step-num">6</div>
+          <div class="step-body">
+            <h4>Delegate the reading.</h4>
+            <p>A folder of reports or a dozen sources doesn't belong in your chat: a sub-agent reads it in its own window and hands back a short summary. Cowork's research jobs do this for you. Costs tokens, buys back attention.</p>
+          </div>
+        </div>
+      </div>
+      <div class="page-num">21</div>
+      <aside class="notes">
+        Ordered by effort-to-payoff, so if the room only adopts item 1 that's still a win. Item 2 is the least intuitive and the biggest saving — people paste because it feels helpful. Item 3 is the most-upvoted practitioner insight: rot is mild for plans and prose, and detailed technical work falls apart first, because errors left in the transcript get re-read as fact. Item 4 is the plan-first habit — plan mode lives on the modes slide in Part 2. Item 5 is the "do it once, benefit forever" move and the natural link back to Workshop #1's memory material. Item 6 is sub-agent delegation, with the honest trade-off worth quoting: "A sub-agent does increase your token usage — but it keeps your main chat very, very lightweight for much longer"; the detail that makes it click is the return size, a summary of one to two thousand tokens from tens of thousands read. And when a chat is already too long, that's the previous slides' two options — the handover prompt sits under the when-it-gets-long slide, press Down there. Ask the room how many keep one Claude conversation open for days — that's the behaviour to name and change.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 22 — PART 4 DIVIDER -->
+    <!-- =========================================== -->
+    <section data-background-color="#9D86C4" id="part-4">
+      <div class="chapter-divider">
+        <span class="chapter-num">Part 4</span>
+        <h2 class="chapter-title">Talking<br/>to it.<span class="title-emoji">💬</span></h2>
+        <p class="chapter-blurb">What makes a prompt work, and six methods worth knowing.</p>
+      </div>
+      <aside class="notes">
+        Transition: "Parts 2 and 3 were about where you work and what you put in front of Claude. Part 4 is about how you ask." Keep the prompting section practical — no prompt-engineering mysticism. Three slides only, then Part 5 turns to whether you can trust what comes back.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 23 — WHAT IS PROMPTING -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">The framing</div>
+        <h2>Treat it like a brilliant new colleague.</h2>
+        <p class="sub">Anthropic's framing, and the most useful one: <em>“a brilliant but new employee who lacks context on your norms and workflows.”</em> Very capable, knows nothing about your organisation, can't see your screen, and will guess rather than ask.</p>
+        <div class="callout">
+          <p><strong>The golden rule:</strong></p>
+          <p style="font-family:'Source Serif 4',serif; font-size:1.15em; font-style:italic; margin-top:6px;">“Show your prompt to a colleague with minimal context on the task and ask them to follow it. If they'd be confused, Claude will be too.”</p>
+        </div>
+        <div class="two-col" style="margin-top:8px;">
+          <div>
+            <div class="col-label">A prompt that fails</div>
+            <div class="col-card bad">
+              <p style="margin:0; font-size:0.8em;"><em>“Look at this battery data and tell me what you think.”</em></p>
+              <p style="margin:8px 0 0 0; font-size:0.7em; color:var(--muted);">Vague verb. No audience. No format. No definition of “what you think.” Nothing to check the answer against.</p>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">The same request, working</div>
+            <div class="col-card good">
+              <p style="margin:0; font-size:0.8em;"><em>“You're reviewing Flash Test results for a fleet customer. From the attached report, list any pack whose SoH dropped more than 3 points since the last test. One line each: pack ID, old grade, new grade, likely cause. Flag anything you're unsure about rather than guessing.”</em></p>
+              <p style="margin:8px 0 0 0; font-size:0.7em; color:var(--muted);">Role, source, threshold, format, and permission to admit doubt.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="page-num">23</div>
+      <aside class="notes">
+        The new-employee framing does more work than any list of tips — it makes the whole thing intuitive. The golden rule is Anthropic's, quoted verbatim, and it's genuinely the best single test for a prompt. Walk the before/after out loud; the audience should be able to name the five things added. Note the last clause of the good prompt — "flag anything you're unsure about" — because it's the cheapest hallucination defence and it comes back as defence number one in Part 5.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 24 — THE SIX METHODS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Methods that earn their keep</div>
+        <h2>Six techniques, in order of payoff.</h2>
+        <dl class="kv">
+          <dt>1 · Be specific</dt><dd>State the output format and the constraints. If you want above-and-beyond work, <em>ask</em> for it rather than hoping it's inferred. Numbered steps when order matters.</dd>
+          <dt>2 · Say why</dt><dd>Explain the motivation behind an instruction, not just the instruction. Claude generalises sensibly from a reason; it follows a bare rule narrowly and misses the intent.</dd>
+          <dt>3 · Show examples</dt><dd><strong>3–5 examples</strong> is the sweet spot. Make them diverse enough to cover edge cases. Don't stuff in a laundry list; for an LLM, examples are the pictures worth a thousand words.</dd>
+          <dt>4 · Label the parts</dt><dd>For long prompts, put a label in angle brackets around each section (<code>&lt;instructions&gt;</code>, <code>&lt;context&gt;</code>, <code>&lt;input&gt;</code>) so Claude can tell your orders from your data. It's just a marker, nothing technical.</dd>
+          <dt>5 · Give a role</dt><dd>One sentence measurably shifts tone and behaviour. “You are reviewing this as a battery engineer” costs nothing.</dd>
+          <dt>6 · Document first, question last</dt><dd>With long inputs, put the document at the <strong>top</strong> and your question at the <strong>bottom</strong>.</dd>
+        </dl>
+        <div class="callout">
+          <strong>That last one costs nothing.</strong> Anthropic's testing: putting the query at the end rather than the beginning improves response quality <strong>by up to 30%</strong> on complex, multi-document inputs. Same words, different order.
+        </div>
+      </div>
+      <div class="page-num">24</div>
+      <aside class="notes">
+        Ordered by payoff-per-effort deliberately. Items 1 and 2 cover most of the gap for most people. Item 6 is the one to make noise about — it's a pure reordering with a measured 30% effect and nobody in the room will know it. If asked about the "ideal prompt template": the six items above assembled in order effectively is the template, and the reprompt skill on the next slide does it for you.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 25 — REPROMPT AND THE INTERVIEW -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Two shortcuts</div>
+        <h2>Don't hand-craft what you can delegate.</h2>
+        <div class="two-col">
+          <div>
+            <div class="col-label">Let Claude fix your prompt</div>
+            <div class="col-card good">
+              <p style="margin:0 0 8px 0; font-size:0.82em;">We have a <code>reprompt</code> <strong>skill</strong>, a packaged instruction set Claude reaches for on its own, covered properly in Part 6. Give it your rough request and it returns a structured one: role, context, task, constraints, success criteria.</p>
+              <p style="margin:0; font-size:0.72em; color:var(--muted);">Fastest way to apply everything on the previous slide without memorising it.</p>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">Let Claude ask the questions</div>
+            <div class="col-card">
+              <p style="margin:0 0 8px 0; font-size:0.82em;">Flip the interview. End a request with <strong>“ask me what you need to know before you start”</strong> and Claude comes back with the three or four questions that actually matter: audience, deadline, format, what done looks like. You answer in a line each; it assembles the brief.</p>
+              <p style="margin:0; font-size:0.72em; color:var(--muted);">The context you'd never think to volunteer gets pulled out of you instead.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <p><strong>The same habit, everywhere.</strong> This is the chat edition of the Cowork line from Part 2 — <code>…ask me questions before you execute</code>. One sentence turns a guessing game into a briefing, and it works in Chat, Cowork and Claude Code alike, because the expert on what you actually want is you.</p>
+        </div>
+      </div>
+      <div class="page-num">25</div>
+      <aside class="notes">
+        The reprompt skill is the practical takeaway — point people at it and note it's a live example of the skills concept coming in Part 6. The interview line is the other half of the same idea: reprompt fixes the prompt you wrote, the interview extracts the prompt you couldn't have written, because Claude asks for the context you'd never think to volunteer. Call back to the AskUserQuestion line on the Cowork slide in Part 2 — the repetition is deliberate: same habit, second surface, and by now the room has seen it work.
+
+        If anyone asks about prompt chaining (older guides pushed it hard): it's mostly obsolete — Anthropic's current guidance is that with thinking and sub-agents "Claude handles most multistep reasoning internally," and saying so models the put-a-date-on-AI-advice theme from the model table in Part 2. The surviving use is when you need to see intermediate output or enforce a fixed pipeline — the classic is a self-correction pass (draft → review against criteria → refine), still worth it for customer-facing writing. Q&amp;A answer only; it no longer earns slide space.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 26 — PART 5 DIVIDER -->
+    <!-- =========================================== -->
+    <section data-background-color="#E8DFC8" id="part-5">
+      <div class="chapter-divider">
+        <span class="chapter-num">Part 5</span>
+        <h2 class="chapter-title">Trusting<br/>it.<span class="title-emoji">🔍</span></h2>
+        <p class="chapter-blurb">Why it invents things, and how to catch it.</p>
+      </div>
+      <aside class="notes">
+        Transition: "That's how to ask. Now — how do you know the answer is any good?" This part is the one that makes the rest safe to use. Four slides: why invention happens, the four cheap defences, how to actually check, and where to tread carefully.
+      </aside>
+    </section>
+    <!-- =========================================== -->
+    <!-- 27 — WHY IT HALLUCINATES -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Hallucination</div>
+        <h2>It has no way to know it doesn't know.</h2>
+        <p class="sub">Back to Part 1's first idea: it predicts likely text. A confident invented answer looks just as likely as a correct one. Nothing checks facts, and nothing flags the moment it stops remembering and starts inventing.</p>
+        <div class="props">
+          <div class="prop">
+            <h4>Most convincing when wrong</h4>
+            <p>Invented answers sound exactly as assured as true ones. Fluent writing is not evidence, and treating it as evidence is the real risk.</p>
+          </div>
+          <div class="prop">
+            <h4>Specifics are the weak spot</h4>
+            <p>Names, dates, figures, citations, part numbers. Exactly what gets pasted into a customer email unchecked.</p>
+          </div>
+          <div class="prop">
+            <h4>Silence is not the default</h4>
+            <p>Unless told otherwise, it answers. Admitting ignorance is a behaviour you have to ask for.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>A live example, from building this deck.</strong> Heavily-upvoted Reddit comments claim that switching off auto-compact — Claude Code's automatic version of the compaction from Part 3 — frees huge amounts of context: <em>“it went from 42% down to 9%!”</em> It's wrong: that 42% included space merely <strong>reserved</strong> for the summary, never spent, so switching it off only hides the reservation. Confident, popular, and false, which is what a hallucination looks like.
+        </div>
+      </div>
+      <div class="page-num">27</div>
+      <aside class="notes">
+        Tie it straight back to Part 1's opening slide — hallucination isn't a separate defect, it's the same mechanism seen from another angle. The Reddit example is the best moment in this section: it's real, it came out of building this deck, and it makes the point that confident consensus isn't truth whether it comes from a model or a forum. It also quietly justifies why the deck cites sources.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 28 — HOW TO PREVENT IT -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">From Anthropic's guardrails guidance</div>
+        <h2>Four defences, cheapest first.</h2>
+        <div class="remember-list dense">
+          <div class="remember-item">
+            <div class="remember-num">1</div>
+            <div>
+              <p><strong>Give it permission not to know.</strong> Add “say you don't know rather than guessing.” Anthropic describes this one line as drastically reducing false information. Free, and almost nobody does it.</p>
+            </div>
+          </div>
+          <div class="remember-item">
+            <div class="remember-num">2</div>
+            <div>
+              <p><strong>Make it quote before it answers.</strong> For long documents, ask for the relevant passages word-for-word <em>first</em>, then work from those. It can't ground an answer in a passage it had to invent.</p>
+            </div>
+          </div>
+          <div class="remember-item">
+            <div class="remember-num">3</div>
+            <div>
+              <p><strong>Demand citations, then audit them.</strong> Every claim cites a source, then a second pass finds a supporting quote for each, <em>and retract any claim without one.</em> The retraction clause is what makes it work.</p>
+            </div>
+          </div>
+          <div class="remember-item">
+            <div class="remember-num">4</div>
+            <div>
+              <p><strong>Close the door on outside knowledge.</strong> “Use only the attached documents, not your general knowledge.” Makes it a closed-book question, where invention has nowhere to hide.</p>
+            </div>
+          </div>
+        </div>
+        <p class="mini"><strong>Anthropic's own caveat, verbatim:</strong> these techniques “significantly reduce hallucinations” but “don't eliminate them entirely. Always validate critical information.”</p>
+      </div>
+      <div class="page-num">28</div>
+      <aside class="notes">
+        Number 1 is the headline: one sentence, free, and hardly anyone adds it. Number 3's retraction clause is the subtle one — asking for citations alone invites invented citations; asking it to retract unsupported claims is what makes the check real. End on Anthropic's caveat rather than our own words, and connect it forward: the strongest defence of all isn't a prompting trick, it's giving Claude the actual source. That's Part 6.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 29 — CHECKING ITS WORK -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Better than “read it carefully”</div>
+        <h2>How to check its work.</h2>
+        <p class="sub">Asking Claude “is this right?” doesn't work, because it will agree with you. Four techniques that actually catch things.</p>
+        <dl class="kv">
+          <dt>Ask a different model</dt><dd>Paste the answer into ChatGPT or Gemini and ask it to find the errors. Different training, different blind spots. A model can't reliably audit itself, which makes this the highest-yield check available.</dd>
+          <dt>Presuppose the errors</dt><dd>Ask for <em>“find at least three problems with this”</em> rather than “review this.” Naming a number removes “looks fine” as an option and forces it to actually look.</dd>
+          <dt>Make it start over</dt><dd>Don't ask it to critique its answer, because it will defend it. Ask it to <strong>redo the analysis from the source</strong> and tell you where the two versions disagree.</dd>
+          <dt>Click one citation</dt><dd>One study (arXiv 2604.03173) found <strong>3–13% of cited URLs never existed.</strong> Asking for sources invents sources; opening one at random is what makes the request real.</dd>
+        </dl>
+        <div class="callout">
+          <p><strong>It agrees with you because it's trained to.</strong> Raters rewarded answers that felt helpful over ones that were blunt, so sycophancy is the objective rather than a quirk. <strong>How you ask decides what you get</strong>: tell it what you did and you'll get encouragement, because there was no question in it. Ask what's <em>wrong</em> with what you did and you'll get an answer.</p>
+        </div>
+      </div>
+      <div class="page-num">29</div>
+      <aside class="notes">
+        Sources: r/ClaudeCode on cross-model review ("started having them review each other's output instead of asking the same model to check its own"), r/PromptEngineering on the RLHF mechanism behind sycophancy, and arxiv 2604.03173 on reference hallucination rates. All checked 30 July 2026.
+
+        The cross-model tip is the one people take away and use the same afternoon. It costs nothing — most people already have a second AI open in another tab. Frame it as: you would not ask an author to proofread their own manuscript.
+
+        "Make it start over" is the subtle one and worth explaining slowly. If you ask a model to critique text it just wrote, it argues for it, because that text is in its context as something it committed to. Re-deriving from the source produces genuine disagreement you can act on. Practitioners building devil's-advocate tooling landed on exactly this: force reanalysis from the underlying data, not a review of the previous output.
+
+        One warning if anyone asks about "be brutal" or "attack this" prompts: combative framing produces performed disagreement — it nitpicks to stay in character. Analytical framings work better: pre-mortem, what would have to be true for this to be wrong, what am I assuming. Ask for an audit, not a fight.
+
+        The RLHF point in the callout is the explanation that makes all four techniques make sense, so land it even if you skip a technique. The second half is the most quotable line on the slide: "tell it what you did and you'll get encouragement — there was no question in it." Someone on r/ClaudeAI put it well: describing a decision you already made isn't asking anything, so of course it's supportive.
+
+        If anyone wants a standing fix rather than a per-prompt one, the most-upvoted version of this doing the rounds is a short instruction block: "I don't like sycophancy. Be neither rude nor polite — matter-of-fact and clear. I am sometimes wrong; challenge my assumptions. Don't be lazy: do things the right way, not the easy way." That belongs in your instructions — the instruction stack in Part 3.
+
+        Worth acknowledging the obvious objection if it comes up, because it's a fair one and someone will make it: you are, in a sense, telling it what you want to hear in order to stop it telling you what you want to hear. It works anyway — but it's why the cross-model check sits at the top of the list rather than the prompt tricks.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 30 — WHEN TO BE CAREFUL -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Boundaries</div>
+        <h2>When to be careful.</h2>
+        <p class="sub">Knowing where it gets risky is what makes the rest of this credible. Five situations that need a second thought before you rely on the answer.</p>
+        <dl class="kv">
+          <dt>You can't judge the answer</dt><dd>If you wouldn't recognise a wrong answer, you can't use it unsupervised. It's a tool for people who know the domain, not a substitute for knowing it.</dd>
+          <dt>It can't reach the truth</dt><dd>With no connector, no file and no access, it's working from memory and you're back to the problem this part opened with. Give it the source or don't ask.</dd>
+          <dt>It has to be exactly right</dt><dd>Legal wording, regulatory figures, anything contractual. Draft with it, decide yourself. Never let it be the last check on something that has to be correct.</dd>
+          <dt>The task is smaller than the prompt</dt><dd>If explaining it takes longer than doing it, just do it. This is the most common waste.</dd>
+          <dt>The data shouldn't leave</dt><dd>If you wouldn't paste it into a shared doc, think before pasting it into a chat. Your classification policy applies to AI output the same as anything else.</dd>
+        </dl>
+        <div class="callout">
+          <strong>None of these are permanent.</strong> Four of the five are fixed by giving it access to the right source or by checking the output, which is what this deck has been about. Only the first one is really about you rather than the tool.
+        </div>
+      </div>
+      <div class="page-num">30</div>
+      <aside class="notes">
+        This slide buys credibility. A deck that only sells capability gets dismissed by anyone who has had a bad experience; naming the failure modes first means you're taken seriously on the rest.
+
+        The first item is the important one and worth saying slowly: this is a tool for people who know their domain. It makes an expert faster; it does not make a non-expert an expert.
+
+        The fifth item is deliberately light — we have a classification skill for exactly this. If anyone wants the detail, that's a separate conversation with whoever owns IT rather than a slide here.
+
+        The closing callout stops the slide being a downer: most of these are solvable, and solving them is what the deck taught.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 31 — PART 6 DIVIDER -->
+    <!-- =========================================== -->
+    <section data-background-color="#C75B7E" id="part-6">
+      <div class="chapter-divider">
+        <span class="chapter-num">Part 6</span>
+        <h2 class="chapter-title">Giving it<br/>hands.<span class="title-emoji">🖐️</span></h2>
+        <p class="chapter-blurb">Connectors give it reach. Skills tell it how.</p>
+      </div>
+      <aside class="notes">
+        Transition from Part 5's closing callout — four of the five risks are fixed by giving Claude access to the right source: "The best fix for making things up is to stop asking Claude to remember and hand it the real thing. That's what this part is." Two ideas only — MCP and skill — plus what you already have, and how it reaches you. Connectors lead because they pay off that transition immediately; skills follow.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 32 — WHAT IS MCP -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Definition</div>
+        <h2>MCP is the kitchen. A connector hands over the keys.</h2>
+        <p class="sub"><strong>MCP</strong> is the kitchen: the tools and ingredients Claude can reach. Switch a connector on and Claude can work inside that system. Nothing to install. (The recipes for this kitchen — skills — come three slides from now.)</p>
+        <div class="two-col" style="margin-top:4px;">
+          <div>
+            <div class="col-label">Web search</div>
+            <div class="col-card bad">
+              <ul class="tight" style="margin:0; padding-left:16px; font-size:0.76em;">
+                <li>Reaches the public internet only</li>
+                <li>Can't see anything behind your login</li>
+                <li>Reads. Can't change anything.</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">Connectors</div>
+            <div class="col-card good">
+              <ul class="tight" style="margin:0; padding-left:16px; font-size:0.76em;">
+                <li>Reach <strong>your</strong> tools and live data</li>
+                <li>See what's behind your login: private and current</li>
+                <li>Can <strong>act</strong>: draft, write, send, update</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <p><strong>This is also the real fix for hallucination.</strong> Every defence in Part 5 manages a model working from memory. A connector removes the need to remember, because it reads the actual record.</p>
+        </div>
+      </div>
+      <div class="page-num">32</div>
+      <aside class="notes">
+        Kitchen analogy carries over from Workshops #3 and #4 — keep it for continuity, though this deck now leads with the kitchen and the skill slide picks up the recipe half. Don't dwell on the acronym; MCP is just the name of the standard. This slide opens Part 6 on purpose, straight off the trust material — the last line of the callout: giving Claude the real record beats any prompting trick for keeping it honest. Say that deliberately and slowly.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 33 — OUR MCPS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Available to switch on</div>
+        <h2>The connectors that matter.</h2>
+        <p class="sub">Nothing here is pre-wired for you. You turn on the ones you need and authenticate once. These five are where the work actually lives.</p>
+        <div class="props">
+          <div class="prop">
+            <h4>Notion</h4>
+            <p>Docs, meeting notes, databases. Where decisions and process live. The most-used connector we have.</p>
+          </div>
+          <div class="prop">
+            <h4>Microsoft 365</h4>
+            <p>Outlook mail and calendar, SharePoint, Teams. Your inbox, your meetings, your shared files.</p>
+          </div>
+          <div class="prop">
+            <h4>Slack</h4>
+            <p>Channels, threads, DMs, canvases. Where the informal decisions actually got made.</p>
+          </div>
+        </div>
+        <div class="props" style="margin-top:14px;">
+          <div class="prop" style="border-top-color: var(--sky);">
+            <h4>Salesforce</h4>
+            <p>Accounts, opportunities, and the test history behind your reporting.</p>
+          </div>
+          <div class="prop" style="border-top-color: var(--sky);">
+            <h4>Bright Data</h4>
+            <p>The live open web: search, any page unblocked, structured data. Every fact in this deck was verified through it.</p>
+          </div>
+          <div class="prop" style="border-top-color: var(--muted);">
+            <h4>Also in the directory</h4>
+            <p>Calendly, Canva, Docusign, Stripe, tldv, Apollo, Semrush and 50-plus more. Ask if you need one.</p>
+          </div>
+        </div>
+      </div>
+      <div class="page-num">33</div>
+      <aside class="notes">
+        The five named here are the ones that matter, and they're already approved and in the directory — each person still switches them on and authenticates their own account once, exactly as the slide says. Worth saying that this deck's model table came from Bright Data hitting Anthropic's live docs — a connector doing exactly what the previous slide described, and the reason these numbers are right when Workshop #1's aren't. The "also in the directory" tile is a soft invitation: if someone needs one, it's a request not a project.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 34 — THE COST OF CONNECTORS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">The cost of reach</div>
+        <h2>Every connector costs context before you type.</h2>
+        <p class="sub">Every connector you switch on describes its tools to Claude at the start of the chat. Anthropic's own guidance is blunt about it: <em>tools and connectors are token-intensive</em>, and they suggest switching off the ones you aren't using.</p>
+        <dl class="kv">
+          <dt>It costs before you type</dt><dd>Tool descriptions load up front, whether or not you call them. That's Part 3 and this part pulling against each other.</dd>
+          <dt>Choice gets harder too</dt><dd>More tools means more chance of picking the wrong one. Anthropic's test is a good one: <em>if a person can't say which tool fits a situation, Claude can't either.</em></dd>
+          <dt>You can turn them off</dt><dd>Connectors are a per-session choice, not a permanent install.</dd>
+        </dl>
+        <div class="callout">
+          <strong>So switch on what you use and turn the rest off.</strong> Every connector you leave on spends context before you type a word.
+        </div>
+      </div>
+      <div class="page-num">34</div>
+      <aside class="notes">
+        Including this is what makes Part 6 credible rather than a sales pitch — and it's true. The honest framing: we spent Part 3 telling you context is precious, so we owe you the fact that connectors spend it. For most claude.ai users this is a non-issue; for Claude Code users with a dozen MCPs installed it's the single biggest context saving available. Anthropic's tool-ambiguity line applies equally to skills, which come next.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 35 — WHAT IS A SKILL -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Definition</div>
+        <h2>A skill is a recipe card.</h2>
+        <p class="sub">A folder with one markdown file — the recipe for the kitchen you just saw. It says what the job is, how we do it here, and what good looks like. Claude reads it when the job comes up, so you stop explaining the same process again and again. <strong>Instructions are how to behave; a skill is how to do a job.</strong></p>
+        <div class="two-col" style="margin-top:4px;">
+          <div>
+            <div class="col-label">Without a skill</div>
+            <div class="col-card bad">
+              <p style="margin:0; font-size:0.78em;">You explain the grading bands again. And the report format again. Every conversation starts from zero, and two people doing the same task get different answers.</p>
+            </div>
+          </div>
+          <div>
+            <div class="col-label">With a skill</div>
+            <div class="col-card good">
+              <p style="margin:0; font-size:0.78em;">You say “grade this.” The recipe is already there. Same result for everyone, and when one person improves the file, everyone gets the improvement.</p>
+            </div>
+          </div>
+        </div>
+        <div class="callout">
+          <p><strong>The description is the part that matters.</strong> Claude reads only the name and description of every skill up front, a line or two each, and pulls the full recipe in only when it looks relevant. The description is what makes Claude reach for the skill at all. Vague description, skill never fires. This is also why fifty skills don't drown your context.</p>
+        </div>
+      </div>
+      <div class="page-num">35</div>
+      <aside class="notes">
+        Recipe card is the analogy from Workshop #3 — reuse it deliberately for continuity. The progressive-disclosure point is the bit people get wrong when writing their first skill: they write a lovely body and a lazy description, then wonder why it never triggers. Tie it back to Part 3: this is just-in-time context in action — identifiers loaded up front, full content on demand.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 36 — OUR SKILLS -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-light">Built, versioned, in-house</div>
+        <h2>Our skills.</h2>
+        <table class="ctable">
+          <thead><tr><th>Skill</th><th>What it does</th></tr></thead>
+          <tbody>
+            <tr><td class="model">reprompt</td><td>Scores your prompt against the <strong>Prompt Standard</strong> for clarity, specificity, structure, constraints, verifiability and decomposition, then rewrites it. Everything in Part 4, automated.</td></tr>
+            <tr><td class="model">no-ai-slop</td><td>Strips the tells that make writing read as machine-generated, so a draft sounds like a person wrote it.</td></tr>
+            
+            
+            
+            
+            
+          </tbody>
+        </table>
+        <p class="mini"><strong>Kept in one internal repo, versioned like any other code. </strong> · <strong>You already have all of these</strong>, and you didn't install any of them. How that works: next slide.</p>
+      </div>
+      <div class="page-num">36</div>
+      <aside class="notes">
+        These are real, versioned and internal &mdash; not workshop demos. The point for a non-technical room is that someone wrote these once and everyone gets them automatically, which is what the next slide explains.</aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 37 — HOW A SKILL GETS DEPLOYED -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content">
+        <div class="chip chip-terracotta">Distribution</div>
+        <h2>How a skill gets deployed.</h2>
+        <p class="sub">A skill is just a folder. Three ways to get it in front of someone else.</p>
+        <div class="trio">
+          <div class="trio-card">
+            <span class="tag">1 · Whole org</span>
+            <h4>An admin uploads it once.</h4>
+            <p>A <code>.zip</code> of the folder goes to <strong>Organization settings &rarr; Skills</strong>. It appears in every member's list, switched on by default. Nobody installs anything.</p>
+            <p class="examples">Use for: anything everyone should have.</p>
+          </div>
+          <div class="trio-card">
+            <span class="tag">2 · Send the zip</span>
+            <h4>Hand over the file.</h4>
+            <p>Zip the folder and send it however you like: Slack, email, a shared drive. They upload it under <strong>Customize &rarr; Skills</strong> and it's theirs to edit.</p>
+            <p class="examples">Use for: outside the company.</p>
+          </div>
+          <div class="trio-card">
+            <span class="tag">3 · Share it in Claude</span>
+            <h4>Share from the UI itself.</h4>
+            <p>Pick the skill in your list and share it with named colleagues. It lands in their <strong>Shared with you</strong> section, ready to switch on, and view-only so there's still one version.</p>
+            <p class="examples">Use for: sharing something you just built.</p>
+          </div>
+        </div>
+        <div class="callout">
+          <strong>Pick by how many people.</strong> One or two, share in the UI. A handful, send the zip. Everyone, ask an admin. That last one is how the seven on the previous slide reached you, with nobody lifting a finger.
+        </div>
+      </div>
+      <div class="page-num">37</div>
+      <aside class="notes">
+        Source: support.claude.com, "Provision and manage skills for your organization", checked 30 July 2026.
+
+        This slide answers the question the previous one raises: seven skills exist, so how do I get them? Route 1 &mdash; you already have them. Say that and move on; don't send anyone to claude.ai/skills to upload their own copy, because a second personal copy just drifts out of date.
+
+        Keep the framing on the folder. That's the through-line: a skill is a directory with a SKILL.md in it, and every route is just a different way of getting that directory in front of someone else. Once people have that, the three routes are obvious rather than three things to memorise.
+
+        Route 1 details if asked: Team and Enterprise plans only. Members can toggle a provisioned skill off for themselves but can't delete it &mdash; only an owner can remove it from the org. They can open any skill and read it, which is the best answer to "is it doing things behind my back."
+
+        The difference between routes 2 and 3 that's worth knowing: a zip you send arrives as the recipient's own copy, so they can edit it &mdash; and it will drift from yours. A skill shared through the UI is view-only: they can use it but not change it, so there's still one version. Send the zip when you want someone to take it and run; share in the UI when it should stay yours.
+
+        For the developers in the room: skills are just folders, so <code>~/.claude/skills/</code> works for personal ones and committing <code>.claude/skills/</code> into a repo means the team gets it on the next pull, reviewed like any other code. Mention it only if asked &mdash; it's a different surface, not a fourth way of handing a skill to a colleague.
+
+        The prerequisite people trip on: Skills *and* code execution both have to be on in Organization settings. Skills need code execution to run, so with it off they silently don't appear at all &mdash; no error, just nothing.
+
+        If asked whether colleagues can share skills with each other directly: the product supports two more routes &mdash; straight to a named colleague, and publishing to an org-wide directory &mdash; but both toggles are off by default and we haven't enabled them, which is why there's no directory to browse here. Leave the decision with whoever owns IT rather than debating it in the room. The relevant detail for them: the org-wide toggle has no approval step, so any member could publish to everyone unreviewed. Sharing events do land in the audit log and Compliance API as role_assignment events if they ever turn it on.
+      </aside>
+    </section>
+
+    <!-- =========================================== -->
+    <!-- 38 — IF YOU REMEMBER NOTHING ELSE -->
+    <!-- =========================================== -->
+    <section class="slide-cream">
+      <div class="slide-content center">
+        <div class="chip chip-terracotta">The whole deck, compressed</div>
+        <h2>If you remember nothing else.</h2>
+        <div class="remember-list dense">
+          <div class="remember-item">
+            <div class="remember-num">1</div>
+            <div><p><strong>It predicts text, and it re-reads rather than remembers.</strong> The whole conversation is sent again every turn. Every complaint you've had about Claude follows from that one fact.</p></div>
+          </div>
+          <div class="remember-item">
+            <div class="remember-num">2</div>
+            <div><p><strong>More context makes it worse.</strong> Quality degrades long before the window fills. One task, one chat.</p></div>
+          </div>
+          <div class="remember-item">
+            <div class="remember-num">3</div>
+            <div><p><strong>Point at things; don't paste them.</strong> A path or link costs a few tokens. The contents cost thousands and crowd out what matters.</p></div>
+          </div>
+          <div class="remember-item">
+            <div class="remember-num">4</div>
+            <div><p><strong>Tell it “I don't know” is allowed.</strong> One sentence, free, the best defence against confident invention.</p></div>
+          </div>
+          <div class="remember-item">
+            <div class="remember-num">5</div>
+            <div><p><strong>Write down what you'd otherwise repeat.</strong> Instructions for how to behave, a skill for how to do a job. Explain it once, benefit forever.</p></div>
+          </div>
+        </div>
+      </div>
+      <div class="page-num">38</div>
+      <aside class="notes">
+        Slow down here. Read all five aloud — this is the slide people photograph, and it is now the closing slide, so leave it on screen through Q&amp;A. If the room takes only #2 and #4 away, the hour paid for itself.
+      </aside>
+    </section>
+
+
+
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/dist/reveal.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/reveal.js@5.1.0/plugin/notes/notes.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    controls: true,
+    progress: true,
+    center: false,
+    transition: 'fade',
+    transitionSpeed: 'default',
+    backgroundTransition: 'fade',
+    width: 1440,
+    height: 900,
+    margin: 0,
+    minScale: 0.2,
+    maxScale: 2.0,
+    plugins: [RevealNotes]
+  });
+</script>
+
+</body>
+</html>

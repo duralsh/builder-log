@@ -33,10 +33,15 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
 
       <article class="card hobby-block">
         <h2>Numismatics</h2>
-        <p>I mostly collect Classical Greek tetradrachms and Roman Republic silver denarii.</p>
         <p>
-          <a href="/hobbies/coins/collection">Numismatic cabinet →</a>
+          Greek silver from the Archaic period onward, the Greco-Baktrian and Indo-Greek kings, and Roman imperial
+          coinage.
         </p>
+        <ul class="hobby-links">
+          <li><a href="/hobbies/coins/collection">Numismatic cabinet</a> — every coin with its full catalogue entry</li>
+          <li><a href="/hobbies/coins/board">The board</a> — all of them on one wall, hover to turn a coin over</li>
+          <li><a href="/hobbies/coins/scale">At true scale</a> — drawn at their real relative size</li>
+        </ul>
         <ul>
           {coins.slice(0, 3).map((post) => (
             <li>
@@ -66,6 +71,19 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
 
   .hobby-block {
     padding: 1.2rem;
+  }
+
+  .hobby-links {
+    margin: 0.9rem 0 0;
+    padding-left: 1.1rem;
+    display: grid;
+    gap: 0.4rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  .hobby-links a {
+    color: var(--ink);
   }
 
 </style>

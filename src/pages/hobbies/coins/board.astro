@@ -21,11 +21,13 @@ const shortName = (title: string) => {
   return (parts[parts.length - 1] ?? t).replace(/\./g, "").trim().toUpperCase();
 };
 
-// These sixteen were composited here with the coin at 78% of an 840px tile
+// Sixteen of these were composited here with the coin at 78% of an 840px tile
 // inside 50px of padding, which leaves it filling only ~71% of its half. The
 // auction photographs are cropped far tighter, so these need a nudge to sit at
-// the same size on the board. Listed by slug rather than by category, so a
-// Baktrian coin bought at auction later is not zoomed by mistake.
+// the same size on the board. The two Eukratides I obols are cut out rather
+// than composited; they are framed to land at the same size under the same
+// nudge. Listed by slug rather than by category, so a Baktrian coin bought at
+// auction later is not zoomed by mistake.
 const ZOOMED = new Set([
   "sophytes-drachm", "sophytes-obol",
   "euthydemos-i-tetradrachm-a", "euthydemos-ii-tetradrachm", "euthydemos-ii-obol",

@@ -1,6 +1,6 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { coins, coinSlug, yearFor, type Coin } from "../../../lib/coins";
+import { coins, categories, categoryFor, coinSlug, yearFor, type Coin } from "../../../lib/coins";
 
 // Titles are catalogue headings, too long for a tile. Most shorten by rule;
 // three are irregular enough that an override is clearer than more regex.
@@ -45,10 +45,10 @@ const subtitle = (coin: Coin) => [coin.type, coin.mint].filter(Boolean).join(" �
 // The type field carries the metal as well as the denomination, and not in a
 // fixed place: "AR Tetradrachm", "BI Tetradrachm" and "Tetradrachm AR" are all
 // tetradrachms, and a follis arrives as "Follis (Bronze)", "Æ Follis" and
-// "Silvered Æ Follis". Grouping on the raw string gives 24 headings for 58
-// coins, so drop the metal and group on what is left. Nothing is lost: the
-// subtitle under each tile still prints the type in full, which is what tells
-// the billon tetradrachm from the silver ones inside a group.
+// "Silvered Æ Follis". Keying on the raw string would split each of those, so
+// drop the metal and key on what is left. Nothing is lost: the subtitle under
+// each tile still prints the type in full, which is what tells the billon
+// tetradrachm from the silver ones once they sit together.
 const METAL = /^(AR|AE|Æ|AV|BI|Silvered)$/i;
 
 const denomination = (type: string) =>
@@ -58,38 +58,46 @@ const denomination = (type: string) =>
     .filter((word) => word && !METAL.test(word))
     .join(" ") || type;
 
-const byDenomination = new Map<string, Coin[]>();
-for (const coin of coins) {
-  const key = denomination(coin.type);
-  byDenomination.set(key, [...(byDenomination.get(key) ?? []), coin]);
-}
+// Periods stay the headings; within one, like denominations are pulled next to
+// each other. Sorting by year first and then bucketing keeps "oldest first"
+// true twice over: a Map holds insertion order, so each run of a denomination
+// appears where its earliest coin fell, and inside a run they stay in date
+// order. Only the clustering is new -- the reading order is still the old one.
+const cluster = (items: Coin[]) => {
+  const runs = new Map<string, Coin[]>();
+  for (const coin of items) {
+    const key = denomination(coin.type);
+    runs.set(key, [...(runs.get(key) ?? []), coin]);
+  }
+  return [...runs.values()].flat();
+};
 
-// Largest group first, the same order the cabinet's mint filter uses. Within a
-// group the coins stay oldest first, as they were under the period headings.
-const groups = [...byDenomination]
-  .map(([category, items]) => ({
+const groups = categories
+  .map((category) => ({
     category,
-    items: [...items].sort((a, b) => yearFor(a) - yearFor(b)),
+    items: cluster(
+      coins.filter((coin) => categoryFor(coin) === category).sort((a, b) => yearFor(a) - yearFor(b)),
+    ),
   }))
-  .sort((a, b) => b.items.length - a.items.length || a.category.localeCompare(b.category));
+  .filter((g) => g.items.length > 0);
 ---
 
 <BaseLayout
   title="Coin Board — Dogus Ural"
-  description="Every coin in the cabinet on one board, grouped by denomination. Hover a coin to turn it over."
+  description="Every coin in the cabinet on one board, by period, with like denominations together. Hover a coin to turn it over."
 >
   <section class="section">
     <div class="container">
       <h1>The Board</h1>
       <p class="muted lede">
-        All {coins.length} coins on one wall, grouped by denomination and oldest first within each. Hover a coin to turn
-        it over; click to open its entry. Every disc is the same size here — the cabinet records each coin's real
-        diameter.
+        All {coins.length} coins on one wall, oldest first within each period and with the same denominations kept
+        together. Hover a coin to turn it over; click to open its entry. Every disc is the same size here — the cabinet
+        records each coin's real diameter.
       </p>
 
       {
         groups.map((group) => (
-          <section class="group">
+          <section class="period">
             <h2>
               {group.category} <span class="count">{group.items.length}</span>
             </h2>
@@ -132,11 +140,11 @@ const groups = [...byDenomination]
     margin: 0.6rem 0 0;
   }
 
-  .group {
+  .period {
     margin-top: 3rem;
   }
 
-  .group h2 {
+  .period h2 {
     font-size: 1.15rem;
     margin: 0 0 1.2rem;
   }

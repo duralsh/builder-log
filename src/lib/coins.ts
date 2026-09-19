@@ -260,7 +260,7 @@ export const coins = [
   },
   {
     title: "CARIA, Rhodes",
-    type: "AR Hemidrahm or Diobol",
+    type: "AR Hemidrachm or Diobol",
     date: "Circa 205-188 BC",
     mint: "Rhodes",
     obv: "Radiate head of Helios facing slightly right.",
@@ -277,7 +277,7 @@ export const coins = [
   },
   {
     title: "CARIA, Rhodes",
-    type: "AR Hemidrahm or Diobol",
+    type: "AR Hemidrachm or Diobol",
     date: "Circa 205-188 BC",
     mint: "Rhodes",
     obv: "Radiate head of Helios facing slightly right.",

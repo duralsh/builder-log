@@ -38,6 +38,20 @@ const ZOOMED = new Set([
   "eukratides-i-obol-a", "eukratides-i-obol-b",
 ]);
 
+// Dates are catalogue prose: "Circa 171-145 BC", "Ca. 4th century BC",
+// "Circa 324-323 BC (lifetime issue)". A tile wants the years and nothing
+// round them. One entry, the Hadrian travel-series denarius, has no year in
+// the field at all -- it reads "Travel Series issue" -- so it returns empty
+// and that tile simply omits the line rather than printing prose as a date.
+const shortDate = (date: string) => {
+  const t = date
+    .replace(/\s*\([^)]*\)/g, "") // (lifetime issue)
+    .replace(/^(?:circa|ca\.?)\s+/i, "")
+    .replace(/\bcenturies\b|\bcentury\b/gi, "c.")
+    .trim();
+  return /\d/.test(t) ? t : "";
+};
+
 // Twelve names repeat — five Constantines alone — so each tile carries a
 // second line that actually tells them apart.
 const subtitle = (coin: Coin) => [coin.type, coin.mint].filter(Boolean).join(" · ");
@@ -121,6 +135,10 @@ const groups = categories
                     </span>
                     <span class="name">{shortName(coin.title)}</span>
                     <span class="sub">{subtitle(coin)}</span>
+                    {/* Its own row rather than another " · " clause: the tile is
+                        narrow enough that a long date would otherwise break
+                        across lines mid-phrase. */}
+                    {shortDate(coin.date) && <span class="date">{shortDate(coin.date)}</span>}
                   </a>
                 </li>
               ))}
@@ -174,6 +192,7 @@ const groups = categories
     gap: 0.1rem;
     text-decoration: none;
     color: inherit;
+    text-align: center;
   }
 
   /* A disc rather than a square photograph: the coin reads as a coin, and the
@@ -244,6 +263,14 @@ const groups = categories
     font-size: 0.7rem;
     line-height: 1.35;
     color: var(--muted);
+  }
+
+  .date {
+    font-size: 0.68rem;
+    line-height: 1.35;
+    color: var(--muted);
+    opacity: 0.8;
+    font-variant-numeric: tabular-nums;
   }
 
   @media (prefers-reduced-motion: reduce) {

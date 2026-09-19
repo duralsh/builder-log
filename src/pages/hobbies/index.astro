@@ -40,7 +40,6 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
         <ul class="hobby-links">
           <li><a href="/hobbies/coins/collection">Numismatic cabinet</a> — every coin with its full catalogue entry</li>
           <li><a href="/hobbies/coins/board">The board</a> — all of them on one wall, hover to turn a coin over</li>
-          <li><a href="/hobbies/coins/scale">At true scale</a> — drawn at their real relative size</li>
         </ul>
         <ul>
           {coins.slice(0, 3).map((post) => (

@@ -58,7 +58,7 @@ const groups = categories
       <h1>The Board</h1>
       <p class="muted lede">
         All {coins.length} coins on one wall, oldest first within each period. Hover a coin to turn it over; click to
-        open its entry.
+        open its entry. Every disc is the same size here — the cabinet records each coin's real diameter.
       </p>
 
       {
@@ -144,12 +144,16 @@ const groups = categories
     color: inherit;
   }
 
+  /* A disc rather than a square photograph: the coin reads as a coin, and the
+     rectangular edges of the source shot disappear. Not a true cut-out — the
+     photo background still sits behind the flan — but every coin is masked the
+     same way, which a mix of real cut-outs and circles would not be. */
   .window {
     display: block;
     position: relative;
     aspect-ratio: 1;
     overflow: hidden;
-    border-radius: var(--rounded-md);
+    border-radius: 50%;
     background: var(--surface-soft);
     border: 1px solid var(--hairline);
     transition: border-color 0.15s ease, transform 0.15s ease;

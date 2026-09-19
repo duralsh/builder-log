@@ -1,0 +1,204 @@
+---
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { coins, categories, categoryFor, coinSlug, yearFor, type Coin } from "../../../lib/coins";
+
+// Titles are catalogue headings, too long for a tile. Most shorten by rule;
+// three are irregular enough that an override is clearer than more regex.
+const SHORT_NAME: Record<string, string> = {
+  "DYNASTS of LYCIA, uncertain": "LYCIA",
+  "SELEUCIS AND PIERIA, Antioch. Philip I 'the Arab' (244-249)": "PHILIP I",
+  "KINGS OF THRACE, Kalchedon, in the name of Lysimachos (305-281 BC)": "LYSIMACHOS",
+};
+
+const shortName = (title: string) => {
+  if (SHORT_NAME[title]) return SHORT_NAME[title];
+  let t = title
+    .replace(/\s*\([^)]*\)/g, "") // (171-145 BC)
+    .replace(/\s*'[^']*'/g, "") // 'the Great'
+    .replace(/\s+(with|in the name of)\s+.*$/i, "")
+    .replace(/^(KINGS? OF|KINGDOM OF|DYNASTS OF|ISLANDS OFF)\s+[A-Z]+,\s*/i, "");
+  const parts = t.split(",").map((p) => p.trim()).filter(Boolean);
+  return (parts[parts.length - 1] ?? t).replace(/\./g, "").trim().toUpperCase();
+};
+
+// Twelve names repeat — five Constantines alone — so each tile carries a
+// second line that actually tells them apart.
+const subtitle = (coin: Coin) => [coin.type, coin.mint].filter(Boolean).join(" · ");
+
+const groups = categories
+  .map((category) => ({
+    category,
+    items: coins
+      .filter((coin) => categoryFor(coin) === category)
+      .sort((a, b) => yearFor(a) - yearFor(b)),
+  }))
+  .filter((g) => g.items.length > 0);
+---
+
+<BaseLayout
+  title="Coin Board — Dogus Ural"
+  description="Every coin in the cabinet on one board, arranged by period. Hover a coin to turn it over."
+>
+  <section class="section">
+    <div class="container">
+      <h1>The Board</h1>
+      <p class="muted lede">
+        All {coins.length} coins on one wall, oldest first within each period. Hover a coin to turn it over; click to
+        open its entry.
+      </p>
+
+      {
+        groups.map((group) => (
+          <section class="period">
+            <h2>
+              {group.category} <span class="count">{group.items.length}</span>
+            </h2>
+            <ul class="board">
+              {group.items.map((coin) => (
+                <li>
+                  <a class="tile" href={`/hobbies/coins/${coinSlug(coin)}`}>
+                    <span class="window">
+                      {/* One composite holds both faces side by side, so sliding
+                          object-position between the halves turns the coin over
+                          without a second file. */}
+                      <img
+                        class="face"
+                        src={coin.image.replace(".webp", "-sm.webp")}
+                        alt={`${coin.title}, ${coin.type}`}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </span>
+                    <span class="name">{shortName(coin.title)}</span>
+                    <span class="sub">{subtitle(coin)}</span>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .lede {
+    max-width: 62ch;
+    margin: 0.6rem 0 0;
+  }
+
+  .period {
+    margin-top: 3rem;
+  }
+
+  .period h2 {
+    font-size: 1.15rem;
+    margin: 0 0 1.2rem;
+  }
+
+  .count {
+    display: inline-block;
+    margin-left: 0.4rem;
+    padding: 0.1rem 0.5rem;
+    border-radius: var(--rounded-pill);
+    background: var(--surface-card);
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 500;
+    font-variant-numeric: tabular-nums;
+    vertical-align: middle;
+  }
+
+  .board {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+    gap: 1.6rem 1.1rem;
+  }
+
+  .tile {
+    display: grid;
+    gap: 0.1rem;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .window {
+    display: block;
+    aspect-ratio: 1;
+    overflow: hidden;
+    border-radius: var(--rounded-md);
+    background: var(--surface-soft);
+    border: 1px solid var(--hairline);
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+
+  /* object-fit: cover scales a ~2:1 composite to twice the tile width, so the
+     visible window is one half of it. 0% lands on the obverse, 100% on the
+     reverse. */
+  .face {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: 0% 50%;
+    display: block;
+    transition: object-position 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .tile:hover .face,
+  .tile:focus-visible .face {
+    object-position: 100% 50%;
+  }
+
+  .tile:hover .window,
+  .tile:focus-visible .window {
+    border-color: var(--ink);
+    transform: translateY(-2px);
+  }
+
+  .tile:focus-visible {
+    outline: none;
+  }
+
+  .tile:focus-visible .window {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .name {
+    margin-top: 0.55rem;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .sub {
+    font-size: 0.7rem;
+    line-height: 1.35;
+    color: var(--muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .face,
+    .window {
+      transition: none;
+    }
+
+    .tile:hover .window,
+    .tile:focus-visible .window {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 30rem) {
+    .board {
+      grid-template-columns: repeat(auto-fill, minmax(6.8rem, 1fr));
+      gap: 1.3rem 0.8rem;
+    }
+  }
+</style>

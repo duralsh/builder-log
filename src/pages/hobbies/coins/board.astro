@@ -21,6 +21,20 @@ const shortName = (title: string) => {
   return (parts[parts.length - 1] ?? t).replace(/\./g, "").trim().toUpperCase();
 };
 
+// These sixteen were composited here with the coin at 78% of an 840px tile
+// inside 50px of padding, which leaves it filling only ~71% of its half. The
+// auction photographs are cropped far tighter, so these need a nudge to sit at
+// the same size on the board. Listed by slug rather than by category, so a
+// Baktrian coin bought at auction later is not zoomed by mistake.
+const ZOOMED = new Set([
+  "sophytes-drachm", "sophytes-obol",
+  "euthydemos-i-tetradrachm-a", "euthydemos-ii-tetradrachm", "euthydemos-ii-obol",
+  "eukratides-i-tetradrachm-a", "eukratides-i-drachm", "eukratides-ii-tetradrachm",
+  "demetrios-i-obol", "heliokles-i-tetradrachm", "antimachos-i-obol",
+  "menander-i-drachm-helmeted", "menander-i-drachm-a", "menander-i-drachm-b",
+  "abbasid-dirham-a", "abbasid-dirham-b",
+]);
+
 // Twelve names repeat — five Constantines alone — so each tile carries a
 // second line that actually tells them apart.
 const subtitle = (coin: Coin) => [coin.type, coin.mint].filter(Boolean).join(" · ");
@@ -56,11 +70,15 @@ const groups = categories
             <ul class="board">
               {group.items.map((coin) => (
                 <li>
-                  <a class="tile" href={`/hobbies/coins/${coinSlug(coin)}`}>
+                  <a
+                    class="tile"
+                    href={`/hobbies/coins/${coinSlug(coin)}`}
+                    style={ZOOMED.has(coinSlug(coin)) ? "--z: 1.25" : undefined}
+                  >
                     <span class="window">
-                      {/* One composite holds both faces side by side, so sliding
-                          object-position between the halves turns the coin over
-                          without a second file. */}
+                      {/* One composite holds both faces side by side, so shifting
+                          the image by exactly one tile turns the coin over
+                          without needing a second file. */}
                       <img
                         class="face"
                         src={coin.image.replace(".webp", "-sm.webp")}
@@ -128,6 +146,7 @@ const groups = categories
 
   .window {
     display: block;
+    position: relative;
     aspect-ratio: 1;
     overflow: hidden;
     border-radius: var(--rounded-md);
@@ -136,21 +155,29 @@ const groups = categories
     transition: border-color 0.15s ease, transform 0.15s ease;
   }
 
-  /* object-fit: cover scales a ~2:1 composite to twice the tile width, so the
-     visible window is one half of it. 0% lands on the obverse, 100% on the
-     reverse. */
+  /* Source ratios run 1.72 to 2.20, so taking "the left half" of the image
+     itself let a sliver of the reverse bleed in on the narrow ones — 8% on the
+     Phokaia diobol. Sizing the image to an exact 2:1 box and letting cover crop
+     it makes the halves land precisely whatever the source ratio.
+
+     --z magnifies about the element centre, so the translation has to
+     compensate: the visible half's centre lands correctly at 25%(z-1) at rest
+     and -25%(z+1) turned over. Both reduce to 0% and -50% when z is 1. */
   .face {
-    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200%;
     height: 100%;
     object-fit: cover;
-    object-position: 0% 50%;
     display: block;
-    transition: object-position 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(calc(25% * (var(--z, 1) - 1))) scale(var(--z, 1));
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .tile:hover .face,
   .tile:focus-visible .face {
-    object-position: 100% 50%;
+    transform: translateX(calc(-25% * (var(--z, 1) + 1))) scale(var(--z, 1));
   }
 
   .tile:hover .window,

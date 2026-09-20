@@ -13,13 +13,17 @@ const projectEmoji: Record<string, string> = {
   "git-commit-ai": "🤖",
   arena: "⚔️",
   "builder-log": "🧱",
-  "hyperliquid-copy-trader": "📈",
 };
 
 // Projects with an actual logo image (shown instead of the emoji).
 const projectLogo: Record<string, string> = {
   praegen: "/covers/praegen-mark.png",
   vigil: "/covers/vigil-mark.png",
+};
+
+// Shipping status, where it is worth saying before someone clicks through.
+const projectStatus: Record<string, string> = {
+  vigil: "Beta",
 };
 
 const internalProjectRoutes: Record<string, { href: string; label: string }> = {
@@ -83,6 +87,9 @@ const chipsFor = (project: (typeof projects)[number]): Chip[] => {
                   <span class="emoji">{projectEmoji[project.slug] ?? "🛠️"}</span>
                 )}
                 <span class="project-title">{project.data.title}</span>
+                {projectStatus[project.slug] && (
+                  <span class="pill status-pill">{projectStatus[project.slug]}</span>
+                )}
                 <span class="pill date-pill">{formatDate(project.data.date)}</span>
               </div>
               <p class="muted excerpt">{project.data.excerpt}</p>
@@ -148,6 +155,19 @@ const chipsFor = (project: (typeof projects)[number]): Chip[] => {
     letter-spacing: -0.02em;
     font-size: 1.2rem;
     color: var(--ink);
+  }
+
+  /* Sits with the title rather than the date, and carries the accent, so it
+     reads as a status and not as a second piece of metadata. */
+  .status-pill {
+    padding: 0.12rem 0.55rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-strong);
+    border-color: color-mix(in srgb, var(--accent-strong) 40%, transparent);
+    background: color-mix(in srgb, var(--accent-strong) 10%, transparent);
   }
 
   .date-pill {

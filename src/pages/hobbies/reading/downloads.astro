@@ -45,7 +45,7 @@ const downloadColumns = [
   },
 ];
 
-// Each column's number sits on the next shape in the set.
+// Each column takes the next shape in the set.
 const MARKS = ["sq", "tri", "ci"] as const;
 ---
 
@@ -63,7 +63,7 @@ const MARKS = ["sq", "tri", "ci"] as const;
       <div class="pdf-columns">
         {downloadColumns.map((column, index) => (
           <section class="card pdf-col">
-            <Marker n={index + 1} shape={MARKS[index % MARKS.length]}>{column.section}</Marker>
+            <Marker shape={MARKS[index % MARKS.length]}>{column.section}</Marker>
             <ul class="pdf-list">
               {column.files.map((file) => (
                 <li>

@@ -1040,6 +1040,18 @@ export const categories = [
   "Other",
 ] as const;
 
+// Each period's colour, shared by its dots on the cabinet map and its headings
+// on the cabinet and the board, so the headings double as the map's legend.
+export type CategoryTone = "yellow" | "blue" | "red" | "ink" | "ring" | "ring-red";
+export const categoryTone: Record<string, CategoryTone> = {
+  "Archaic Greek": "yellow",
+  "Classical & Hellenistic Greek": "blue",
+  "Greco-Baktrian & Indo-Greek": "red",
+  "Roman Imperial": "ink",
+  Islamic: "ring",
+  Medieval: "ring-red",
+};
+
 export const ISSUER_WIKI: Record<string, { label: string; slug: string }> = {
   "ABBASID CALIPHATE": { label: "ABBASID CALIPHATE", slug: "Abbasid_Caliphate" },
   "ANTONINUS PIUS": { label: "ANTONINUS PIUS", slug: "Antoninus_Pius" },

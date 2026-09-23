@@ -23,7 +23,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
 
       <div class="hobby-grid">
       <article class="card hobby-block">
-        <Marker n={1} shape="se">Lifting</Marker>
+        <Marker shape="se">Lifting</Marker>
         <p>I am a big fan of kettlebells, boxing, cycling and home workouts.</p>
         <ul>
           {lifting.slice(0, 3).map((post) => (
@@ -35,7 +35,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
       </article>
 
       <article class="card hobby-block">
-        <Marker n={2} shape="tri">Numismatics</Marker>
+        <Marker shape="tri">Numismatics</Marker>
         <p>
           Greek silver from the Archaic period onward, the Greco-Baktrian and Indo-Greek kings, and Roman imperial
           coinage.
@@ -54,7 +54,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
       </article>
 
       <article class="card hobby-block">
-        <Marker n={3} shape="ci">Reading</Marker>
+        <Marker shape="ci">Reading</Marker>
         <p><a href="/hobbies/reading">Reading Shelf</a></p>
         <p><a href="/hobbies/reading/downloads">Downloadable PDFs</a></p>
       </article>

@@ -233,17 +233,74 @@ code {
   color: #111111;
 }
 
-/* === Section markers: a numeral sitting on a primary shape === */
+/* === Section markers ===
+   A heading is a primary shape standing on the baseline, then a bold label.
+   Only where the order is the content (the workshop series) does a numeral
+   sit on the shape instead. */
 .marker {
   display: flex;
-  align-items: flex-end;
-  gap: 10px;
+  align-items: baseline;
+  gap: 12px;
   margin: 0 0 1.1rem;
   color: var(--ink);
   font-size: 19px;
   font-weight: 700;
   letter-spacing: 0;
   line-height: 1;
+}
+
+.marker .mk-shape {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  background: var(--red);
+}
+
+.mk-tri .mk-shape {
+  background: var(--yellow);
+  clip-path: polygon(50% 0, 100% 100%, 0 100%);
+}
+
+.mk-ci .mk-shape {
+  background: var(--blue);
+  border-radius: 50%;
+}
+
+.mk-se .mk-shape {
+  height: 11px;
+  border-radius: 11px 11px 0 0;
+}
+
+.mk-qu .mk-shape {
+  background: var(--yellow);
+  border-radius: 0 100% 0 0;
+}
+
+/* A tone overrides the shape's own colour; the rings are hollow. */
+.tone-yellow .mk-shape {
+  background: var(--yellow);
+}
+
+.tone-blue .mk-shape {
+  background: var(--blue);
+}
+
+.tone-red .mk-shape {
+  background: var(--red);
+}
+
+.tone-ink .mk-shape {
+  background: var(--ink);
+}
+
+.tone-ring .mk-shape {
+  background: transparent;
+  box-shadow: inset 0 0 0 3px var(--ink);
+}
+
+.tone-ring-red .mk-shape {
+  background: transparent;
+  box-shadow: inset 0 0 0 3px var(--red);
 }
 
 .marker .num {
@@ -291,7 +348,6 @@ code {
 }
 
 .marker .lbl {
-  padding-bottom: 1px;
   font-size: 19px;
   letter-spacing: 0.04em;
   line-height: 1;

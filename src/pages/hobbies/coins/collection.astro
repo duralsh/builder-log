@@ -10,6 +10,7 @@ import {
   coins,
   categories,
   categoryFor,
+  categoryTone,
   coinSlug,
   issuerLink,
   parseStartYear,
@@ -199,7 +200,6 @@ const nearestGap = (pin: MintPin) => {
 // i.e. when the radius exceeds the gap — so 0.85 of the gap is both safe and
 // noticeably easier to tap on a phone than half of it.
 const hitRadiusFor = (pin: MintPin) => Math.max(7, Math.min(18, nearestGap(pin) * 0.85));
-const categorySlug = (c: string) => toToken(c);
 
 const groupedCoinsWithAnchors = groupedCoins.map((group) => ({
   ...group,
@@ -219,9 +219,6 @@ const SHORT_LABEL: Record<string, string> = {
 };
 
 const totalCoins = coins.length;
-
-// Each period's number sits on the next shape in the set.
-const MARKS = ["sq", "tri", "ci", "se", "qu"] as const;
 ---
 
 <BaseLayout
@@ -284,7 +281,7 @@ const MARKS = ["sq", "tri", "ci", "se", "qu"] as const;
                   <g class="mint-scale">
                     <title>{pin.label}{pin.region ? " (region)" : ""} — {pin.breakdown}</title>
                     <circle class="mint-hit" cx="0" cy="0" r={hitRadiusFor(pin)} />
-                    <circle class={`mint-dot mint-dot--${categorySlug(pin.category)}`} cx="0" cy="0" r={DOT_R} />
+                    <circle class={`mint-dot mint-dot--${categoryTone[pin.category]}`} cx="0" cy="0" r={DOT_R} />
                   </g>
                 </a>
               </g>
@@ -337,9 +334,9 @@ const MARKS = ["sq", "tri", "ci", "se", "qu"] as const;
         </span>
       </nav>
 
-      {groupedCoinsWithAnchors.map((group, index) => (
+      {groupedCoinsWithAnchors.map((group) => (
         <section class="coin-category" id={group.anchor} data-period={group.anchor}>
-          <Marker n={index + 1} shape={MARKS[index % MARKS.length]}>
+          <Marker shape="ci" tone={categoryTone[group.category]}>
             {group.category} <span class="category-count">{group.items.length}</span>
           </Marker>
           <details class="coin-index">
@@ -1014,12 +1011,14 @@ const MARKS = ["sq", "tri", "ci", "se", "qu"] as const;
     stroke-width: 2;
   }
 
-  .mint-dot--archaic-greek { fill: var(--yellow); stroke: var(--ink); }
-  .mint-dot--classical-hellenistic-greek { fill: var(--blue); }
-  .mint-dot--greco-baktrian-indo-greek { fill: var(--red); }
-  .mint-dot--roman-imperial { fill: var(--ink); }
-  .mint-dot--islamic { fill: var(--cream); stroke: var(--ink); stroke-width: 2.2; }
-  .mint-dot--medieval { fill: var(--cream); stroke: var(--red); stroke-width: 2.2; }
+  /* One class per categoryTone in lib/coins.ts; the period headings use the
+     same tones, so they read as this map's legend. */
+  .mint-dot--yellow { fill: var(--yellow); stroke: var(--ink); }
+  .mint-dot--blue { fill: var(--blue); }
+  .mint-dot--red { fill: var(--red); }
+  .mint-dot--ink { fill: var(--ink); }
+  .mint-dot--ring { fill: var(--cream); stroke: var(--ink); stroke-width: 2.2; }
+  .mint-dot--ring-red { fill: var(--cream); stroke: var(--red); stroke-width: 2.2; }
 
   /* Every mint behaves the same: named on hover or focus, and while selected.
      No standing labels, so the map stays clean and nothing looks arbitrary. */
@@ -1135,9 +1134,12 @@ const MARKS = ["sq", "tri", "ci", "se", "qu"] as const;
     margin-bottom: 1rem;
   }
 
+  /* Still an ordered list, since the order is chronological, but unnumbered:
+     the count restarted in every period and said nothing the order did not. */
   .coin-list {
     margin: 0;
-    padding-left: 1.25rem;
+    padding: 0;
+    list-style: none;
     display: grid;
     gap: 1.6rem;
   }
@@ -1213,11 +1215,6 @@ const MARKS = ["sq", "tri", "ci", "se", "qu"] as const;
     padding-bottom: 1.8rem;
     margin-bottom: 0.4rem;
     scroll-margin-top: 6.5rem;
-  }
-
-  .coin-item::marker {
-    color: var(--ink);
-    font-weight: 700;
   }
 
   .coin-item p:last-child {

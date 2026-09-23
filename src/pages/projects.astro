@@ -18,7 +18,6 @@ type Form = {
 const projectShape: Record<string, Form> = {
   "ai-workshops": { kind: "circle", color: "blue" },
   "git-commit-ai": { kind: "square", color: "red" },
-  arena: { kind: "triangle", color: "yellow" },
   "builder-log": { kind: "bar", color: "ink" },
 };
 const DEFAULT_SHAPE: Form = { kind: "semi", color: "ink" };
@@ -27,6 +26,7 @@ const DEFAULT_SHAPE: Form = { kind: "semi", color: "ink" };
 const projectLogo: Record<string, string> = {
   praegen: "/covers/praegen-mark.png",
   vigil: "/covers/vigil-mark.png",
+  arena: "/covers/arena-mark.png",
 };
 
 // Shipping status, where it is worth saying before someone clicks through.

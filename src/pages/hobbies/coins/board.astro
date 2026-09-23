@@ -2,7 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PageHead from "../../../components/PageHead.astro";
 import Marker from "../../../components/Marker.astro";
-import { coins, categories, categoryFor, coinSlug, yearFor, type Coin } from "../../../lib/coins";
+import { coins, categories, categoryFor, categoryTone, coinSlug, yearFor, type Coin } from "../../../lib/coins";
 
 // Titles are catalogue headings, too long for a tile. Most shorten by rule;
 // three are irregular enough that an override is clearer than more regex.
@@ -96,9 +96,6 @@ const groups = categories
     ),
   }))
   .filter((g) => g.items.length > 0);
-
-// Each period's number sits on the next shape in the set.
-const MARKS = ["sq", "tri", "ci", "se", "qu"] as const;
 ---
 
 <BaseLayout
@@ -112,9 +109,9 @@ const MARKS = ["sq", "tri", "ci", "se", "qu"] as const;
       </PageHead>
 
       {
-        groups.map((group, index) => (
+        groups.map((group) => (
           <section class="period">
-            <Marker n={index + 1} shape={MARKS[index % MARKS.length]}>
+            <Marker shape="ci" tone={categoryTone[group.category]}>
               {group.category} <span class="count">{group.items.length}</span>
             </Marker>
             <ul class="board">

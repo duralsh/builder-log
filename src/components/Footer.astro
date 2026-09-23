@@ -31,12 +31,14 @@ const columns = [
   },
 ];
 
-// Four turns from the CV, one per shape, on the reference's timeline rail.
+// The CV told as five stages, from firmware to AI. Each stage starts at the
+// role that opened it and covers the ones that followed it.
 const milestones = [
-  { year: "2016", label: "Firmware, Ankara" },
-  { year: "2021", label: "Snap Spectacles" },
-  { year: "2024", label: "Product, Arena" },
-  { year: "2026", label: "Head of AI, AVILOO" },
+  { year: "2016", stage: "Engineer", detail: "Firmware & telecom, Turkey" },
+  { year: "2019", stage: "Embedded", detail: "Security & AR hardware, Vienna" },
+  { year: "2022", stage: "Product", detail: "Concept to launch" },
+  { year: "2024", stage: "Fintech", detail: "Director of Product, Arena" },
+  { year: "2026", stage: "AI leadership", detail: "Head of AI, AVILOO" },
 ];
 ---
 
@@ -47,7 +49,8 @@ const milestones = [
         milestones.map((m) => (
           <li>
             <b>{m.year}</b>
-            {m.label}
+            <span class="stage">{m.stage}</span>
+            <span class="detail">{m.detail}</span>
           </li>
         ))
       }
@@ -99,7 +102,7 @@ const milestones = [
   .timeline {
     position: relative;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     margin: 0;
     padding: 18px 0 0;
     list-style: none;
@@ -119,10 +122,6 @@ const milestones = [
   .timeline li {
     position: relative;
     padding: 24px 0.8rem 0 0;
-    color: var(--ink-2);
-    font-size: 12.5px;
-    font-weight: 700;
-    letter-spacing: 0.04em;
     line-height: 1.35;
     text-transform: lowercase;
   }
@@ -151,11 +150,33 @@ const milestones = [
     clip-path: polygon(50% 0, 100% 100%, 0 100%);
   }
 
+  /* The line ends on the red dot that closes every page title: now. */
+  .timeline li:nth-child(5)::before {
+    background: var(--red);
+    border-radius: 50%;
+  }
+
   .timeline b {
     display: block;
     color: var(--ink);
     font-size: 22px;
     letter-spacing: -0.02em;
+  }
+
+  .stage {
+    display: block;
+    color: var(--ink);
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  .detail {
+    display: block;
+    margin-top: 2px;
+    color: var(--ink-3);
+    font-size: 12px;
+    letter-spacing: 0.02em;
   }
 
   .footer-cols {
@@ -211,13 +232,40 @@ const milestones = [
     }
   }
 
+  /* Five stages will not fit across a phone, so the rail turns vertical. */
   @media (max-width: 560px) {
+    .timeline {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 0.9rem;
+      padding: 0 0 0 28px;
+    }
+
+    .timeline::before {
+      top: 6px;
+      bottom: 6px;
+      left: 6px;
+      right: auto;
+      width: 2px;
+      height: auto;
+    }
+
     .timeline li {
-      font-size: 11px;
+      padding: 0;
+    }
+
+    .timeline li::before {
+      top: 4px;
+      left: -28px;
     }
 
     .timeline b {
+      display: inline;
+      margin-right: 0.5rem;
       font-size: 18px;
+    }
+
+    .stage {
+      display: inline;
     }
 
     .footer-cols {

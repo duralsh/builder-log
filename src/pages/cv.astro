@@ -12,6 +12,7 @@ const roles = [
   {
     title: "Head of AI",
     company: "AVILOO GmbH",
+    logo: "/covers/aviloo-mark.png",
     location: "Wiener Neudorf / Vienna",
     start: new Date("2026-04-26"),
     end: null,
@@ -31,6 +32,7 @@ const roles = [
   {
     title: "Director of Product",
     company: "Arena Inc.",
+    logo: "/covers/arena-mark.png",
     location: "Vienna / New York",
     start: new Date("2024-02-01"),
     end: new Date("2026-04-26"),
@@ -67,6 +69,7 @@ const roles = [
   {
     title: "Software Engineer (AR / Embedded)",
     company: "Snap Inc.",
+    logo: "/covers/snap-mark.png",
     location: "Vienna",
     start: new Date("2021-03-01"),
     end: new Date("2022-05-01"),
@@ -111,6 +114,7 @@ const roles = [
   {
     title: "Embedded Software Engineer",
     company: "Accenture",
+    logo: "/covers/accenture-mark.png",
     location: "Istanbul",
     start: new Date("2017-07-01"),
     end: new Date("2018-08-01"),
@@ -151,7 +155,7 @@ const rolePosts = (start: Date, end: Date | null) =>
       </PageHead>
 
       <section class="cv-work">
-        <Marker n={1} shape="sq">Experience</Marker>
+        <Marker shape="sq">Experience</Marker>
         <div class="cv-list">
           {
             roles.map((role) => (
@@ -161,9 +165,14 @@ const rolePosts = (start: Date, end: Date | null) =>
                   <span class="role-location">{role.location}</span>
                 </div>
                 <div class="role-body">
-                  <h2>
-                    {role.title} — {role.company}
-                  </h2>
+                  <div class="role-head">
+                    {role.logo && (
+                      <img class="role-logo" src={role.logo} alt="" width="36" height="36" loading="lazy" decoding="async" />
+                    )}
+                    <h2>
+                      {role.title} — {role.company}
+                    </h2>
+                  </div>
                   {role.links.length > 0 && (
                     <div class="role-links">
                       <span>Links:</span>
@@ -205,14 +214,14 @@ const rolePosts = (start: Date, end: Date | null) =>
 
       <div class="cv-meta">
         <section>
-          <Marker n={2} shape="ci">Education</Marker>
+          <Marker shape="ci">Education</Marker>
           <ul class="ticks">
             <li>M.S. Computer Science — METU, Ankara · 2016–2017</li>
             <li>B.S. Electronics Engineering — Ankara University · 2008–2015</li>
           </ul>
         </section>
         <section class="skills">
-          <Marker n={3} shape="tri">Skills</Marker>
+          <Marker shape="tri">Skills</Marker>
           <p>
             <strong>AI:</strong> AI strategy and transformation, agentic workflows, LLM application design, prompt and
             context engineering, evals and benchmarking, MCP and tool integration, model routing and cost control,
@@ -282,9 +291,25 @@ const rolePosts = (start: Date, end: Date | null) =>
     color: var(--ink-3);
   }
 
-  .role h2 {
+  .role-head {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
     margin: 0 0 0.6rem;
+  }
+
+  .role h2 {
+    margin: 0;
     font-size: clamp(1.3rem, 2.2vw, 1.65rem);
+  }
+
+  /* Framed like the project logos; decorative, since the heading names the company. */
+  .role-logo {
+    flex: none;
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border: 2px solid var(--ink);
   }
 
   .role-links {

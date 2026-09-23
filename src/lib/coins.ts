@@ -939,6 +939,23 @@ export const coins = [
     height: 690,
   },
   {
+    title: "TRAJAN DECIUS (249-251)",
+    type: "AR Antoninianus",
+    date: "AD 249-251",
+    mint: "Rome",
+    obv: "IMP C M Q TRAIANVS DECIVS AVG, radiate, draped and cuirassed bust of Trajan Decius right.",
+    rev: "ADVENTVS AVG, Trajan Decius on horseback left, raising right hand in salute and holding sceptre in left.",
+    refs: "RIC 11b; Cohen 4.",
+    notes: "",
+    condition: "Very fine",
+    weight: "3.16 g",
+    diameter: "22.02 mm",
+    axis: "",
+    image: "/coins/trajan-decius-antoninianus-adventus.webp",
+    width: 800,
+    height: 420,
+  },
+  {
     title: "PROBUS (276-282)",
     type: "Silvered Æ Antoninianus",
     date: "AD 277",
@@ -1094,6 +1111,7 @@ export const ISSUER_WIKI: Record<string, { label: string; slug: string }> = {
   "SELEUCIS AND PIERIA, Antioch. Philip I 'the Arab' (244-249)": { label: "Philip I 'the Arab'", slug: "Philip_the_Arab" },
   "THRACE, Chersonesos": { label: "Chersonesos", slug: "Gallipoli" },
   "TRAJAN (AD 98-117)": { label: "TRAJAN", slug: "Trajan" },
+  "TRAJAN DECIUS (249-251)": { label: "TRAJAN DECIUS", slug: "Decius" },
   "VALERIAN I": { label: "VALERIAN I", slug: "Valerian_(emperor)" },
 };
 

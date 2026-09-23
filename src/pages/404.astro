@@ -1,30 +1,67 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import PageHead from "../components/PageHead.astro";
 ---
 
 <BaseLayout title="404 | Dogus Ural" description="Page not found.">
   <section class="section">
-    <div class="container not-found">
-      <h1>404</h1>
-      <p>Page not found.</p>
-      <a href="/">Go home</a>
+    <div class="container">
+      <PageHead title="404" mark>
+        <p>Page not found.</p>
+        <a class="btn btn-primary" href="/">Go home</a>
+      </PageHead>
+
+      <!-- The composition that should have been here, fallen to the floor. -->
+      <svg class="fallen" viewBox="0 0 800 300" aria-hidden="true">
+        <path class="grid" d="M100 0V300M200 0V300M300 0V300M400 0V300M500 0V300M600 0V300M700 0V300M0 100H800M0 200H800" />
+        <circle class="f-blue" cx="178" cy="232" r="68" />
+        <rect class="f-red" x="258" y="183" width="104" height="104" transform="rotate(17 310 235)" />
+        <path class="f-yellow" d="M398 300l118-8-66-104Z" />
+        <rect class="f-ink" x="470" y="244" width="250" height="20" transform="rotate(-16 470 264)" />
+        <path class="f-red" d="M800 300h-62a62 62 0 0 1 62-62Z" />
+        <circle class="f-ink" cx="636" cy="286" r="14" />
+      </svg>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .not-found {
-    text-align: center;
-    padding: 4rem 0;
+  .fallen {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 2px solid var(--ink);
+    background: var(--cream);
+    box-shadow: 11px 11px 0 var(--ink);
   }
 
-  .not-found h1 {
-    font-size: 3rem;
-    margin-bottom: 0.5rem;
+  .grid {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 1;
+    stroke-dasharray: 3 7;
+    opacity: 0.3;
   }
 
-  .not-found p {
-    margin-bottom: 1rem;
-    color: var(--text-muted);
+  .f-ink {
+    fill: var(--ink);
+  }
+
+  .f-red {
+    fill: var(--red);
+  }
+
+  .f-yellow {
+    fill: var(--yellow);
+  }
+
+  .f-blue {
+    fill: var(--blue);
+  }
+
+  @media (max-width: 760px) {
+    .fallen {
+      box-shadow: 7px 7px 0 var(--ink);
+    }
   }
 </style>

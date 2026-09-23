@@ -1,0 +1,32 @@
+---
+// One primary form in a palette colour, standing in for the emoji the site
+// used as icons. It fills its wrapper's width, so size the wrapper.
+interface Props {
+  kind: "circle" | "square" | "triangle" | "semi" | "quarter" | "bar";
+  color?: "red" | "yellow" | "blue" | "ink";
+}
+
+const { kind, color = "ink" } = Astro.props;
+
+const PATHS: Record<Props["kind"], string> = {
+  circle: "M-48 0a48 48 0 1 0 96 0a48 48 0 1 0-96 0Z",
+  square: "M-42-42H42V42H-42Z",
+  triangle: "M0-46L52 44H-52Z",
+  semi: "M-52 24A52 52 0 0 1 52 24Z",
+  quarter: "M-44 44V-44A88 88 0 0 1 44 44Z",
+  bar: "M-56-10H56V10H-56Z",
+};
+---
+
+<svg class="shape" viewBox="-60 -60 120 120" aria-hidden="true">
+  <path d={PATHS[kind]} style={`fill: var(--${color})`} transform={kind === "bar" ? "rotate(-30)" : undefined} />
+</svg>
+
+<style>
+  .shape {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+</style>

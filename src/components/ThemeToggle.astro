@@ -1,10 +1,7 @@
 <button id="theme-toggle" type="button" aria-label="Toggle light and dark theme" title="Toggle theme">
-  <svg class="icon icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-  </svg>
-  <svg class="icon icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <circle cx="12" cy="12" r="4" />
-    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <circle class="ring" cx="12" cy="12" r="8" />
+    <path class="half" d="M12 4a8 8 0 0 1 0 16Z" />
   </svg>
 </button>
 
@@ -15,34 +12,38 @@
     justify-content: center;
     width: 40px;
     height: 40px;
-    border-radius: var(--rounded-pill);
-    border: 1px solid var(--hairline);
-    background: var(--canvas);
+    padding: 0;
+    border: 2px solid var(--ink);
+    background: var(--cream);
     color: var(--ink);
     cursor: pointer;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    transition: transform 0.35s var(--spring), box-shadow 0.35s var(--spring);
   }
 
   #theme-toggle:hover {
-    border-color: var(--ink);
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--ink);
   }
 
-  .icon {
-    width: 18px;
-    height: 18px;
+  svg {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.5s var(--spring);
   }
 
-  /* Light theme: show moon (click to go dark). Dark theme: show sun. */
-  .icon-sun {
-    display: none;
+  .ring {
+    fill: none;
+    stroke: var(--ink);
+    stroke-width: 2;
   }
 
-  :global(:root[data-theme="dark"]) .icon-moon {
-    display: none;
+  .half {
+    fill: var(--ink);
   }
 
-  :global(:root[data-theme="dark"]) .icon-sun {
-    display: inline;
+  /* Night turns the filled half to the other side. */
+  :global(:root[data-theme="dark"]) svg {
+    transform: rotate(180deg);
   }
 </style>
 

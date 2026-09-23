@@ -1,0 +1,51 @@
+---
+// A small composition for mastheads: bar, circle, triangle, quarter circle.
+// Only the circle turns, so the turning reads.
+---
+
+<svg class="mark" viewBox="0 0 160 100" aria-hidden="true">
+  <rect class="f-ink" x="8" y="64" width="116" height="11" transform="rotate(-17 66 69)" />
+  <g class="spin">
+    <circle class="f-red" cx="48" cy="40" r="27" />
+    <path class="f-ink" d="M48 40V13a27 27 0 0 1 27 27Z" />
+  </g>
+  <path class="f-yellow" d="M122 8l32 56H90Z" />
+  <path class="f-blue" d="M104 100V76a24 24 0 0 1 24 24Z" />
+</svg>
+
+<style>
+  .mark {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .f-ink {
+    fill: var(--ink);
+  }
+
+  .f-red {
+    fill: var(--red);
+  }
+
+  .f-yellow {
+    fill: var(--yellow);
+  }
+
+  .f-blue {
+    fill: var(--blue);
+  }
+
+  .spin {
+    transform-box: fill-box;
+    transform-origin: center;
+    animation: mark-turn 14s linear infinite;
+  }
+
+  @keyframes mark-turn {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+</style>

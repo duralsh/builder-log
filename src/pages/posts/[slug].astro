@@ -24,13 +24,15 @@ const { Content } = await render(post);
 <BaseLayout title={`${post.data.title} | Dogus Ural`} description={post.data.excerpt}>
   <section class="section">
     <article class="container post">
-      {post.data.cover && <img src={post.data.cover} alt={post.data.title} class="cover-img" loading="lazy" decoding="async" />}
-      <h1>{post.data.title}</h1>
-      <div class="post-meta">
-        <span class="pill">{formatDate(post.data.date)}</span>
-        {post.data.tags.map((tag) => (
-          <span class="pill">#{tag}</span>
-        ))}
+      {post.data.cover && <img src={post.data.cover} alt={post.data.title} class="cover-img post-cover" loading="lazy" decoding="async" />}
+      <div class="post-head">
+        <h1>{post.data.title}</h1>
+        <div class="post-meta">
+          <span class="pill">{formatDate(post.data.date)}</span>
+          {post.data.tags.map((tag) => (
+            <span class="pill">#{tag}</span>
+          ))}
+        </div>
       </div>
 
       <div class="card post-body">
@@ -38,7 +40,7 @@ const { Content } = await render(post);
       </div>
 
       {post.data.links && post.data.links.length > 0 && (
-        <section class="card linkouts">
+        <section class="card post-links">
           <h2>Links</h2>
           <ul>
             {post.data.links.map((link) => (
@@ -61,39 +63,91 @@ const { Content } = await render(post);
     max-width: 860px;
   }
 
+  .post-cover {
+    margin-bottom: 2rem;
+    box-shadow: 11px 11px 0 var(--ink);
+  }
+
+  .post-head {
+    padding-bottom: 1rem;
+    border-bottom: 7px solid var(--ink);
+  }
+
+  .post-head h1 {
+    margin: 0 0 1rem;
+    font-size: clamp(2.2rem, 5.4vw, 4rem);
+    line-height: 1.02;
+    letter-spacing: -0.04em;
+  }
+
+  .post-head .post-meta {
+    margin: 0;
+  }
+
   .post-body {
-    padding: 1.8rem 2rem;
-    margin-top: 1.4rem;
+    margin-top: 2rem;
+    padding: clamp(1.4rem, 3.5vw, 2.6rem);
+    box-shadow: 11px 11px 0 var(--ink);
+    font-size: 17px;
+    line-height: 1.65;
+  }
+
+  .post-body :global(h2) {
+    margin: 2rem 0 0.7rem;
+    font-size: clamp(1.4rem, 2.6vw, 1.9rem);
+  }
+
+  .post-body :global(h3) {
+    margin: 1.6rem 0 0.5rem;
+  }
+
+  .post-body :global(h2:first-child),
+  .post-body :global(h3:first-child) {
+    margin-top: 0;
+  }
+
+  .post-body :global(ul),
+  .post-body :global(ol) {
+    margin: 0 0 1rem;
+    padding-left: 1.3rem;
+  }
+
+  .post-body :global(li) {
+    margin-bottom: 0.35rem;
+  }
+
+  .post-body :global(hr) {
+    margin: 2rem 0;
+    border: 0;
+    border-top: 2px solid var(--ink);
+  }
+
+  .post-body :global(blockquote) {
+    margin: 1.2rem 0;
+    padding-left: 1rem;
+    border-left: 4px solid var(--red);
   }
 
   .post-body :global(img),
   .post-body :global(iframe),
   .post-body :global(video) {
     max-width: 100%;
-    border-radius: var(--rounded-md);
-    border: 1px solid var(--hairline);
-  }
-
-  .linkouts {
-    margin-top: 1.25rem;
-    padding: 1.4rem 1.8rem;
+    border: 2px solid var(--ink);
   }
 
   .post-body :global(.handout-embed),
   .post-body :global(.deck-embed) {
     margin: 1.2rem 0 0.6rem;
-    border: 1px solid var(--hairline);
-    border-radius: var(--rounded-md);
+    border: 2px solid var(--ink);
     overflow: hidden;
-    background: var(--surface-soft);
+    background: var(--paper);
   }
 
   .post-body :global(.handout-embed iframe) {
+    display: block;
     width: 100%;
     height: 80vh;
     border: 0;
-    border-radius: 0;
-    display: block;
   }
 
   .post-body :global(.deck-embed) {
@@ -101,15 +155,37 @@ const { Content } = await render(post);
   }
 
   .post-body :global(.deck-embed iframe) {
+    display: block;
     width: 100%;
     height: 100%;
     border: 0;
-    border-radius: 0;
-    display: block;
   }
 
   .post-body :global(.handout-link) {
     margin: 0 0 1rem;
     font-size: 0.92rem;
+  }
+
+  .post-links {
+    margin-top: 1.8rem;
+    padding: 1.3rem 1.6rem;
+  }
+
+  .post-links h2 {
+    margin: 0 0 0.6rem;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+  }
+
+  .post-links ul {
+    margin: 0;
+    padding-left: 1.2rem;
+  }
+
+  @media (max-width: 760px) {
+    .post-cover,
+    .post-body {
+      box-shadow: 7px 7px 0 var(--ink);
+    }
   }
 </style>

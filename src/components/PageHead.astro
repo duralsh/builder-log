@@ -1,0 +1,152 @@
+---
+import Mark from "./Mark.astro";
+
+// The page masthead: a giant lowercase title closed by a red dot, an optional
+// sub line behind a short bar, an optional composition, and whatever the page
+// slots in on the right. Closes with the reference's 7px rule.
+interface Props {
+  title: string;
+  sub?: string;
+  mark?: boolean;
+}
+
+const { title, sub, mark = false } = Astro.props;
+// Past a dozen characters the masthead size runs off a phone and wraps on a
+// laptop, so long titles step down a size.
+const long = title.length > 12;
+const hasAside = Astro.slots.has("default");
+---
+
+<div class:list={["mast", { "mast--mark": mark }]}>
+  <div>
+    <h1 class:list={["mast-title", { "mast-title--long": long }]}>
+      {title}<span class="dot" aria-hidden="true"></span>
+    </h1>
+    {
+      sub && (
+        <p class="mast-sub">
+          <span class="bar" aria-hidden="true" />
+          {sub}
+        </p>
+      )
+    }
+  </div>
+  {
+    mark && (
+      <div class="mast-mark">
+        <Mark />
+      </div>
+    )
+  }
+  {
+    hasAside && (
+      <div class="mast-aside">
+        <slot />
+      </div>
+    )
+  }
+</div>
+
+<style>
+  .mast {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: end;
+    gap: 14px clamp(18px, 2.4vw, 40px);
+    margin-bottom: clamp(28px, 4vw, 52px);
+    padding-bottom: 14px;
+    border-bottom: 7px solid var(--ink);
+  }
+
+  .mast--mark {
+    grid-template-columns: auto auto minmax(0, 1fr);
+  }
+
+  /* The tight line-height is the look; the bottom padding keeps descenders
+     (the g in "dogus") clear of the sub line and the rule. */
+  .mast-title {
+    margin: 0;
+    padding-bottom: 0.2em;
+    font-size: clamp(48px, 7.4vw, 118px);
+    line-height: 0.8;
+    letter-spacing: -0.045em;
+  }
+
+  .mast-title--long {
+    font-size: clamp(38px, 5.6vw, 88px);
+    line-height: 1;
+  }
+
+  .dot {
+    display: inline-block;
+    width: 0.2em;
+    height: 0.2em;
+    margin-left: 0.04em;
+    border-radius: 50%;
+    background: var(--red);
+  }
+
+  .mast-sub {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0 0;
+    color: var(--ink);
+    font-size: clamp(13px, 1.1vw, 16px);
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: lowercase;
+  }
+
+  .bar {
+    flex: none;
+    width: 44px;
+    height: 6px;
+    background: var(--ink);
+  }
+
+  .mast-mark {
+    align-self: end;
+    width: clamp(96px, 10vw, 150px);
+    margin-bottom: 4px;
+  }
+
+  .mast-aside {
+    justify-self: end;
+    display: grid;
+    justify-items: end;
+    gap: 10px;
+    max-width: 470px;
+    font-size: clamp(14px, 1.05vw, 16px);
+    line-height: 1.55;
+    text-align: right;
+  }
+
+  .mast-aside :global(p) {
+    margin: 0;
+  }
+
+  @media (max-width: 1100px) {
+    .mast--mark {
+      grid-template-columns: auto minmax(0, 1fr);
+    }
+
+    .mast-mark {
+      display: none;
+    }
+  }
+
+  @media (max-width: 760px) {
+    .mast,
+    .mast--mark {
+      grid-template-columns: minmax(0, 1fr);
+      align-items: start;
+    }
+
+    .mast-aside {
+      justify-self: start;
+      justify-items: start;
+      text-align: left;
+    }
+  }
+</style>

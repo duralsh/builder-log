@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHead from "../../components/PageHead.astro";
 import { formatDate, sortByDateDesc } from "../../lib/posts";
 
 const posts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("coins")));
@@ -12,11 +13,12 @@ const posts = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
 >
   <section class="section">
     <div class="container">
-      <h1>Numismatics</h1>
-      <p class="muted">
-        Greek silver from the Archaic period onward, the Greco-Baktrian and Indo-Greek kings, and Roman imperial
-        coinage.
-      </p>
+      <PageHead title="Numismatics">
+        <p>
+          Greek silver from the Archaic period onward, the Greco-Baktrian and Indo-Greek kings, and Roman imperial
+          coinage.
+        </p>
+      </PageHead>
       <div class="post-grid">
         {
           posts.map((post) => (

@@ -1,6 +1,8 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHead from "../../components/PageHead.astro";
+import Marker from "../../components/Marker.astro";
 import { formatDate, sortByDateDesc } from "../../lib/posts";
 
 const lifting = sortByDateDesc(
@@ -15,12 +17,13 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
 >
   <section class="section">
     <div class="container">
-      <h1>Hobbies</h1>
-      <p class="muted">Training logs, numismatics notes, and a reading shelf.</p>
+      <PageHead title="Hobbies">
+        <p>Training logs, numismatics notes, and a reading shelf.</p>
+      </PageHead>
 
       <div class="hobby-grid">
       <article class="card hobby-block">
-        <h2>Lifting</h2>
+        <Marker n={1} shape="se">Lifting</Marker>
         <p>I am a big fan of kettlebells, boxing, cycling and home workouts.</p>
         <ul>
           {lifting.slice(0, 3).map((post) => (
@@ -32,7 +35,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
       </article>
 
       <article class="card hobby-block">
-        <h2>Numismatics</h2>
+        <Marker n={2} shape="tri">Numismatics</Marker>
         <p>
           Greek silver from the Archaic period onward, the Greco-Baktrian and Indo-Greek kings, and Roman imperial
           coinage.
@@ -51,7 +54,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
       </article>
 
       <article class="card hobby-block">
-        <h2>Reading</h2>
+        <Marker n={3} shape="ci">Reading</Marker>
         <p><a href="/hobbies/reading">Reading Shelf</a></p>
         <p><a href="/hobbies/reading/downloads">Downloadable PDFs</a></p>
       </article>
@@ -62,27 +65,40 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
 
 <style>
   .hobby-grid {
-    margin-top: 2rem;
     display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 
   .hobby-block {
-    padding: 1.2rem;
+    padding: 1.4rem 1.4rem 1.5rem;
+  }
+
+  .hobby-block ul {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0.9rem 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .hobby-block li {
+    position: relative;
+    padding-left: 1.1rem;
+  }
+
+  .hobby-block li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0.6em;
+    width: 7px;
+    height: 7px;
+    background: var(--ink);
   }
 
   .hobby-links {
-    margin: 0.9rem 0 0;
-    padding-left: 1.1rem;
-    display: grid;
-    gap: 0.4rem;
-    color: var(--muted);
+    color: var(--ink-3);
     font-size: 0.95rem;
   }
-
-  .hobby-links a {
-    color: var(--ink);
-  }
-
 </style>

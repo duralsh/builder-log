@@ -1,0 +1,18 @@
+---
+// A section heading in the reference's voice: a big numeral on a primary
+// shape, then a bold label. The numeral is ornament, so screen readers skip it.
+// Extra props (including the parent's scoping attribute) land on the root.
+interface Props {
+  n: number | string;
+  shape?: "sq" | "tri" | "ci" | "se" | "qu";
+  as?: "h2" | "h3";
+  id?: string;
+  class?: string;
+}
+
+const { n, shape = "sq", as: Tag = "h2", class: className, ...rest } = Astro.props;
+---
+
+<Tag class:list={["marker", `mk-${shape}`, className]} {...rest}>
+  <span class="num" aria-hidden="true">{n}</span><span class="lbl"><slot /></span>
+</Tag>

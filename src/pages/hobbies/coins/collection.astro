@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../../../layouts/BaseLayout.astro";
+import PageHead from "../../../components/PageHead.astro";
+import Marker from "../../../components/Marker.astro";
 import { geoConicEqualArea, geoGraticule, geoPath } from "d3-geo";
 import { feature } from "topojson-client";
 import landTopo from "world-atlas/land-50m.json";
@@ -217,6 +219,9 @@ const SHORT_LABEL: Record<string, string> = {
 };
 
 const totalCoins = coins.length;
+
+// Each period's number sits on the next shape in the set.
+const MARKS = ["sq", "tri", "ci", "se", "qu"] as const;
 ---
 
 <BaseLayout
@@ -225,11 +230,12 @@ const totalCoins = coins.length;
 >
   <section class="section">
     <div class="container">
-      <h1>Numismatic Cabinet</h1>
-      <p class="muted">
-        {coins.length} coins, struck between the sixth century BC and the Abbasid caliphate — Archaic and Classical
-        Greek silver, the Greco-Baktrian and Indo-Greek kings, and Roman imperial issues from Nerva to Constantine.
-      </p>
+      <PageHead title="Numismatic Cabinet">
+        <p>
+          {coins.length} coins, struck between the sixth century BC and the Abbasid caliphate — Archaic and Classical
+          Greek silver, the Greco-Baktrian and Indo-Greek kings, and Roman imperial issues from Nerva to Constantine.
+        </p>
+      </PageHead>
 
       <figure class="mint-map">
         <div class="map-scroll">
@@ -331,11 +337,11 @@ const totalCoins = coins.length;
         </span>
       </nav>
 
-      {groupedCoinsWithAnchors.map((group) => (
+      {groupedCoinsWithAnchors.map((group, index) => (
         <section class="coin-category" id={group.anchor} data-period={group.anchor}>
-          <h2>
+          <Marker n={index + 1} shape={MARKS[index % MARKS.length]}>
             {group.category} <span class="category-count">{group.items.length}</span>
-          </h2>
+          </Marker>
           <details class="coin-index">
             <summary>Jump to a coin</summary>
             <ul>
@@ -728,12 +734,12 @@ const totalCoins = coins.length;
     z-index: 20;
     display: flex;
     flex-wrap: wrap;
-    gap: 0.45rem;
-    margin: 1.4rem -0.5rem 1.8rem;
-    padding: 0.6rem 0.5rem;
-    background: color-mix(in srgb, var(--canvas) 92%, transparent);
-    backdrop-filter: saturate(140%) blur(8px);
-    border-bottom: 1px solid var(--hairline);
+    gap: 0.5rem;
+    margin: 2.2rem 0 2rem;
+    padding: 0.7rem 0;
+    background: var(--grain) var(--paper);
+    background-blend-mode: var(--grain-blend);
+    border-bottom: 2px solid var(--ink);
     scroll-margin-top: 6.5rem;
   }
 
@@ -741,64 +747,69 @@ const totalCoins = coins.length;
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    padding: 0.35rem 0.8rem;
-    border: 1px solid var(--hairline);
-    border-radius: var(--rounded-pill);
-    background: var(--surface-card);
-    color: var(--muted);
-    font-size: 0.85rem;
-    font-weight: 500;
+    min-height: 34px;
+    padding: 0 0.8rem;
+    border: 2px solid var(--ink);
+    background: var(--cream);
+    color: var(--ink);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
     text-decoration: none;
+    text-transform: lowercase;
     white-space: nowrap;
     flex-shrink: 0;
-    transition: color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+    transition: transform 0.35s var(--spring), box-shadow 0.35s var(--spring);
   }
 
   .period:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--ink);
     color: var(--ink);
-    border-color: var(--ink);
   }
 
   .period.is-active {
     background: var(--ink);
-    border-color: var(--ink);
-    color: var(--canvas);
+    color: var(--on-ink);
+  }
+
+  .period.is-active:hover {
+    color: var(--on-ink);
   }
 
   .period-count {
     font-variant-numeric: tabular-nums;
-    font-size: 0.75rem;
-    opacity: 0.65;
+    font-size: 11px;
+    opacity: 0.7;
   }
 
   .category-count {
     display: inline-block;
     margin-left: 0.35rem;
-    padding: 0.1rem 0.5rem;
-    border-radius: var(--rounded-pill);
-    background: var(--surface-card);
-    color: var(--muted);
-    font-family: var(--font-body);
-    font-size: 0.8rem;
-    font-weight: 500;
+    padding: 0.05rem 0.45rem;
+    border: 1.5px solid var(--ink);
+    background: var(--cream);
+    font-size: 12px;
+    letter-spacing: 0.04em;
     font-variant-numeric: tabular-nums;
-    vertical-align: middle;
+    vertical-align: 0.15em;
   }
 
   /* Collapsed by default so 18 links don't push the coins off-screen. */
   .coin-index {
-    margin: 0 0 1.2rem;
-    border: 1px solid var(--hairline);
-    border-radius: var(--rounded-md);
-    background: var(--surface-card);
+    margin: 0 0 1.4rem;
+    border: 2px solid var(--ink);
+    background: var(--cream);
   }
 
   .coin-index summary {
-    padding: 0.55rem 0.9rem;
+    padding: 0.6rem 0.9rem;
+    color: var(--ink);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
     cursor: pointer;
-    font-size: 0.88rem;
-    font-weight: 500;
-    color: var(--muted);
     list-style: none;
   }
 
@@ -806,11 +817,17 @@ const totalCoins = coins.length;
     display: none;
   }
 
+  /* A small red triangle, turned down when open. */
   .coin-index summary::before {
-    content: "▸";
+    content: "";
     display: inline-block;
-    margin-right: 0.5rem;
-    transition: transform 0.15s ease;
+    width: 0;
+    height: 0;
+    margin-right: 0.6rem;
+    border-style: solid;
+    border-width: 5px 0 5px 8px;
+    border-color: transparent transparent transparent var(--red);
+    transition: transform 0.35s var(--spring);
   }
 
   .coin-index[open] summary::before {
@@ -818,27 +835,28 @@ const totalCoins = coins.length;
   }
 
   .coin-index summary:hover {
-    color: var(--ink);
+    color: var(--red);
   }
 
   .coin-index ul {
-    margin: 0;
-    padding: 0 0.9rem 0.8rem 1.9rem;
     display: grid;
     gap: 0.4rem;
+    margin: 0;
+    padding: 0 0.9rem 0.9rem 2rem;
     list-style: none;
   }
 
   .coin-index a {
+    color: var(--ink-2);
     font-size: 0.87rem;
-    color: var(--body);
     text-decoration: none;
   }
 
   .coin-index a:hover {
-    color: var(--ink);
+    color: var(--red);
     text-decoration: underline;
-    text-underline-offset: 2px;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 3px;
   }
 
   .coin-category[hidden] {
@@ -847,40 +865,42 @@ const totalCoins = coins.length;
 
   .map-controls {
     position: absolute;
-    top: 0.6rem;
-    right: 0.6rem;
+    top: 0.7rem;
+    right: 0.7rem;
     display: flex;
-    gap: 0.3rem;
+    gap: 0.35rem;
     z-index: 2;
   }
 
   .map-btn {
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    border: 1px solid var(--hairline);
-    border-radius: var(--rounded-sm);
-    background: color-mix(in srgb, var(--surface-card) 88%, transparent);
-    backdrop-filter: blur(4px);
+    padding: 0;
+    border: 2px solid var(--ink);
+    background: var(--cream);
     color: var(--ink);
+    font-family: var(--font-geo);
     font-size: 1rem;
-    font-weight: 600;
+    font-weight: 700;
     line-height: 1;
     cursor: pointer;
-    transition: border-color 0.15s ease, color 0.15s ease;
+    transition: transform 0.35s var(--spring), box-shadow 0.35s var(--spring);
   }
 
   .map-btn--reset {
     width: auto;
     padding: 0 0.6rem;
-    font-size: 0.78rem;
-    font-weight: 500;
+    font-size: 12px;
+    letter-spacing: 0.06em;
+    text-transform: lowercase;
   }
 
   .map-btn:hover:not(:disabled) {
-    border-color: var(--ink);
+    transform: translate(-2px, -2px);
+    box-shadow: 3px 3px 0 var(--ink);
   }
 
   .map-btn:disabled {
@@ -894,13 +914,14 @@ const totalCoins = coins.length;
     display: none;
   }
 
+  /* Framed like the reference's board: ink border and a hard offset shadow. */
   .mint-map {
     position: relative;
-    margin: 1.6rem 0 0;
+    margin: 0;
     padding: 0;
-    border: 1px solid var(--hairline);
-    border-radius: var(--rounded-lg);
-    background: var(--surface-card);
+    border: 2px solid var(--ink);
+    background: var(--cream);
+    box-shadow: 11px 11px 0 var(--ink);
     overflow: hidden;
   }
 
@@ -923,28 +944,32 @@ const totalCoins = coins.length;
   }
 
   .map-sea {
-    fill: var(--surface-card);
+    fill: var(--cream);
   }
 
   .map-graticule {
     fill: none;
-    stroke: var(--hairline);
-    stroke-width: 0.4;
-    opacity: 0.55;
+    stroke: var(--ink);
+    stroke-width: 0.8;
+    stroke-dasharray: 2 5;
+    opacity: 0.3;
   }
 
   /* The relief supplies the land tone, so the outline only has to draw the
-     coast. non-scaling-stroke keeps it hairline-crisp at every zoom level. */
+     coast. non-scaling-stroke keeps it crisp at every zoom level. */
   .map-land {
     fill: none;
-    stroke: color-mix(in srgb, var(--muted) 80%, transparent);
-    stroke-width: 0.9;
+    stroke: var(--ink);
+    stroke-width: 1;
     stroke-linejoin: round;
     stroke-linecap: round;
+    opacity: 0.75;
   }
 
+  /* Multiplied into the paper, so the terrain reads as a printed plate. */
   .map-relief {
-    opacity: 0.85;
+    opacity: 0.6;
+    mix-blend-mode: multiply;
   }
 
   /* The relief ships as light-on-white; invert it for the dark palette so
@@ -952,6 +977,7 @@ const totalCoins = coins.length;
   :global(html[data-theme="dark"]) .map-relief {
     filter: invert(1) brightness(0.62) contrast(1.05);
     opacity: 0.55;
+    mix-blend-mode: normal;
   }
 
   .map-viewport {
@@ -977,8 +1003,8 @@ const totalCoins = coins.length;
   }
 
   .mint-dot {
-    stroke: var(--surface-card);
-    stroke-width: 1.2;
+    stroke: var(--cream);
+    stroke-width: 1.4;
     transition: r 0.12s ease, stroke-width 0.12s ease;
   }
 
@@ -988,24 +1014,24 @@ const totalCoins = coins.length;
     stroke-width: 2;
   }
 
-  .mint-dot--archaic-greek { fill: var(--brand-ochre); }
-  .mint-dot--classical-hellenistic-greek { fill: var(--brand-lavender); }
-  .mint-dot--greco-baktrian-indo-greek { fill: var(--brand-pink); }
-  .mint-dot--roman-imperial { fill: var(--brand-coral); }
-  .mint-dot--islamic { fill: var(--brand-mint); }
-  .mint-dot--medieval { fill: var(--brand-peach); }
+  .mint-dot--archaic-greek { fill: var(--yellow); stroke: var(--ink); }
+  .mint-dot--classical-hellenistic-greek { fill: var(--blue); }
+  .mint-dot--greco-baktrian-indo-greek { fill: var(--red); }
+  .mint-dot--roman-imperial { fill: var(--ink); }
+  .mint-dot--islamic { fill: var(--cream); stroke: var(--ink); stroke-width: 2.2; }
+  .mint-dot--medieval { fill: var(--cream); stroke: var(--red); stroke-width: 2.2; }
 
-  /* Twenty-three labels will not all fit; the busiest mints stay lit and the
-     rest surface on hover or keyboard focus. */
   /* Every mint behaves the same: named on hover or focus, and while selected.
      No standing labels, so the map stays clean and nothing looks arbitrary. */
   .mint-label {
-    font-family: var(--font-body);
+    font-family: var(--font-geo);
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: lowercase;
     fill: var(--ink);
     paint-order: stroke;
-    stroke: var(--surface-card);
+    stroke: var(--cream);
     stroke-width: 3;
     stroke-linejoin: round;
     opacity: 0;
@@ -1028,10 +1054,12 @@ const totalCoins = coins.length;
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem 1rem;
-    padding: 0.7rem 1rem 0.9rem;
-    border-top: 1px solid var(--hairline);
-    font-size: 0.85rem;
-    color: var(--muted);
+    padding: 0.7rem 1rem 0.8rem;
+    border-top: 2px solid var(--ink);
+    color: var(--ink-3);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
   }
 
   /* Active mint chip in the period bar */
@@ -1039,13 +1067,14 @@ const totalCoins = coins.length;
     display: none;
     align-items: center;
     gap: 0.45rem;
-    padding: 0.35rem 0.5rem 0.35rem 0.8rem;
-    border-radius: var(--rounded-pill);
-    border: 1px solid var(--ink);
+    min-height: 34px;
+    padding: 0 0.5rem 0 0.8rem;
+    border: 2px solid var(--ink);
     background: var(--ink);
-    color: var(--canvas);
-    font-size: 0.85rem;
-    font-weight: 500;
+    color: var(--on-ink);
+    font-size: 12.5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
     white-space: nowrap;
     flex-shrink: 0;
   }
@@ -1079,41 +1108,38 @@ const totalCoins = coins.length;
     align-items: center;
     gap: 0.4rem;
     padding: 0.35rem 0.85rem;
-    border: 1px solid var(--hairline);
-    border-radius: var(--rounded-pill);
-    background: var(--surface-card);
-    color: var(--muted);
+    border: 2px solid var(--ink);
+    background: var(--cream);
+    color: var(--ink-3);
     font-size: 0.85rem;
-    font-weight: 500;
+    font-weight: 700;
     text-decoration: none;
-    transition: color 0.15s ease, border-color 0.15s ease;
+    transition: color 0.15s ease;
   }
 
   .permalink a:hover,
   .permalink a:focus-visible {
     color: var(--ink);
-    border-color: var(--ink);
   }
-
 
   .coin-item[hidden] {
     display: none;
   }
 
   .coin-category {
-    margin-top: 1.3rem;
+    margin-top: 2.2rem;
     scroll-margin-top: 6.5rem;
   }
 
-  .coin-category h2 {
-    margin-bottom: 0.55rem;
+  .coin-category .marker {
+    margin-bottom: 1rem;
   }
 
   .coin-list {
     margin: 0;
     padding-left: 1.25rem;
     display: grid;
-    gap: 1.4rem;
+    gap: 1.6rem;
   }
 
   /* The heading opens the coin; the issuer's name opens Wikipedia. Two
@@ -1131,9 +1157,9 @@ const totalCoins = coins.length;
 
   .coin-heading:has(.coin-open:hover) {
     text-decoration: underline;
-    text-decoration-thickness: 1px;
+    text-decoration-thickness: 2px;
     text-underline-offset: 5px;
-    text-decoration-color: var(--muted);
+    text-decoration-color: var(--red);
   }
 
   /* Colour said "link" but not "to where". A W badge names the destination
@@ -1143,9 +1169,9 @@ const totalCoins = coins.length;
     z-index: 1;
     color: inherit;
     text-decoration: underline solid;
-    text-decoration-thickness: 1px;
+    text-decoration-thickness: 2px;
     text-underline-offset: 4px;
-    text-decoration-color: var(--muted);
+    text-decoration-color: var(--ink-3);
     transition: text-decoration-color 0.15s ease;
   }
 
@@ -1165,6 +1191,7 @@ const totalCoins = coins.length;
     line-height: 1;
     vertical-align: 0.22em;
     text-decoration: none;
+    text-transform: none;
     opacity: 0.7;
     transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease;
   }
@@ -1178,14 +1205,19 @@ const totalCoins = coins.length;
   .issuer:focus-visible::after {
     opacity: 1;
     background: var(--ink);
-    color: var(--canvas);
+    color: var(--paper);
   }
 
   .coin-item {
-    border-bottom: 1px solid var(--hairline);
-    padding-bottom: 1.6rem;
-    margin-bottom: 0.35rem;
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 1.8rem;
+    margin-bottom: 0.4rem;
     scroll-margin-top: 6.5rem;
+  }
+
+  .coin-item::marker {
+    color: var(--ink);
+    font-weight: 700;
   }
 
   .coin-item p:last-child {
@@ -1196,10 +1228,9 @@ const totalCoins = coins.length;
     width: min(760px, 100%);
     height: auto;
     display: block;
-    border: 1px solid var(--hairline);
-    border-radius: var(--rounded-md);
-    background: var(--surface-soft);
-    margin: 0.7rem 0 0.9rem;
+    border: 2px solid var(--ink);
+    background: var(--cream);
+    margin: 0.8rem 0 1rem;
   }
 
   @media (max-width: 720px) {
@@ -1224,16 +1255,13 @@ const totalCoins = coins.length;
     }
 
     .period {
-      padding: 0.3rem 0.65rem;
-      font-size: 0.8rem;
+      min-height: 30px;
+      padding: 0 0.65rem;
+      font-size: 12px;
     }
-  }
 
-  /* The bar's own sticky offset is enough; don't double it on the sections. */
-  @media (prefers-reduced-motion: reduce) {
-    .period,
-    .coin-index summary::before {
-      transition: none;
+    .mint-map {
+      box-shadow: 7px 7px 0 var(--ink);
     }
   }
 </style>

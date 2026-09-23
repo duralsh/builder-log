@@ -1,5 +1,7 @@
 ---
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHead from "../../components/PageHead.astro";
+import Marker from "../../components/Marker.astro";
 import { BOOKS } from "../../lib/books";
 ---
 
@@ -9,11 +11,12 @@ import { BOOKS } from "../../lib/books";
 >
   <section class="section">
     <div class="container">
-      <h1>Reading Shelf</h1>
-      <p class="muted">Icon view of books I keep returning to.</p>
+      <PageHead title="Reading Shelf">
+        <p>Icon view of books I keep returning to.</p>
+      </PageHead>
 
-      <section class="books-section">
-        <h2>Books</h2>
+      <section>
+        <Marker n={1} shape="ci">Books</Marker>
         <ul class="book-grid">
           {BOOKS.map((book) => (
             <li class="book-item">
@@ -24,49 +27,38 @@ import { BOOKS } from "../../lib/books";
           ))}
         </ul>
       </section>
-
     </div>
   </section>
 </BaseLayout>
 
 <style>
   .book-grid {
-    list-style: none;
-    margin: 1.1rem 0 0;
-    padding: 0;
     display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-  }
-
-  .book-item {
-    border-radius: var(--rounded-lg);
-    padding: 0.7rem;
-    background: var(--surface-card);
+    gap: 1.6rem 1.1rem;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
   }
 
   .book-cover {
+    display: block;
     width: 100%;
     aspect-ratio: 2 / 3;
     object-fit: cover;
-    border: 1px solid var(--hairline);
-    border-radius: var(--rounded-sm);
-    background: var(--surface-strong);
+    border: 2px solid var(--ink);
+    box-shadow: 5px 5px 0 var(--ink);
+    background: var(--paper-deep);
   }
 
   .book-item h3 {
-    font-size: 0.9rem;
-    margin: 0.55rem 0 0.25rem;
-    line-height: 1.3;
+    margin: 0.9rem 0 0.2rem;
+    font-size: 0.95rem;
+    line-height: 1.25;
   }
 
   .book-item p {
     margin: 0;
     font-size: 0.82rem;
-  }
-
-  .books-section h2 {
-    font-size: 1.05rem;
-    margin: 1rem 0 0.35rem;
   }
 </style>

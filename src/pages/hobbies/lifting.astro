@@ -1,6 +1,7 @@
 ---
 import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHead from "../../components/PageHead.astro";
 import { formatDate, sortByDateDesc } from "../../lib/posts";
 
 const posts = sortByDateDesc(
@@ -14,10 +15,9 @@ const posts = sortByDateDesc(
 >
   <section class="section">
     <div class="container">
-      <h1>Lifting</h1>
-      <p class="muted">
-        Posts tagged <code>lifting</code>: milestones, training notes, and progress updates.
-      </p>
+      <PageHead title="Lifting">
+        <p>Posts tagged <code>lifting</code>: milestones, training notes, and progress updates.</p>
+      </PageHead>
       <div class="post-grid">
         {
           posts.map((post) => (

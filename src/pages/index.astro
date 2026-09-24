@@ -102,7 +102,7 @@ const features = [
           {
             features.map((feature) => (
               <a class="tile" href={feature.href}>
-                <span class="tile-glyph">
+                <span class={`tile-glyph glyph-${feature.shape}`}>
                   <Shape kind={feature.shape} color={feature.color} />
                 </span>
                 <span class="tile-eyebrow">{feature.eyebrow}</span>
@@ -292,11 +292,123 @@ const features = [
     display: block;
     width: 58px;
     margin-bottom: 1.6rem;
-    transition: transform 0.45s var(--spring);
   }
 
-  .tile:hover .tile-glyph {
-    transform: rotate(-8deg) scale(1.06);
+  /* On hover each form moves in its own way, most in keeping with its tile:
+     the coin flips, the barbell locks out overhead. Rest poses sit at 0% and
+     100%, so a loop never jumps. */
+  .tile:hover .glyph-circle,
+  .tile:focus-visible .glyph-circle {
+    transform-origin: 50% 90%;
+    animation: glyph-bounce 0.9s ease-in-out infinite;
+  }
+
+  .tile:hover .glyph-square,
+  .tile:focus-visible .glyph-square {
+    animation: glyph-tick 2.4s var(--spring) infinite;
+  }
+
+  .tile:hover .glyph-triangle,
+  .tile:focus-visible .glyph-triangle {
+    animation: glyph-flip 1.6s ease-in-out infinite;
+  }
+
+  .tile:hover .glyph-bar,
+  .tile:focus-visible .glyph-bar {
+    animation: glyph-lift 1.4s cubic-bezier(0.45, 0, 0.3, 1) infinite;
+  }
+
+  .tile:hover .glyph-quarter,
+  .tile:focus-visible .glyph-quarter {
+    animation: glyph-spin 1.2s linear infinite;
+  }
+
+  .tile:hover .glyph-semi,
+  .tile:focus-visible .glyph-semi {
+    transform-origin: 50% 70%;
+    animation: glyph-rock 1.2s ease-in-out infinite;
+  }
+
+  /* A ball: gathers, jumps, lands. */
+  @keyframes glyph-bounce {
+    0%,
+    100% {
+      transform: translateY(0) scale(1, 1);
+    }
+    15% {
+      transform: translateY(0) scale(1.15, 0.85);
+    }
+    50% {
+      transform: translateY(-16px) scale(0.95, 1.05);
+    }
+    85% {
+      transform: translateY(0) scale(1.12, 0.88);
+    }
+  }
+
+  /* Quarter turns, each springing into place before a short rest. */
+  @keyframes glyph-tick {
+    0% {
+      transform: rotate(0deg);
+    }
+    15%,
+    25% {
+      transform: rotate(90deg);
+    }
+    40%,
+    50% {
+      transform: rotate(180deg);
+    }
+    65%,
+    75% {
+      transform: rotate(270deg);
+    }
+    90%,
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* A tossed coin: one full turn, then it settles. */
+  @keyframes glyph-flip {
+    0% {
+      transform: perspective(300px) rotateY(0deg);
+    }
+    65%,
+    100% {
+      transform: perspective(300px) rotateY(360deg);
+    }
+  }
+
+  /* The bar rests at its tilt; lifted, it levels out at lockout and holds. */
+  @keyframes glyph-lift {
+    0%,
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+    45%,
+    60% {
+      transform: translateY(-14px) rotate(30deg);
+    }
+  }
+
+  @keyframes glyph-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @keyframes glyph-rock {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+    25% {
+      transform: rotate(18deg);
+    }
+    75% {
+      transform: rotate(-18deg);
+    }
   }
 
   .tile-eyebrow {

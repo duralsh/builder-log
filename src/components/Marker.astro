@@ -1,7 +1,8 @@
 ---
 // A section heading in the reference's voice: a primary shape, then a bold
 // label. A tone overrides the shape's own colour where the colour carries
-// meaning. Extra props (including the parent's scoping attribute) land on the
+// meaning, and a page can put a pictogram in the "icon" slot instead of the
+// shape. Extra props (including the parent's scoping attribute) land on the
 // root.
 interface Props {
   shape?: "sq" | "tri" | "ci" | "se" | "qu";
@@ -15,5 +16,5 @@ const { shape = "sq", tone, as: Tag = "h2", class: className, ...rest } = Astro.
 ---
 
 <Tag class:list={["marker", `mk-${shape}`, tone && `tone-${tone}`, className]} {...rest}>
-  <span class="mk-shape" aria-hidden="true"></span><span class="lbl"><slot /></span>
+  <slot name="icon"><span class="mk-shape" aria-hidden="true"></span></slot><span class="lbl"><slot /></span>
 </Tag>

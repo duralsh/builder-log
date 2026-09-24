@@ -3,6 +3,7 @@ import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHead from "../../components/PageHead.astro";
 import Marker from "../../components/Marker.astro";
+import Pictogram from "../../components/Pictogram.astro";
 import { formatDate, sortByDateDesc } from "../../lib/posts";
 
 const lifting = sortByDateDesc(
@@ -23,7 +24,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
 
       <div class="hobby-grid">
       <article class="card hobby-block">
-        <Marker shape="se">Lifting</Marker>
+        <Marker><Pictogram slot="icon" kind="kettlebell" />Lifting</Marker>
         <p>I am a big fan of kettlebells, boxing, cycling and home workouts.</p>
         <ul>
           {lifting.slice(0, 3).map((post) => (
@@ -35,7 +36,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
       </article>
 
       <article class="card hobby-block">
-        <Marker shape="tri">Numismatics</Marker>
+        <Marker><Pictogram slot="icon" kind="coin" />Numismatics</Marker>
         <p>
           Greek silver from the Archaic period onward, the Greco-Baktrian and Indo-Greek kings, and Roman imperial
           coinage.
@@ -54,7 +55,7 @@ const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.dr
       </article>
 
       <article class="card hobby-block">
-        <Marker shape="ci">Reading</Marker>
+        <Marker><Pictogram slot="icon" kind="book" />Reading</Marker>
         <p><a href="/hobbies/reading">Reading Shelf</a></p>
         <p><a href="/hobbies/reading/downloads">Downloadable PDFs</a></p>
       </article>

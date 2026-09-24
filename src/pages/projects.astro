@@ -9,25 +9,14 @@ const projects = sortByDateDesc(
   await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("project")),
 );
 
-type Form = {
-  kind: "circle" | "square" | "triangle" | "semi" | "quarter" | "bar";
-  color: "red" | "yellow" | "blue" | "ink";
-};
-
-// Projects without a logo get a primary form instead of an emoji.
-const projectShape: Record<string, Form> = {
-  "ai-workshops": { kind: "circle", color: "blue" },
-  "git-commit-ai": { kind: "square", color: "red" },
-};
-const DEFAULT_SHAPE: Form = { kind: "semi", color: "ink" };
-
-// Projects with an actual logo image (shown instead of the shape). This site
-// is its own project, so it wears the favicon.
+// Projects with an actual logo image; any other gets a plain primary form in
+// its place. This site is its own project, so it wears the favicon.
 const projectLogo: Record<string, string> = {
   praegen: "/covers/praegen-mark.png",
   vigil: "/covers/vigil-mark.png",
   arena: "/covers/arena-mark.png",
   "builder-log": "/favicon.svg",
+  "ai-workshops": "/covers/claude-mark.png",
 };
 
 // Shipping status, where it is worth saying before someone clicks through.
@@ -88,7 +77,6 @@ const chipsFor = (project: (typeof projects)[number]): Chip[] => {
       <ul class="project-list">
         {
           projects.map((project) => {
-            const form = projectShape[project.slug] ?? DEFAULT_SHAPE;
             return (
               <li class="card project-item">
                 <div class="project-head">
@@ -102,7 +90,7 @@ const chipsFor = (project: (typeof projects)[number]): Chip[] => {
                     />
                   ) : (
                     <span class="project-glyph">
-                      <Shape kind={form.kind} color={form.color} />
+                      <Shape kind="semi" color="ink" />
                     </span>
                   )}
                   <span class="project-title">{project.data.title}</span>

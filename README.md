@@ -1,3 +1,5 @@
+<img src="public/favicon.svg" width="96" alt="builder-log logo: a red circle and a black bar on paper" />
+
 # builder-log
 
 Personal website built with Astro.

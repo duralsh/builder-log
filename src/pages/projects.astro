@@ -18,15 +18,16 @@ type Form = {
 const projectShape: Record<string, Form> = {
   "ai-workshops": { kind: "circle", color: "blue" },
   "git-commit-ai": { kind: "square", color: "red" },
-  "builder-log": { kind: "bar", color: "ink" },
 };
 const DEFAULT_SHAPE: Form = { kind: "semi", color: "ink" };
 
-// Projects with an actual logo image (shown instead of the shape).
+// Projects with an actual logo image (shown instead of the shape). This site
+// is its own project, so it wears the favicon.
 const projectLogo: Record<string, string> = {
   praegen: "/covers/praegen-mark.png",
   vigil: "/covers/vigil-mark.png",
   arena: "/covers/arena-mark.png",
+  "builder-log": "/favicon.svg",
 };
 
 // Shipping status, where it is worth saying before someone clicks through.

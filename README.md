@@ -1,4 +1,4 @@
-<img src="public/favicon.svg" width="96" alt="builder-log logo: a red circle and a black bar on paper" />
+<img src="public/favicon.png" width="96" alt="builder-log logo: Dogus's face on beige" />
 
 # builder-log
 

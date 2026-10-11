@@ -89,12 +89,6 @@ const features = [
         </div>
         <figure class="portrait">
           <img src="/dogus-hero.png" alt="Dogus Ural portrait" decoding="async" />
-          <span class="portrait-bowtie" aria-hidden="true">
-            <svg viewBox="-60 -30 120 60">
-              <path d="M-56-26L0 0L-56 26ZM56-26L0 0L56 26Z" />
-              <circle r="11" />
-            </svg>
-          </span>
           <span class="portrait-shape"><Shape kind="triangle" color="yellow" /></span>
         </figure>
       </div>
@@ -244,52 +238,6 @@ const features = [
     right: -26px;
     width: clamp(64px, 7vw, 96px);
     transform: rotate(12deg);
-  }
-
-  /* Sits under the chin in percentages of the frame, which the photo fills
-     edge to edge vertically, so it tracks the face at every width. The photo
-     stays beige in dark mode, so the knot is a fixed black, not the ink. */
-  .portrait-bowtie {
-    position: absolute;
-    top: 82.5%;
-    left: 50%;
-    width: 26%;
-    transform: translate(-50%, -50%);
-  }
-
-  .portrait-bowtie svg {
-    display: block;
-    width: 100%;
-    height: auto;
-  }
-
-  .portrait-bowtie path {
-    fill: var(--red);
-  }
-
-  .portrait-bowtie circle {
-    fill: #111111;
-  }
-
-  /* Straightened by an unseen hand: it tips, overshoots back, and settles. */
-  .portrait:hover .portrait-bowtie svg {
-    animation: bowtie-wiggle 1.3s var(--spring) infinite;
-  }
-
-  @keyframes bowtie-wiggle {
-    0% {
-      transform: rotate(0deg);
-    }
-    25% {
-      transform: rotate(14deg);
-    }
-    50% {
-      transform: rotate(-10deg);
-    }
-    70%,
-    100% {
-      transform: rotate(0deg);
-    }
   }
 
   .explore {

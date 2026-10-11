@@ -88,7 +88,9 @@ const features = [
           </div>
         </div>
         <figure class="portrait">
-          <img src="/dogus-hero.png" alt="Dogus Ural portrait" decoding="async" />
+          <div class="portrait-frame">
+            <img src="/dogus-hero.png" alt="Dogus Ural portrait" decoding="async" />
+          </div>
           <span class="portrait-shape"><Shape kind="triangle" color="yellow" /></span>
         </figure>
       </div>
@@ -222,14 +224,52 @@ const features = [
     margin: 0;
   }
 
-  .portrait img {
-    display: block;
-    width: 100%;
+  /* The frame stays put and clips; the photo moves inside it. The photo's
+     backdrop is a flat #e7dec6 in both themes, so the frame is filled with
+     that same fixed beige and the photo's edges never show as it tilts. */
+  .portrait-frame {
     aspect-ratio: 5 / 6;
-    object-fit: cover;
+    overflow: hidden;
     border: 2px solid var(--ink);
     box-shadow: 11px 11px 0 var(--ink);
-    background: var(--cream);
+    background: #e7dec6;
+  }
+
+  .portrait-frame img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* The chin, where a bobblehead's spring sits. */
+    transform-origin: 50% 78%;
+  }
+
+  /* A bobblehead knocked once: each swing smaller than the last, then a rest
+     before the next knock. */
+  .portrait:hover .portrait-frame img {
+    animation: head-bobble 1.8s var(--spring) infinite;
+  }
+
+  @keyframes head-bobble {
+    0% {
+      transform: rotate(0deg);
+    }
+    12% {
+      transform: rotate(8deg);
+    }
+    26% {
+      transform: rotate(-6deg);
+    }
+    40% {
+      transform: rotate(4deg);
+    }
+    54% {
+      transform: rotate(-2deg);
+    }
+    68%,
+    100% {
+      transform: rotate(0deg);
+    }
   }
 
   .portrait-shape {
@@ -566,7 +606,7 @@ const features = [
   }
 
   @media (max-width: 760px) {
-    .portrait img,
+    .portrait-frame,
     .stoic,
     .contact {
       box-shadow: 7px 7px 0 var(--ink);

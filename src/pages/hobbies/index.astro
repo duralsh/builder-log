@@ -4,14 +4,18 @@ import PageHead from "../../components/PageHead.astro";
 import Marker from "../../components/Marker.astro";
 import Pictogram from "../../components/Pictogram.astro";
 import { BOOKS } from "../../lib/books";
-import { categories, categoryFor, coinSlug, coins, ZOOMED } from "../../lib/coins";
+import { coinSlug, coins, ZOOMED } from "../../lib/coins";
 
-// One coin per period, the first of each in the cabinet's own order, so the
-// row follows the collection as it changes and nothing here names what is in it.
-const sampleCoins = categories.flatMap((period) => {
-  const coin = coins.find((c) => categoryFor(c) === period);
-  return coin ? [coin] : [];
-});
+// A hand-picked row, by slug. A coin that leaves the cabinet simply drops out
+// of it rather than breaking the page.
+const FEATURED = [
+  "lysimachos-kalchedon-tetradrachm",
+  "eumenes-i-philetairos-tetradrachm",
+  "eukratides-i-tetradrachm-a",
+  "alexander-iii-drachm-lifetime-sardes",
+  "athens-tetradrachm-classical",
+];
+const sampleCoins = FEATURED.flatMap((slug) => coins.filter((coin) => coinSlug(coin) === slug));
 
 const shelf = BOOKS.slice(0, 6);
 ---

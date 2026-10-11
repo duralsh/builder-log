@@ -2,7 +2,7 @@
 import BaseLayout from "../../../layouts/BaseLayout.astro";
 import PageHead from "../../../components/PageHead.astro";
 import Marker from "../../../components/Marker.astro";
-import { coins, categories, categoryFor, categoryTone, coinSlug, yearFor, type Coin } from "../../../lib/coins";
+import { coins, categories, categoryFor, categoryTone, coinSlug, yearFor, ZOOMED, type Coin } from "../../../lib/coins";
 
 // Titles are catalogue headings, too long for a tile. Most shorten by rule;
 // three are irregular enough that an override is clearer than more regex.
@@ -22,23 +22,6 @@ const shortName = (title: string) => {
   const parts = t.split(",").map((p) => p.trim()).filter(Boolean);
   return (parts[parts.length - 1] ?? t).replace(/\./g, "").trim().toUpperCase();
 };
-
-// Sixteen of these were composited here with the coin at 78% of an 840px tile
-// inside 50px of padding, which leaves it filling only ~71% of its half. The
-// auction photographs are cropped far tighter, so these need a nudge to sit at
-// the same size on the board. The two Eukratides I obols are cut out rather
-// than composited; they are framed to land at the same size under the same
-// nudge. Listed by slug rather than by category, so a Baktrian coin bought at
-// auction later is not zoomed by mistake.
-const ZOOMED = new Set([
-  "sophytes-drachm", "sophytes-obol",
-  "euthydemos-i-tetradrachm-a", "euthydemos-ii-tetradrachm", "euthydemos-ii-obol",
-  "eukratides-i-tetradrachm-a", "eukratides-i-drachm", "eukratides-ii-tetradrachm",
-  "demetrios-i-obol", "heliokles-i-tetradrachm", "antimachos-i-obol",
-  "menander-i-drachm-helmeted", "menander-i-drachm-a", "menander-i-drachm-b",
-  "abbasid-dirham-a", "abbasid-dirham-b",
-  "eukratides-i-obol-a", "eukratides-i-obol-b",
-]);
 
 // Dates are catalogue prose: "Circa 171-145 BC", "Ca. 4th century BC",
 // "Circa 324-323 BC (lifetime issue)". A tile wants the years and nothing

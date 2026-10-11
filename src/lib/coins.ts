@@ -1130,6 +1130,23 @@ export const issuerLink = (title: string) => {
   };
 };
 
+// Sixteen of these were composited here with the coin at 78% of an 840px tile
+// inside 50px of padding, which leaves it filling only ~71% of its half. The
+// auction photographs are cropped far tighter, so these need a nudge to sit at
+// the same size as the rest wherever coins show as round tiles. The two
+// Eukratides I obols are cut out rather than composited; they are framed to
+// land at the same size under the same nudge. Listed by slug rather than by
+// category, so a Baktrian coin bought at auction later is not zoomed by mistake.
+export const ZOOMED = new Set([
+  "sophytes-drachm", "sophytes-obol",
+  "euthydemos-i-tetradrachm-a", "euthydemos-ii-tetradrachm", "euthydemos-ii-obol",
+  "eukratides-i-tetradrachm-a", "eukratides-i-drachm", "eukratides-ii-tetradrachm",
+  "demetrios-i-obol", "heliokles-i-tetradrachm", "antimachos-i-obol",
+  "menander-i-drachm-helmeted", "menander-i-drachm-a", "menander-i-drachm-b",
+  "abbasid-dirham-a", "abbasid-dirham-b",
+  "eukratides-i-obol-a", "eukratides-i-obol-b",
+]);
+
 /** Stable, unique URL slug: the image basename, already descriptive and
  *  distinct even where three Menander drachms share a title and type. */
 export const coinSlug = (coin: Coin) =>

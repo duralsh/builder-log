@@ -233,6 +233,49 @@ code {
   color: #111111;
 }
 
+/* === Link chips: small square doors under a card, lifting like the slabs === */
+.linkouts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1.1rem;
+}
+
+.linkout {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 36px;
+  padding: 0 0.85rem;
+  border: 2px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-decoration: none;
+  text-transform: lowercase;
+  transition: transform 0.35s var(--spring), box-shadow 0.35s var(--spring);
+}
+
+.linkout:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 5px 5px 0 var(--ink);
+  color: var(--ink);
+}
+
+.linkout-icon {
+  display: inline-flex;
+  width: 15px;
+  height: 15px;
+}
+
+.linkout-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 /* === Section markers ===
    A heading is a primary shape standing on the baseline, then a bold label.
    Only where the order is the content (the workshop series) does a numeral

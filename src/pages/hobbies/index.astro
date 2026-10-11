@@ -1,105 +1,182 @@
 ---
-import { getCollection } from "astro:content";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PageHead from "../../components/PageHead.astro";
 import Marker from "../../components/Marker.astro";
 import Pictogram from "../../components/Pictogram.astro";
-import { formatDate, sortByDateDesc } from "../../lib/posts";
+import { BOOKS } from "../../lib/books";
+import { categories, categoryFor, coinSlug, coins, ZOOMED } from "../../lib/coins";
 
-const lifting = sortByDateDesc(
-  await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("lifting")),
-);
-const coins = sortByDateDesc(await getCollection("posts", ({ data }) => !data.draft && data.tags.includes("coins")));
+// One coin per period, the first of each in the cabinet's own order, so the
+// row follows the collection as it changes and nothing here names what is in it.
+const sampleCoins = categories.flatMap((period) => {
+  const coin = coins.find((c) => categoryFor(c) === period);
+  return coin ? [coin] : [];
+});
+
+const shelf = BOOKS.slice(0, 6);
 ---
 
 <BaseLayout
   title="Hobbies | Dogus Ural"
-  description="Dogus Ural's hobbies: a cabinet of Greek, Roman, Baktrian and Islamic coins, a lifting log, and a reading shelf."
+  description="Dogus Ural's hobbies outside work: ancient coins, a reading shelf and lifting."
 >
   <section class="section">
     <div class="container">
       <PageHead title="Hobbies">
-        <p>Training logs, numismatics notes, and a reading shelf.</p>
+        <p>Coins, books and lifting, outside work.</p>
       </PageHead>
 
-      <div class="hobby-grid">
-      <article class="card hobby-block">
-        <Marker><Pictogram slot="icon" kind="kettlebell" />Lifting</Marker>
-        <p>I am a big fan of kettlebells, boxing, cycling and home workouts.</p>
-        <ul>
-          {lifting.slice(0, 3).map((post) => (
-            <li>
-              <a href={`/posts/${post.slug}`}>{post.data.title}</a> <span class="muted">· {formatDate(post.data.date)}</span>
-            </li>
-          ))}
-        </ul>
-      </article>
+      <div class="hobbies">
+        <article class="card hobby">
+          <Marker><Pictogram slot="icon" kind="coin" />Numismatics</Marker>
+          <p class="hobby-line">Ancient coins, each with its full catalogue entry.</p>
+          <ul class="coin-row">
+            {
+              sampleCoins.map((coin) => (
+                <li>
+                  <a
+                    class="coin"
+                    href={`/hobbies/coins/${coinSlug(coin)}`}
+                    style={ZOOMED.has(coinSlug(coin)) ? "--z: 1.25" : undefined}
+                  >
+                    <span class="coin-window">
+                      {/* Both faces sit side by side in one image, as on the
+                          board, so sliding it by half turns the coin over. */}
+                      <img
+                        class="coin-face"
+                        src={coin.image.replace(".webp", "-sm.webp")}
+                        alt={`${coin.title}, ${coin.type}`}
+                        loading="lazy"
+                        decoding="async"
+                      />
+                    </span>
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+          <div class="linkouts">
+            <a class="linkout" href="/hobbies/coins/collection">cabinet</a>
+            <a class="linkout" href="/hobbies/coins/board">board</a>
+          </div>
+        </article>
 
-      <article class="card hobby-block">
-        <Marker><Pictogram slot="icon" kind="coin" />Numismatics</Marker>
-        <p>
-          Greek silver from the Archaic period onward, the Greco-Baktrian and Indo-Greek kings, and Roman imperial
-          coinage.
-        </p>
-        <ul class="hobby-links">
-          <li><a href="/hobbies/coins/collection">Numismatic cabinet</a> — every coin with its full catalogue entry</li>
-          <li><a href="/hobbies/coins/board">The board</a> — all of them on one wall, hover to turn a coin over</li>
-        </ul>
-        <ul>
-          {coins.slice(0, 3).map((post) => (
-            <li>
-              <a href={`/posts/${post.slug}`}>{post.data.title}</a> <span class="muted">· {formatDate(post.data.date)}</span>
-            </li>
-          ))}
-        </ul>
-      </article>
+        <article class="card hobby">
+          <Marker><Pictogram slot="icon" kind="book" />Reading</Marker>
+          <p class="hobby-line">Books I keep returning to, and cheat sheets to download.</p>
+          <a class="cover-row" href="/hobbies/reading" aria-label="Reading shelf">
+            {shelf.map((book) => <img src={book.cover} alt="" loading="lazy" decoding="async" />)}
+          </a>
+          <div class="linkouts">
+            <a class="linkout" href="/hobbies/reading">shelf</a>
+            <a class="linkout" href="/hobbies/reading/downloads">pdfs</a>
+          </div>
+        </article>
 
-      <article class="card hobby-block">
-        <Marker><Pictogram slot="icon" kind="book" />Reading</Marker>
-        <p><a href="/hobbies/reading">Reading Shelf</a></p>
-        <p><a href="/hobbies/reading/downloads">Downloadable PDFs</a></p>
-      </article>
+        <article class="card hobby">
+          <Marker><Pictogram slot="icon" kind="kettlebell" />Lifting</Marker>
+          <p class="hobby-line">I am a big fan of kettlebells, boxing, cycling and home workouts.</p>
+        </article>
       </div>
     </div>
   </section>
 </BaseLayout>
 
 <style>
-  .hobby-grid {
+  .hobbies {
     display: grid;
     gap: 14px;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   }
 
-  .hobby-block {
-    padding: 1.4rem 1.4rem 1.5rem;
+  .hobby {
+    padding: 1.4rem 1.6rem 1.5rem;
   }
 
-  .hobby-block ul {
-    display: grid;
-    gap: 0.45rem;
-    margin: 0.9rem 0 0;
+  .hobby-line {
+    margin: 0.7rem 0 0;
+    max-width: 60ch;
+  }
+
+  .coin-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin: 1.3rem 0 0;
     padding: 0;
     list-style: none;
   }
 
-  .hobby-block li {
+  .coin {
+    display: block;
+  }
+
+  .coin-window {
     position: relative;
-    padding-left: 1.1rem;
+    display: block;
+    width: clamp(64px, 11vw, 120px);
+    aspect-ratio: 1;
+    overflow: hidden;
+    border: 2px solid var(--ink);
+    border-radius: 50%;
+    background: var(--cream);
+    transition: transform 0.35s var(--spring), box-shadow 0.35s var(--spring);
   }
 
-  .hobby-block li::before {
-    content: "";
+  .coin-face {
     position: absolute;
+    top: 0;
     left: 0;
-    top: 0.6em;
-    width: 7px;
-    height: 7px;
-    background: var(--ink);
+    display: block;
+    width: 200%;
+    height: 100%;
+    object-fit: cover;
+    /* The board's sizing: --z enlarges a coin photographed small, and the
+       shift keeps the visible face centred while it does. */
+    transform: translateX(calc(25% * (var(--z, 1) - 1))) scale(var(--z, 1));
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  .hobby-links {
-    color: var(--ink-3);
-    font-size: 0.95rem;
+  .coin:hover .coin-face,
+  .coin:focus-visible .coin-face {
+    transform: translateX(calc(-25% * (var(--z, 1) + 1))) scale(var(--z, 1));
+  }
+
+  .coin:hover .coin-window,
+  .coin:focus-visible .coin-window {
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+
+  .coin:focus-visible {
+    outline: none;
+  }
+
+  .coin:focus-visible .coin-window {
+    outline: 3px solid var(--ink);
+    outline-offset: 3px;
+  }
+
+  .cover-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    width: fit-content;
+    margin-top: 1.3rem;
+  }
+
+  .cover-row img {
+    display: block;
+    width: clamp(56px, 9vw, 100px);
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border: 2px solid var(--ink);
+    background: var(--paper-deep);
+    transition: transform 0.35s var(--spring), box-shadow 0.35s var(--spring);
+  }
+
+  .cover-row:hover img,
+  .cover-row:focus-visible img {
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--ink);
   }
 </style>
